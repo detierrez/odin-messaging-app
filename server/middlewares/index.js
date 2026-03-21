@@ -1,5 +1,5 @@
-const { strictAuthenticate, looseAuthenticate } = require("./passport");
-const { validateId, validateLogin, validateSignup } = require("./validators");
+// const { strictAuthenticate, looseAuthenticate } = require("./passport");
+// const { validateId, validateLogin, validateSignup } = require("./validators");
 const {
   httpError,
   throw404,
@@ -21,9 +21,9 @@ module.exports = {
   maskInternalErrors,
   sendError,
   httpError,
-  strictAuthenticate,
-  looseAuthenticate,
-  validateId,
-  validateLogin,
-  validateSignup,
+  // strictAuthenticate,
+  // looseAuthenticate,
+  // validateId,
+  // validateLogin,
+  // validateSignup,
 };

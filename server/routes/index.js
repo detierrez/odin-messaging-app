@@ -1,4 +1,4 @@
 module.exports = {
   // authRouter: require("./auth"),
-  rocks: require("./rocks"),
+  messages: require("./messages"),
 };
