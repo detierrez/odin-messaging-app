@@ -1,19 +1,48 @@
+const { matchedData } = require("express-validator/lib");
 const prisma = require("../lib/prisma");
 
-module.exports.getMessages = async (req, res) => {
-  const messages = await prisma.message.findMany();
+module.exports.getMessagesByContact = async (req, res) => {
+  const { id: userId } = req.user;
+  const { contactId } = matchedData(req);
+
+  const messages = await prisma.message.findMany({
+    where: {
+      OR: [
+        { fromId: userId, toId: contactId },
+        { fromId: contactId, toId: userId },
+      ],
+    },
+    orderBy: { id: "desc" }, // TODO by date instead
+  });
   res.json(messages);
 };
 
-module.exports.postMessage = async (req, res) => {
-  try {
-    const { fromId, toId, text } = req.body;
-    const message = await prisma.message.create({
-      data: { fromId, toId, text },
-    });
-    res.json(message);
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
+module.exports.postMessageToContact = async (req, res) => {
+  const { id } = req.user;
+  const { contactId } = matchedData(req);
+  const { text } = req.body;
+
+  const message = await prisma.message.create({
+    data: { fromId: id, toId: contactId, text },
+  });
+  res.json(message);
+};
+
+module.exports.getInbox = async (req, res) => {
+  const { id: userId } = req.user;
+
+  const result = await prisma.$queryRaw`
+    SELECT * FROM (
+      SELECT DISTINCT ON ("contactId") *
+      FROM (
+        SELECT *, CASE WHEN "fromId" = ${userId} THEN "toId" ELSE "fromId" END AS "contactId"
+        FROM "Message"
+        WHERE "fromId" = ${userId} OR "toId" = ${userId}
+      ) AS "messagesWithContact"
+      ORDER BY "contactId", "id" DESC
+    ) AS "distinctMessages"
+    ORDER BY "id" DESC
+  `;
+
+  res.json(result);
 };

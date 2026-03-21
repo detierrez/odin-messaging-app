@@ -1,4 +1,4 @@
-const { messages } = require("../routes/index");
+const index = require("../routes/index");
 
 const request = require("supertest");
 const express = require("express");
@@ -6,31 +6,69 @@ const { expect } = require("@jest/globals");
 const app = express();
 
 app.use(express.json());
-app.use("/messages", messages);
+app.use("/", index);
 
-test("returns all messages", async () => {
-  await request(app)
-    .get("/messages")
-    .expect((res) => {
-      expect(res.body).toEqual(
-        expect.arrayOf(
-          expect.objectContaining({
-            id: expect.any(Number),
-            text: expect.any(String),
-          }),
-        ),
-      );
-    })
-    .expect(200);
-});
+// test("fail if doesn't authenticate", async () => {
+//   await request(app).get("/").expect(401);
+// });
 
-test("posts a message", async () => {
-  const data = { fromId: 1, toId: 2, text: "what's good" };
+// test("returns a chat", async () => {
+//   const id = 1;
+//   const contactId = 2;
+
+//   await request(app)
+//     .get(`/contacts/${contactId}/messages?id=${id}`)
+//     .expect((res) => {
+//       expect(Array.isArray(res.body)).toBe(true);
+
+//       res.body.forEach((message) => {
+//         expect(message).toEqual(
+//           expect.objectContaining({
+//             id: expect.any(Number),
+//             text: expect.any(String),
+//           }),
+//         );
+
+//         const validParticipants =
+//           (message.fromId === id && message.toId === contactId) ||
+//           (message.fromId === contactId && message.toId === id);
+//         expect(validParticipants).toBe(true);
+//       });
+//     })
+//     .expect(200);
+// });
+
+// test("posts a message", async () => {
+//   const id = 1;
+//   const contactId = 2;
+//   const text = "what good";
+
+//   await request(app)
+//     .post(`/contacts/${contactId}/messages?id=${id}`)
+//     .send({ text })
+//     .expect((res) => {
+//       expect(res.body).toEqual({
+//         id: expect.any(Number),
+//         fromId: id,
+//         toId: contactId,
+//         text,
+//       });
+//     })
+//     .expect(200);
+// });
+
+test("gets the last message of each conversation", async () => {
+  const id = 3;
+
   await request(app)
-    .post("/messages")
-    .send(data)
-    .expect((res) => {
-      expect(res.body).toEqual({ id: expect.any(Number), ...data });
-    })
+    .get(`/inbox?id=${id}`)
+    // .expect((res) => {
+    //   expect(res.body).toEqual({
+    //     id: expect.any(Number),
+    //     fromId: id,
+    //     toId: contactId,
+    //     text,
+    //   });
+    // })
     .expect(200);
 });

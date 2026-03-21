@@ -1,5 +1,5 @@
 // const { strictAuthenticate, looseAuthenticate } = require("./passport");
-// const { validateId, validateLogin, validateSignup } = require("./validators");
+const { validateId, validateLogin, validateSignup } = require("./validators");
 const {
   httpError,
   throw404,
@@ -11,8 +11,18 @@ const logger = (req, res, next) => {
   console.log("Incoming request:", {
     url: req.url,
     body: req.body,
+    query: req.query,
   });
   next();
+};
+
+const strictAuthenticate = (req, res, next) => {
+  const id = Number(req.query.id);
+  if (id) {
+    req.user = { id };
+    return next();
+  }
+  throw new httpError(401);
 };
 
 module.exports = {
@@ -21,9 +31,9 @@ module.exports = {
   maskInternalErrors,
   sendError,
   httpError,
-  // strictAuthenticate,
+  strictAuthenticate,
   // looseAuthenticate,
-  // validateId,
+  validateId,
   // validateLogin,
   // validateSignup,
 };
