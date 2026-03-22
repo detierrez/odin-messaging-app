@@ -1,12 +1,10 @@
-import { useContext } from "react";
 import { useState } from "react";
-import { useBackend, useContact, useWebSocket } from "../../hooks";
-import { UserContext } from "../../contexts/contexts";
+import { useBackend, useContact, useUser, useWebSocket } from "../../hooks";
 
 export default function Inbox() {
   const lastMessage = useWebSocket();
   const [prevMessage, setPrevMessage] = useState(null);
-  const user = useContext(UserContext);
+  const { user, setUser } = useUser();
   const [inbox, setInbox] = useBackend(`/inbox?id=${user.id}`);
   const { setContactId } = useContact();
 
@@ -43,6 +41,13 @@ export default function Inbox() {
             </li>
           );
         })}
+
+      <button onClick={() => setUser({ id: 1 })}>1</button>
+      <button onClick={() => setUser({ id: 2 })}>2</button>
+      <button onClick={() => setUser({ id: 3 })}>3</button>
+      <button onClick={() => setUser({ id: 4 })}>4</button>
+      <button onClick={() => setUser({ id: 5 })}>5</button>
+      <button onClick={() => setUser({ id: undefined })}>X</button>
     </ul>
   );
 }

@@ -19,8 +19,19 @@ app.use(cors(CLIENT_URL));
 app.use("/", index);
 
 // WebSocket Server
+io.use((socket, next) => {
+  const userId = socket.handshake.auth.token;
+  if (!userId) {
+    console.log("asd");
+    next(new Error("Unauthorized"));
+  }
+  return next();
+});
+
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  const userId = socket.handshake.auth.token;
+  socket.join(`${userId}`);
+  console.log(`user ${userId} connected`);
 });
 
 server.listen(PORT, () => console.log(`http://localhost:${PORT}`));

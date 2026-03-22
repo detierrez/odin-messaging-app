@@ -27,8 +27,8 @@ module.exports.postMessageToContact = async (req, res) => {
   });
 
   const io = req.app.get("io");
-  console.log("sending message...");
-  io.emit("new_message", message);
+  const { fromId, toId } = message;
+  io.to(`${fromId}`).to(`${toId}`).emit("new_message", message);
   res.json("success");
 };
 

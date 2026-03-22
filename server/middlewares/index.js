@@ -10,8 +10,8 @@ const {
 const logger = (req, res, next) => {
   console.log("Incoming request:", {
     url: req.url,
-    body: req.body,
-    query: req.query,
+    // body: req.body,
+    // query: req.query,
   });
   next();
 };

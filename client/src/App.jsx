@@ -2,12 +2,12 @@ import s from "@styles/App.module.css";
 import Inbox from "./components/layout/Inbox";
 import Chat from "./components/layout/Chat";
 import WebSocketProvider from "./providers/WebSocketProvider";
-import { UserContext } from "./contexts/contexts";
 import ContactProvider from "./providers/ContactProvider";
+import UserProvider from "./providers/UserProvider";
 
 export default function App() {
   return (
-    <UserContext value={{ id: 3 }}>
+    <UserProvider>
       <ContactProvider>
         <WebSocketProvider>
           <div className={s.body}>
@@ -20,6 +20,6 @@ export default function App() {
           </div>
         </WebSocketProvider>
       </ContactProvider>
-    </UserContext>
+    </UserProvider>
   );
 }

@@ -1,6 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { fetchBackend } from "../router/actions-loaders";
-import { ContactContext, WebSocketContext } from "../contexts/contexts";
+import {
+  ContactContext,
+  UserContext,
+  WebSocketContext,
+} from "../contexts/contexts";
 
 export function useBackend(path) {
   const [data, setData] = useState(null);
@@ -24,10 +28,14 @@ export function useBackend(path) {
   return [data, setData];
 }
 
-export function useWebSocket() {
-  return useContext(WebSocketContext);
+export function useUser() {
+  return useContext(UserContext);
 }
 
 export function useContact() {
   return useContext(ContactContext);
+}
+
+export function useWebSocket() {
+  return useContext(WebSocketContext);
 }
