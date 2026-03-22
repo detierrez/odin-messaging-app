@@ -4,7 +4,7 @@ const { PORT } = process.env;
 const cors = require("cors");
 const express = require("express");
 const m = require("./middlewares");
-const { messages } = require("./routes");
+const index = require("./routes");
 
 const app = express();
 app.use(express.json());
@@ -13,7 +13,7 @@ app.use(cors("localhost:5173"));
 app.use("/", m.logger);
 
 // app.use("/", authRouter);
-app.use("/messages", messages);
+app.use("/", index);
 
 app.use("/", m.throw404);
 app.use("/", m.maskInternalErrors);

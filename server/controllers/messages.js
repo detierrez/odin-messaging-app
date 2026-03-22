@@ -14,6 +14,8 @@ module.exports.getMessagesByContact = async (req, res) => {
     },
     orderBy: { id: "desc" }, // TODO by date instead
   });
+  console.log(messages);
+
   res.json(messages);
 };
 
@@ -32,7 +34,7 @@ module.exports.getInbox = async (req, res) => {
   const { id: userId } = req.user;
 
   const result = await prisma.$queryRaw`
-    SELECT * FROM (
+    SELECT "id", "fromId", "toId", "text" FROM (
       SELECT DISTINCT ON ("contactId") *
       FROM (
         SELECT *, CASE WHEN "fromId" = ${userId} THEN "toId" ELSE "fromId" END AS "contactId"

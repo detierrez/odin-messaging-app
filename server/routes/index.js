@@ -10,7 +10,7 @@ const { validateId } = require("../middlewares");
 
 const contacts = Router();
 const contactId = Router({ mergeParams: true });
-contacts.use("/:contactId", logger, validateId("contactId"), logger, contactId);
+contacts.use("/:contactId", validateId("contactId"), contactId);
 contactId
   .route("/messages")
   .get(getMessagesByContact)

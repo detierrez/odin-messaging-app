@@ -62,13 +62,20 @@ test("gets the last message of each conversation", async () => {
 
   await request(app)
     .get(`/inbox?id=${id}`)
-    // .expect((res) => {
-    //   expect(res.body).toEqual({
-    //     id: expect.any(Number),
-    //     fromId: id,
-    //     toId: contactId,
-    //     text,
-    //   });
-    // })
+    .expect((res) => {
+      expect(Array.isArray(res.body)).toBe(true);
+
+      res.body.forEach((message) => {
+        expect(message).toEqual(
+          expect.objectContaining({
+            id: expect.any(Number),
+            text: expect.any(String),
+          }),
+        );
+
+        const validParticipants = message.fromId === id || message.toId === id;
+        expect(validParticipants).toBe(true);
+      });
+    })
     .expect(200);
 });
