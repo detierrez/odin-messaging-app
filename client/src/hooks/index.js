@@ -1,7 +1,9 @@
-import { useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { fetchBackend } from "../router/actions-loaders";
+import { ContactContext, WebSocketContext } from "../contexts/contexts";
 
-export function useBackend(path, set) {
+export function useBackend(path) {
+  const [data, setData] = useState(null);
   useEffect(() => {
     const controller = new AbortController();
     const abortError = new Error("Request aborted");
@@ -9,7 +11,7 @@ export function useBackend(path, set) {
       signal: controller.signal,
     })
       .then((data) => {
-        set(data);
+        setData(data);
       })
       .catch((error) => {
         if (error !== abortError) throw error;
@@ -17,5 +19,15 @@ export function useBackend(path, set) {
     return () => {
       controller.abort(abortError);
     };
-  }, [path, set]);
+  }, [path]);
+
+  return [data, setData];
+}
+
+export function useWebSocket() {
+  return useContext(WebSocketContext);
+}
+
+export function useContact() {
+  return useContext(ContactContext);
 }

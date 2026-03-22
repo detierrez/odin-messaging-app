@@ -1,18 +1,16 @@
-import { useContext } from "react";
 import { useState } from "react";
 import TextBox from "./TextBox";
-import { useBackend } from "../../hooks";
-import { WebSocketContext } from "../../contexts/contexts";
+import { useBackend, useContact, useWebSocket } from "../../hooks";
 
 export default function Chat() {
-  const lastMessage = useContext(WebSocketContext);
+  const lastMessage = useWebSocket();
   const [prevMessage, setPrevMessage] = useState(null);
-  const [chat, setChat] = useState([]);
 
-  const [contactId /*setContactId*/] = useState(5);
+  const { contactId } = useContact();
   const userId = 3;
-  const path = `/contacts/${contactId}/messages?id=${userId}`;
-  useBackend(path, setChat);
+  const [chat, setChat] = useBackend(
+    `/contacts/${contactId}/messages?id=${userId}`,
+  );
 
   if (lastMessage && lastMessage !== prevMessage) {
     setPrevMessage(lastMessage);
@@ -23,13 +21,10 @@ export default function Chat() {
 
   return (
     <>
-      <TextBox action={path} />
+      {contactId}
+      <TextBox action={`/contacts/${contactId}/messages?id=${userId}`} />
 
-      <ul>
-        {chat.map((m) => (
-          <li key={m.id}>{m.text}</li>
-        ))}
-      </ul>
+      <ul>{chat && chat.map((m) => <li key={m.id}>{m.text}</li>)}</ul>
     </>
   );
 }
