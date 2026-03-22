@@ -1,20 +1,45 @@
-import { useEffect } from "react";
-import { fetchBackend } from "../../router/actions-loaders";
+import { useContext } from "react";
 import { useState } from "react";
+import { useBackend } from "../../hooks";
+import { UserContext, WebSocketContext } from "../../contexts/contexts";
 
 export default function Inbox() {
-  //   const [inbox, setInbox] = useState({});
+  const lastMessage = useContext(WebSocketContext);
+  const [prevMessage, setPrevMessage] = useState(null);
+  const user = useContext(UserContext);
+  const [inbox, setInbox] = useState([]);
+  useBackend(`/inbox?id=${user.id}`, setInbox);
 
-  //   useEffect(() => {
-  //     const controller = new AbortController();
-  //     const abortError = new Error("Request aborted");
-  //     fetchBackend("/inbox", { signal: controller.signal })
-  //       .then((data) => setInbox(data))
-  //       .catch((error) => {
-  //         if (error !== abortError) throw error;
-  //       });
-  //     return () => controller.abort(abortError);
-  //   }, []);
+  if (lastMessage && lastMessage !== prevMessage) {
+    setPrevMessage(lastMessage);
+    setInbox((prevInbox) => {
+      const { fromId, toId } = lastMessage;
+      const contactId = fromId === user.id ? toId : fromId;
+      const newInbox = prevInbox.filter(
+        (message) => message.fromId !== contactId && message.toId !== contactId,
+      );
+      newInbox.unshift(lastMessage);
+      return newInbox;
+    });
+  }
 
-  return <>Mah messages</>;
+  return (
+    <ul>
+      {inbox.map((message) => {
+        const { id, fromId, toId, text } = message;
+        const head = fromId === user.id ? "You: " : "";
+        const contactId = fromId === user.id ? toId : fromId;
+        return (
+          <li key={id}>
+            <b>
+              {contactId} - {id}
+            </b>
+            <br />
+            {head}
+            {text}
+          </li>
+        );
+      })}
+    </ul>
+  );
 }

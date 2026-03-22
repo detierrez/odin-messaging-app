@@ -3,7 +3,6 @@ import { fetchBackend } from "../router/actions-loaders";
 
 export function useBackend(path, set) {
   useEffect(() => {
-    console.log("useBacked effect");
     const controller = new AbortController();
     const abortError = new Error("Request aborted");
     fetchBackend(path, {

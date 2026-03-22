@@ -1,5 +1,4 @@
 import { useContext } from "react";
-import { fetchBackend, SERVER_BASE_URL } from "../../router/actions-loaders";
 import { useState } from "react";
 import TextBox from "./TextBox";
 import { useBackend } from "../../hooks";
@@ -10,7 +9,7 @@ export default function Chat() {
   const [prevMessage, setPrevMessage] = useState(null);
   const [chat, setChat] = useState([]);
 
-  const [contactId, setContactId] = useState(5);
+  const [contactId /*setContactId*/] = useState(5);
   const userId = 3;
   const path = `/contacts/${contactId}/messages?id=${userId}`;
   useBackend(path, setChat);
