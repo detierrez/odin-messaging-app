@@ -14,8 +14,6 @@ module.exports.getMessagesByContact = async (req, res) => {
     },
     orderBy: { id: "desc" }, // TODO by date instead
   });
-  console.log(messages);
-
   res.json(messages);
 };
 
@@ -27,7 +25,11 @@ module.exports.postMessageToContact = async (req, res) => {
   const message = await prisma.message.create({
     data: { fromId: id, toId: contactId, text },
   });
-  res.json(message);
+
+  const io = req.app.get("io");
+  console.log("sending message...");
+  io.emit("new_message", message);
+  res.json("success");
 };
 
 module.exports.getInbox = async (req, res) => {

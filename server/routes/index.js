@@ -4,7 +4,12 @@ const {
   postMessageToContact,
   getInbox,
 } = require("../controllers/messages");
-const { logger, maskInternalErrors } = require("../middlewares");
+const {
+  logger,
+  maskInternalErrors,
+  throw404,
+  sendError,
+} = require("../middlewares");
 const { strictAuthenticate } = require("../middlewares");
 const { validateId } = require("../middlewares");
 
@@ -20,9 +25,10 @@ const inbox = Router();
 inbox.get("/", getInbox);
 
 const index = Router();
+index.use(logger);
 index.use(strictAuthenticate);
 index.use("/contacts", contacts);
 index.use("/inbox", inbox);
-index.use(maskInternalErrors);
+index.use(throw404, maskInternalErrors, sendError);
 
 module.exports = index;

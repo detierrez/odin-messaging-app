@@ -1,22 +1,26 @@
 require("dotenv/config");
-const { PORT } = process.env;
+const { PORT, CLIENT_URL } = process.env;
 
+const { createServer } = require("node:http");
 const cors = require("cors");
 const express = require("express");
+const { Server } = require("socket.io");
 const m = require("./middlewares");
 const index = require("./routes");
 
 const app = express();
+const server = createServer(app);
+const io = new Server(server, { cors: { origin: CLIENT_URL } });
+
+// HTTP Server
+app.set("io", io);
 app.use(express.json());
-app.use(cors("localhost:5173"));
-
-app.use("/", m.logger);
-
-// app.use("/", authRouter);
+app.use(cors(CLIENT_URL));
 app.use("/", index);
 
-app.use("/", m.throw404);
-app.use("/", m.maskInternalErrors);
-app.use("/", m.sendError);
+// WebSocket Server
+io.on("connection", (socket) => {
+  console.log("a user connected");
+});
 
-app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
+server.listen(PORT, () => console.log(`http://localhost:${PORT}`));

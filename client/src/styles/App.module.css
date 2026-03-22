@@ -1,0 +1,19 @@
+.body {
+  height: 100%;
+  display: flex;
+}
+
+.aside {
+  width: 30%;
+  border: 1px solid #61ef0969;
+}
+
+.main {
+  width: 70%;
+  border: 1px solid #ff0000de;
+}
+
+.main {
+  overflow: auto;
+  overflow-x: hidden;
+}
