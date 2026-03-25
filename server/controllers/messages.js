@@ -12,7 +12,7 @@ module.exports.getMessagesByContact = async (req, res) => {
         { fromId: contactId, toId: userId },
       ],
     },
-    orderBy: { id: "desc" }, // TODO by date instead
+    orderBy: { id: "asc" }, // TODO by date instead
   });
   res.json(messages);
 };

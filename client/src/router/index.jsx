@@ -3,7 +3,7 @@ import { RouterProvider, createBrowserRouter } from "react-router";
 import HydrateFallback from "../components/common/HydrateFallback";
 import ErrorPage from "../components/layout/Pages/ErrorPage";
 
-import App from "../App";
+import Controller from "../Controller";
 // import { rockAction, rockLoader, rocksLoader } from "./actions-loaders";
 
 export default function AppRouterProvider() {
@@ -14,7 +14,7 @@ export default function AppRouterProvider() {
           {
             id: "root",
             path: "/",
-            element: <App />,
+            element: <Controller />,
             // errorElement: <ErrorPage />,
             // shouldRevalidate: () => true,
             // HydrateFallback,

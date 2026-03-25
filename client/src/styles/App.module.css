@@ -4,16 +4,27 @@
 }
 
 .aside {
-  width: 30%;
+  flex: 1 1 250px;
+  max-width: 400px;
+  min-width: 0;
   border: 1px solid #61ef0969;
 }
 
 .main {
-  width: 70%;
+  flex: 2 1 200px;
+  min-width: 0;
   border: 1px solid #ff0000de;
 }
 
-.main {
-  overflow: auto;
-  overflow-x: hidden;
+.aside {
+  display: flex;
+  flex-direction: column;
+}
+
+.asideMenu {
+  flex-grow: 1;
+}
+
+.menuBar {
+  display: flex;
 }
