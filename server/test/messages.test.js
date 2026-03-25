@@ -14,10 +14,10 @@ app.use("/", index);
 
 // test("returns a chat", async () => {
 //   const id = 1;
-//   const contactId = 2;
+//   const friendId = 2;
 
 //   await request(app)
-//     .get(`/contacts/${contactId}/messages?id=${id}`)
+//     .get(`/friends/${friendId}/messages?id=${id}`)
 //     .expect((res) => {
 //       expect(Array.isArray(res.body)).toBe(true);
 
@@ -30,8 +30,8 @@ app.use("/", index);
 //         );
 
 //         const validParticipants =
-//           (message.fromId === id && message.toId === contactId) ||
-//           (message.fromId === contactId && message.toId === id);
+//           (message.fromId === id && message.toId === friendId) ||
+//           (message.fromId === friendId && message.toId === id);
 //         expect(validParticipants).toBe(true);
 //       });
 //     })
@@ -40,17 +40,17 @@ app.use("/", index);
 
 // test("posts a message", async () => {
 //   const id = 1;
-//   const contactId = 2;
+//   const friendId = 2;
 //   const text = "what good";
 
 //   await request(app)
-//     .post(`/contacts/${contactId}/messages?id=${id}`)
+//     .post(`/friends/${friendId}/messages?id=${id}`)
 //     .send({ text })
 //     .expect((res) => {
 //       expect(res.body).toEqual({
 //         id: expect.any(Number),
 //         fromId: id,
-//         toId: contactId,
+//         toId: friendId,
 //         text,
 //       });
 //     })
