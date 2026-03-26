@@ -1,4 +1,4 @@
-import { useUser } from "../../../../../hooks";
+import { useUser } from "../../../../../../hooks";
 
 export default function ProfileButtons({ className }) {
   const { user, setUser } = useUser();

@@ -1,6 +1,8 @@
+import { useData } from "../../../../../../hooks";
 import InboxEntry from "./InboxEntry";
 
-export default function Inbox({ inbox }) {
+export default function Inbox() {
+  const { inbox } = useData();
   return (
     <ul>
       {inbox &&

@@ -2,9 +2,10 @@ import TextBox from "./TextBox";
 import Banner from "./Banner";
 import s from "@styles/Chat.module.css";
 import { useEffect, useRef } from "react";
-import { useUser } from "../../../../../hooks";
+import { useData, useUser } from "../../../../../hooks";
 
-export default function ChatWindow({ chat }) {
+export default function ChatWindow() {
+  const { chat } = useData();
   const {
     user: { id: userId },
   } = useUser();

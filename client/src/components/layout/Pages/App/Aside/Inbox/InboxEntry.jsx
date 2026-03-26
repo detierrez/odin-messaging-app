@@ -1,6 +1,6 @@
-import { useActiveFriend, useUser } from "../../../../../hooks";
+import { useActiveFriend, useUser } from "../../../../../../hooks";
 import s from "@styles/InboxEntry.module.css";
-import { getFriendId } from "../../../../../utils";
+import { getFriendId } from "../../../../../../utils";
 
 export default function InboxEntry({ message }) {
   const { user } = useUser();
