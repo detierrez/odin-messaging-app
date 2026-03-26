@@ -21,7 +21,7 @@ export default function ChatWindow({ chat }) {
         {chat &&
           chat.map((m) => {
             const className =
-              m.fromId === userId ? s.userMessage : s.contactMessage;
+              m.fromId === userId ? s.userMessage : s.friendMessage;
             return (
               <li className={className} key={m.id}>
                 <b>{m.fromId}</b> - {m.id}

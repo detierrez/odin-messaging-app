@@ -20,27 +20,27 @@ export default function App() {
               main: (
                 <>
                   <h2>Chats</h2>
-                  <button onClick={() => setMenu("contacts")}>+</button>
+                  <button onClick={() => setMenu("friends")}>+</button>
                   <Inbox inbox={inbox} />
                 </>
               ),
-              contacts: (
+              friends: (
                 <>
-                  <h2>Contacts</h2>
+                  <h2>Friends</h2>
                   <button onClick={() => setMenu("main")}>&lt;</button>
                   <br />
-                  <button onClick={() => setMenu("addContact")}>
-                    Add contact
+                  <button onClick={() => setMenu("addFriend")}>
+                    Add friend
                   </button>
                   <br />
                   <button onClick={() => setMenu("newGroup")}>New group</button>
                   <h3>Friend requests</h3>
                 </>
               ),
-              addContact: (
+              addFriend: (
                 <>
-                  <h2>Add contact</h2>
-                  <button onClick={() => setMenu("contacts")}>&lt;</button>
+                  <h2>Add friend</h2>
+                  <button onClick={() => setMenu("friends")}>&lt;</button>
                   <br />
                   <input type="text" placeholder="Enter username..." />
                   <button>Send request</button>
@@ -51,7 +51,7 @@ export default function App() {
               newGroup: (
                 <>
                   <h2>New group</h2>
-                  <button onClick={() => setMenu("contacts")}>&lt;</button>
+                  <button onClick={() => setMenu("friends")}>&lt;</button>
                   <br />
                   <button>Upload group picture</button>
                   <br />

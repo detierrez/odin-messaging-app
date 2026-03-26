@@ -48,13 +48,13 @@
   align-self: flex-end;
 }
 
-.contactMessage {
+.friendMessage {
   background-color: #6666;
   align-self: flex-start;
 }
 
 .userMessage,
-.contactMessage {
+.friendMessage {
   padding: 0.25em 0.5em;
   max-width: 90%;
   min-width: 0;
@@ -69,10 +69,10 @@
   }
 }
 
-.contactMessage {
+.friendMessage {
   border-radius: 15px;
   border-bottom-left-radius: 2px;
-  + .contactMessage {
+  + .friendMessage {
     border-top-left-radius: 2px;
   }
 }

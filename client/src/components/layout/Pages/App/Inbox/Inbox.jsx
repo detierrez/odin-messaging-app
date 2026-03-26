@@ -1,4 +1,4 @@
-import Contact from "./Contact";
+import InboxEntry from "./InboxEntry";
 
 export default function Inbox({ inbox }) {
   return (
@@ -7,7 +7,7 @@ export default function Inbox({ inbox }) {
         inbox.map((message) => {
           return (
             <li key={message.id}>
-              <Contact {...{ ...message }} />
+              <InboxEntry message={message} />
             </li>
           );
         })}

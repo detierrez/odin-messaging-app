@@ -1,11 +1,11 @@
-import { useActiveContact } from "../../../../../hooks";
+import { useActiveFriend } from "../../../../../hooks";
 
 export default function Banner() {
-  const { activeContactId } = useActiveContact();
+  const { activeFriend } = useActiveFriend();
 
   return (
     <div className="banner">
-      <h1>{activeContactId}</h1>
+      <h1>{activeFriend.id}</h1>
     </div>
   );
 }

@@ -1,16 +1,16 @@
 import { useState } from "react";
 import App from "./components/layout/Pages/App/App";
-import { ActiveContactContext, UserContext } from "./contexts/contexts";
+import { ActiveFriendContext, UserContext } from "./contexts/contexts";
 
 export default function Controller() {
   const [user, setUser] = useState({ id: 1 });
-  const [activeContactId, setActiveContactId] = useState(5);
+  const [activeFriend, setActiveFriend] = useState({ id: 5 });
 
   return (
     <UserContext value={{ user, setUser }}>
-      <ActiveContactContext value={{ activeContactId, setActiveContactId }}>
+      <ActiveFriendContext value={{ activeFriend, setActiveFriend }}>
         <App key={user.id} />
-      </ActiveContactContext>
+      </ActiveFriendContext>
     </UserContext>
   );
 }

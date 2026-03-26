@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { fetchBackend } from "../../../../../router/actions-loaders";
-import { useActiveContact, useUser } from "../../../../../hooks";
+import { useActiveFriend, useUser } from "../../../../../hooks";
 
 export default function TextBox() {
-  const { activeContactId } = useActiveContact();
+  const {
+    activeFriend: { id: friendId },
+  } = useActiveFriend();
   const { user } = useUser();
   const [drafts, setDrafts] = useState({});
 
-  const text = drafts[activeContactId] || "";
+  const text = drafts[friendId] || "";
 
   const updateActiveDraft = (text) => {
-    setDrafts((prev) => ({ ...prev, [activeContactId]: text }));
+    setDrafts((prev) => ({ ...prev, [friendId]: text }));
   };
 
   return (
@@ -24,12 +26,9 @@ export default function TextBox() {
         if (e.key === "Enter") {
           if (!e.shiftKey) {
             e.preventDefault(); // Avoid adding new line
-            fetchBackend(
-              `/contacts/${activeContactId}/messages?id=${user.id}`,
-              {
-                body: { text },
-              },
-            )
+            fetchBackend(`/friends/${friendId}/messages?id=${user.id}`, {
+              body: { text },
+            })
               .then((data) => {
                 console.log(data);
               })

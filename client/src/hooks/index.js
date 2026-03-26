@@ -1,23 +1,26 @@
 import { useContext, useEffect, useState } from "react";
 import { fetchBackend } from "../router/actions-loaders";
 import {
-  ActiveContactContext,
+  ActiveFriendContext,
   UserContext,
   WebSocketContext,
 } from "../contexts/contexts";
 
 import io from "socket.io-client";
 import { SERVER_BASE_URL } from "../router/actions-loaders";
+import { getFriendId } from "../utils";
 
 export function useData() {
   const [chatHistories, setChatHistories] = useState({});
   const [inbox, setInbox] = useState(null);
-  const { activeContactId } = useActiveContact();
+  const {
+    activeFriend: { id: activeFriendId },
+  } = useActiveFriend();
 
   const { user } = useUser();
   const userId = user.id;
 
-  const activeChat = chatHistories[activeContactId];
+  const activeChat = chatHistories[activeFriendId];
 
   useEffect(() => {
     const controller = new AbortController();
@@ -25,12 +28,12 @@ export function useData() {
     fetchBackend(`/inbox?id=${userId}`, {
       signal: controller.signal,
     })
-      .then((data) => {
+      .then(({ inbox }) => {
         setInbox(
-          data.map((msg) => {
+          inbox.map((msg) => {
             const { fromId, toId } = msg;
-            const contactId = userId !== fromId ? fromId : toId;
-            return { ...msg, contactId };
+            const friendId = userId !== fromId ? fromId : toId;
+            return { ...msg, friendId };
           }),
         );
       })
@@ -43,18 +46,18 @@ export function useData() {
   }, [userId]);
 
   useEffect(() => {
-    if (!activeContactId) return;
+    if (!activeFriendId) return;
     if (activeChat) return;
 
     const controller = new AbortController();
     const abortError = new Error("Request aborted");
-    fetchBackend(`/contacts/${activeContactId}/messages?id=${userId}`, {
+    fetchBackend(`/friends/${activeFriendId}/messages?id=${userId}`, {
       signal: controller.signal,
     })
-      .then((data) => {
+      .then(({ messages }) => {
         setChatHistories((prev) => ({
           ...prev,
-          [activeContactId]: data,
+          [activeFriendId]: messages,
         }));
       })
       .catch((error) => {
@@ -63,7 +66,7 @@ export function useData() {
     return () => {
       controller.abort(abortError);
     };
-  }, [userId, activeContactId, activeChat]);
+  }, [userId, activeFriendId, activeChat]);
 
   useEffect(() => {
     const socket = io(SERVER_BASE_URL, {
@@ -71,24 +74,20 @@ export function useData() {
     });
     socket.on("new_message", onNewMessage);
     function onNewMessage(newMessage) {
-      const { fromId, toId } = newMessage;
-      const peerId = fromId === userId ? toId : fromId;
+      const friendId = getFriendId(userId, newMessage);
       setInbox((prevInbox) => {
         return [
           newMessage,
-          ...prevInbox.filter((i) => {
-            const inboxPeerId = userId !== i.fromId ? i.fromId : i.toId;
-            return inboxPeerId !== peerId;
-          }),
+          ...prevInbox.filter((msg) => getFriendId(userId, msg) !== friendId),
         ];
       });
 
       setChatHistories((prevHistory) => {
-        const existingChat = prevHistory[peerId];
+        const existingChat = prevHistory[friendId];
         if (!existingChat) return prevHistory;
         return {
           ...prevHistory,
-          [peerId]: [...existingChat, newMessage],
+          [friendId]: [...existingChat, newMessage],
         };
       });
     }
@@ -105,8 +104,8 @@ export function useUser() {
   return useContext(UserContext);
 }
 
-export function useActiveContact() {
-  return useContext(ActiveContactContext);
+export function useActiveFriend() {
+  return useContext(ActiveFriendContext);
 }
 
 export function useWebSocket() {

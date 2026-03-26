@@ -1,4 +1,4 @@
-.contact {
+.entry {
   border-radius: 5px;
   padding: 0.25em;
   overflow: hidden;
@@ -26,9 +26,9 @@
   color: #bbbb;
 }
 
-.contact {
+.entry {
   transition: background-color 150ms;
 }
-.contact:hover {
+.entry:hover {
   background-color: #4444;
 }
