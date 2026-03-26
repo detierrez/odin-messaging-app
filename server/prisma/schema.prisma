@@ -8,8 +8,9 @@ datasource db {
 }
 
 model User {
-    id       Int    @id @default(autoincrement())
-    username String @unique
+    id        Int    @id @default(autoincrement())
+    username  String @unique
+    avatarUrl String @default("https://media.muckrack.com/profile/images/2061376/peter-mansell.png.256x256_q100_crop-smart.png")
 
     sent     Message[] @relation(name: "sent")
     received Message[] @relation(name: "received")

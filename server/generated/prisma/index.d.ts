@@ -1237,16 +1237,19 @@ export namespace Prisma {
   export type UserMinAggregateOutputType = {
     id: number | null
     username: string | null
+    avatarUrl: string | null
   }
 
   export type UserMaxAggregateOutputType = {
     id: number | null
     username: string | null
+    avatarUrl: string | null
   }
 
   export type UserCountAggregateOutputType = {
     id: number
     username: number
+    avatarUrl: number
     _all: number
   }
 
@@ -1262,16 +1265,19 @@ export namespace Prisma {
   export type UserMinAggregateInputType = {
     id?: true
     username?: true
+    avatarUrl?: true
   }
 
   export type UserMaxAggregateInputType = {
     id?: true
     username?: true
+    avatarUrl?: true
   }
 
   export type UserCountAggregateInputType = {
     id?: true
     username?: true
+    avatarUrl?: true
     _all?: true
   }
 
@@ -1364,6 +1370,7 @@ export namespace Prisma {
   export type UserGroupByOutputType = {
     id: number
     username: string
+    avatarUrl: string
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -1388,6 +1395,7 @@ export namespace Prisma {
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     username?: boolean
+    avatarUrl?: boolean
     sent?: boolean | User$sentArgs<ExtArgs>
     received?: boolean | User$receivedArgs<ExtArgs>
     lessIdFriends?: boolean | User$lessIdFriendsArgs<ExtArgs>
@@ -1400,19 +1408,22 @@ export namespace Prisma {
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     username?: boolean
+    avatarUrl?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     username?: boolean
+    avatarUrl?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
     id?: boolean
     username?: boolean
+    avatarUrl?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "avatarUrl", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sent?: boolean | User$sentArgs<ExtArgs>
     received?: boolean | User$receivedArgs<ExtArgs>
@@ -1438,6 +1449,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       username: string
+      avatarUrl: string
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -1869,6 +1881,7 @@ export namespace Prisma {
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'Int'>
     readonly username: FieldRef<"User", 'String'>
+    readonly avatarUrl: FieldRef<"User", 'String'>
   }
     
 
@@ -5697,7 +5710,8 @@ export namespace Prisma {
 
   export const UserScalarFieldEnum: {
     id: 'id',
-    username: 'username'
+    username: 'username',
+    avatarUrl: 'avatarUrl'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -5802,6 +5816,7 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     id?: IntFilter<"User"> | number
     username?: StringFilter<"User"> | string
+    avatarUrl?: StringFilter<"User"> | string
     sent?: MessageListRelationFilter
     received?: MessageListRelationFilter
     lessIdFriends?: FriendshipListRelationFilter
@@ -5813,6 +5828,7 @@ export namespace Prisma {
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
     username?: SortOrder
+    avatarUrl?: SortOrder
     sent?: MessageOrderByRelationAggregateInput
     received?: MessageOrderByRelationAggregateInput
     lessIdFriends?: FriendshipOrderByRelationAggregateInput
@@ -5827,6 +5843,7 @@ export namespace Prisma {
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
+    avatarUrl?: StringFilter<"User"> | string
     sent?: MessageListRelationFilter
     received?: MessageListRelationFilter
     lessIdFriends?: FriendshipListRelationFilter
@@ -5838,6 +5855,7 @@ export namespace Prisma {
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
     username?: SortOrder
+    avatarUrl?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -5851,6 +5869,7 @@ export namespace Prisma {
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"User"> | number
     username?: StringWithAggregatesFilter<"User"> | string
+    avatarUrl?: StringWithAggregatesFilter<"User"> | string
   }
 
   export type MessageWhereInput = {
@@ -6007,6 +6026,7 @@ export namespace Prisma {
 
   export type UserCreateInput = {
     username: string
+    avatarUrl?: string
     sent?: MessageCreateNestedManyWithoutFromInput
     received?: MessageCreateNestedManyWithoutToInput
     lessIdFriends?: FriendshipCreateNestedManyWithoutLesserIdUserInput
@@ -6018,6 +6038,7 @@ export namespace Prisma {
   export type UserUncheckedCreateInput = {
     id?: number
     username: string
+    avatarUrl?: string
     sent?: MessageUncheckedCreateNestedManyWithoutFromInput
     received?: MessageUncheckedCreateNestedManyWithoutToInput
     lessIdFriends?: FriendshipUncheckedCreateNestedManyWithoutLesserIdUserInput
@@ -6028,6 +6049,7 @@ export namespace Prisma {
 
   export type UserUpdateInput = {
     username?: StringFieldUpdateOperationsInput | string
+    avatarUrl?: StringFieldUpdateOperationsInput | string
     sent?: MessageUpdateManyWithoutFromNestedInput
     received?: MessageUpdateManyWithoutToNestedInput
     lessIdFriends?: FriendshipUpdateManyWithoutLesserIdUserNestedInput
@@ -6039,6 +6061,7 @@ export namespace Prisma {
   export type UserUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
+    avatarUrl?: StringFieldUpdateOperationsInput | string
     sent?: MessageUncheckedUpdateManyWithoutFromNestedInput
     received?: MessageUncheckedUpdateManyWithoutToNestedInput
     lessIdFriends?: FriendshipUncheckedUpdateManyWithoutLesserIdUserNestedInput
@@ -6050,15 +6073,18 @@ export namespace Prisma {
   export type UserCreateManyInput = {
     id?: number
     username: string
+    avatarUrl?: string
   }
 
   export type UserUpdateManyMutationInput = {
     username?: StringFieldUpdateOperationsInput | string
+    avatarUrl?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
+    avatarUrl?: StringFieldUpdateOperationsInput | string
   }
 
   export type MessageCreateInput = {
@@ -6236,6 +6262,7 @@ export namespace Prisma {
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     username?: SortOrder
+    avatarUrl?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
@@ -6245,11 +6272,13 @@ export namespace Prisma {
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
     username?: SortOrder
+    avatarUrl?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
     username?: SortOrder
+    avatarUrl?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
@@ -7051,6 +7080,7 @@ export namespace Prisma {
 
   export type UserCreateWithoutSentInput = {
     username: string
+    avatarUrl?: string
     received?: MessageCreateNestedManyWithoutToInput
     lessIdFriends?: FriendshipCreateNestedManyWithoutLesserIdUserInput
     greaterIdFriends?: FriendshipCreateNestedManyWithoutGreaterIdUserInput
@@ -7061,6 +7091,7 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutSentInput = {
     id?: number
     username: string
+    avatarUrl?: string
     received?: MessageUncheckedCreateNestedManyWithoutToInput
     lessIdFriends?: FriendshipUncheckedCreateNestedManyWithoutLesserIdUserInput
     greaterIdFriends?: FriendshipUncheckedCreateNestedManyWithoutGreaterIdUserInput
@@ -7075,6 +7106,7 @@ export namespace Prisma {
 
   export type UserCreateWithoutReceivedInput = {
     username: string
+    avatarUrl?: string
     sent?: MessageCreateNestedManyWithoutFromInput
     lessIdFriends?: FriendshipCreateNestedManyWithoutLesserIdUserInput
     greaterIdFriends?: FriendshipCreateNestedManyWithoutGreaterIdUserInput
@@ -7085,6 +7117,7 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutReceivedInput = {
     id?: number
     username: string
+    avatarUrl?: string
     sent?: MessageUncheckedCreateNestedManyWithoutFromInput
     lessIdFriends?: FriendshipUncheckedCreateNestedManyWithoutLesserIdUserInput
     greaterIdFriends?: FriendshipUncheckedCreateNestedManyWithoutGreaterIdUserInput
@@ -7110,6 +7143,7 @@ export namespace Prisma {
 
   export type UserUpdateWithoutSentInput = {
     username?: StringFieldUpdateOperationsInput | string
+    avatarUrl?: StringFieldUpdateOperationsInput | string
     received?: MessageUpdateManyWithoutToNestedInput
     lessIdFriends?: FriendshipUpdateManyWithoutLesserIdUserNestedInput
     greaterIdFriends?: FriendshipUpdateManyWithoutGreaterIdUserNestedInput
@@ -7120,6 +7154,7 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutSentInput = {
     id?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
+    avatarUrl?: StringFieldUpdateOperationsInput | string
     received?: MessageUncheckedUpdateManyWithoutToNestedInput
     lessIdFriends?: FriendshipUncheckedUpdateManyWithoutLesserIdUserNestedInput
     greaterIdFriends?: FriendshipUncheckedUpdateManyWithoutGreaterIdUserNestedInput
@@ -7140,6 +7175,7 @@ export namespace Prisma {
 
   export type UserUpdateWithoutReceivedInput = {
     username?: StringFieldUpdateOperationsInput | string
+    avatarUrl?: StringFieldUpdateOperationsInput | string
     sent?: MessageUpdateManyWithoutFromNestedInput
     lessIdFriends?: FriendshipUpdateManyWithoutLesserIdUserNestedInput
     greaterIdFriends?: FriendshipUpdateManyWithoutGreaterIdUserNestedInput
@@ -7150,6 +7186,7 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutReceivedInput = {
     id?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
+    avatarUrl?: StringFieldUpdateOperationsInput | string
     sent?: MessageUncheckedUpdateManyWithoutFromNestedInput
     lessIdFriends?: FriendshipUncheckedUpdateManyWithoutLesserIdUserNestedInput
     greaterIdFriends?: FriendshipUncheckedUpdateManyWithoutGreaterIdUserNestedInput
@@ -7159,6 +7196,7 @@ export namespace Prisma {
 
   export type UserCreateWithoutLessIdFriendsInput = {
     username: string
+    avatarUrl?: string
     sent?: MessageCreateNestedManyWithoutFromInput
     received?: MessageCreateNestedManyWithoutToInput
     greaterIdFriends?: FriendshipCreateNestedManyWithoutGreaterIdUserInput
@@ -7169,6 +7207,7 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutLessIdFriendsInput = {
     id?: number
     username: string
+    avatarUrl?: string
     sent?: MessageUncheckedCreateNestedManyWithoutFromInput
     received?: MessageUncheckedCreateNestedManyWithoutToInput
     greaterIdFriends?: FriendshipUncheckedCreateNestedManyWithoutGreaterIdUserInput
@@ -7183,6 +7222,7 @@ export namespace Prisma {
 
   export type UserCreateWithoutGreaterIdFriendsInput = {
     username: string
+    avatarUrl?: string
     sent?: MessageCreateNestedManyWithoutFromInput
     received?: MessageCreateNestedManyWithoutToInput
     lessIdFriends?: FriendshipCreateNestedManyWithoutLesserIdUserInput
@@ -7193,6 +7233,7 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutGreaterIdFriendsInput = {
     id?: number
     username: string
+    avatarUrl?: string
     sent?: MessageUncheckedCreateNestedManyWithoutFromInput
     received?: MessageUncheckedCreateNestedManyWithoutToInput
     lessIdFriends?: FriendshipUncheckedCreateNestedManyWithoutLesserIdUserInput
@@ -7218,6 +7259,7 @@ export namespace Prisma {
 
   export type UserUpdateWithoutLessIdFriendsInput = {
     username?: StringFieldUpdateOperationsInput | string
+    avatarUrl?: StringFieldUpdateOperationsInput | string
     sent?: MessageUpdateManyWithoutFromNestedInput
     received?: MessageUpdateManyWithoutToNestedInput
     greaterIdFriends?: FriendshipUpdateManyWithoutGreaterIdUserNestedInput
@@ -7228,6 +7270,7 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutLessIdFriendsInput = {
     id?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
+    avatarUrl?: StringFieldUpdateOperationsInput | string
     sent?: MessageUncheckedUpdateManyWithoutFromNestedInput
     received?: MessageUncheckedUpdateManyWithoutToNestedInput
     greaterIdFriends?: FriendshipUncheckedUpdateManyWithoutGreaterIdUserNestedInput
@@ -7248,6 +7291,7 @@ export namespace Prisma {
 
   export type UserUpdateWithoutGreaterIdFriendsInput = {
     username?: StringFieldUpdateOperationsInput | string
+    avatarUrl?: StringFieldUpdateOperationsInput | string
     sent?: MessageUpdateManyWithoutFromNestedInput
     received?: MessageUpdateManyWithoutToNestedInput
     lessIdFriends?: FriendshipUpdateManyWithoutLesserIdUserNestedInput
@@ -7258,6 +7302,7 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutGreaterIdFriendsInput = {
     id?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
+    avatarUrl?: StringFieldUpdateOperationsInput | string
     sent?: MessageUncheckedUpdateManyWithoutFromNestedInput
     received?: MessageUncheckedUpdateManyWithoutToNestedInput
     lessIdFriends?: FriendshipUncheckedUpdateManyWithoutLesserIdUserNestedInput
@@ -7267,6 +7312,7 @@ export namespace Prisma {
 
   export type UserCreateWithoutSentRequestsInput = {
     username: string
+    avatarUrl?: string
     sent?: MessageCreateNestedManyWithoutFromInput
     received?: MessageCreateNestedManyWithoutToInput
     lessIdFriends?: FriendshipCreateNestedManyWithoutLesserIdUserInput
@@ -7277,6 +7323,7 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutSentRequestsInput = {
     id?: number
     username: string
+    avatarUrl?: string
     sent?: MessageUncheckedCreateNestedManyWithoutFromInput
     received?: MessageUncheckedCreateNestedManyWithoutToInput
     lessIdFriends?: FriendshipUncheckedCreateNestedManyWithoutLesserIdUserInput
@@ -7291,6 +7338,7 @@ export namespace Prisma {
 
   export type UserCreateWithoutReceivedRequestsInput = {
     username: string
+    avatarUrl?: string
     sent?: MessageCreateNestedManyWithoutFromInput
     received?: MessageCreateNestedManyWithoutToInput
     lessIdFriends?: FriendshipCreateNestedManyWithoutLesserIdUserInput
@@ -7301,6 +7349,7 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutReceivedRequestsInput = {
     id?: number
     username: string
+    avatarUrl?: string
     sent?: MessageUncheckedCreateNestedManyWithoutFromInput
     received?: MessageUncheckedCreateNestedManyWithoutToInput
     lessIdFriends?: FriendshipUncheckedCreateNestedManyWithoutLesserIdUserInput
@@ -7326,6 +7375,7 @@ export namespace Prisma {
 
   export type UserUpdateWithoutSentRequestsInput = {
     username?: StringFieldUpdateOperationsInput | string
+    avatarUrl?: StringFieldUpdateOperationsInput | string
     sent?: MessageUpdateManyWithoutFromNestedInput
     received?: MessageUpdateManyWithoutToNestedInput
     lessIdFriends?: FriendshipUpdateManyWithoutLesserIdUserNestedInput
@@ -7336,6 +7386,7 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutSentRequestsInput = {
     id?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
+    avatarUrl?: StringFieldUpdateOperationsInput | string
     sent?: MessageUncheckedUpdateManyWithoutFromNestedInput
     received?: MessageUncheckedUpdateManyWithoutToNestedInput
     lessIdFriends?: FriendshipUncheckedUpdateManyWithoutLesserIdUserNestedInput
@@ -7356,6 +7407,7 @@ export namespace Prisma {
 
   export type UserUpdateWithoutReceivedRequestsInput = {
     username?: StringFieldUpdateOperationsInput | string
+    avatarUrl?: StringFieldUpdateOperationsInput | string
     sent?: MessageUpdateManyWithoutFromNestedInput
     received?: MessageUpdateManyWithoutToNestedInput
     lessIdFriends?: FriendshipUpdateManyWithoutLesserIdUserNestedInput
@@ -7366,6 +7418,7 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutReceivedRequestsInput = {
     id?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
+    avatarUrl?: StringFieldUpdateOperationsInput | string
     sent?: MessageUncheckedUpdateManyWithoutFromNestedInput
     received?: MessageUncheckedUpdateManyWithoutToNestedInput
     lessIdFriends?: FriendshipUncheckedUpdateManyWithoutLesserIdUserNestedInput
