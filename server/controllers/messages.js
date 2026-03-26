@@ -19,7 +19,25 @@ module.exports.getFriends = async (req, res) => {
     f.lesserId === userId ? f.greaterIdUser : f.lesserIdUser,
   );
 
-  res.json(friends);
+  res.json({ friends });
+};
+
+module.exports.deleteFriend = async (req, res) => {
+  const { id: userId } = req.user;
+  const { friendId } = matchedData(req);
+
+  if (userId === friendId) {
+    throw new httpError(400, [{ reason: "You cannot unfriend yourself" }]);
+  }
+
+  const lesserId = userId < friendId ? userId : friendId;
+  const greaterId = userId >= friendId ? userId : friendId;
+
+  await prisma.friendship.delete({
+    where: { lesserId_greaterId: { lesserId, greaterId } },
+  });
+
+  res.json({ message: "success" });
 };
 
 module.exports.postRequest = async (req, res) => {
@@ -86,7 +104,7 @@ module.exports.getRequests = async (req, res) => {
     where,
   });
 
-  res.json(requests);
+  res.json({ requests });
 };
 
 module.exports.acceptRequest = async (req, res) => {

@@ -9,6 +9,7 @@ const {
   postRequest,
   rejectRequest,
   deleteRequest,
+  deleteFriend,
 } = require("../controllers/messages");
 const {
   logger,
@@ -25,6 +26,7 @@ friends.route("/").get(getFriends);
 friends.use("/:friendId", validateId("friendId"), friendId);
 friendId.get("/messages", getMessagesByFriend);
 friendId.post("/messages", postMessageToFriend);
+friendId.delete("/", deleteFriend);
 
 const requests = Router();
 const requestId = Router({ mergeParams: true });
