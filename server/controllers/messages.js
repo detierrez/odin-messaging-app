@@ -158,7 +158,7 @@ module.exports.getMessagesByFriend = async (req, res) => {
     },
     orderBy: { id: "asc" }, // TODO by date instead
   });
-  res.json(messages);
+  res.json({ messages });
 };
 
 module.exports.postMessageToFriend = async (req, res) => {
@@ -173,13 +173,13 @@ module.exports.postMessageToFriend = async (req, res) => {
   const io = req.app.get("io");
   const { fromId, toId } = message;
   io.to(`${fromId}`).to(`${toId}`).emit("new_message", message);
-  res.json("success");
+  res.json({ message: "success" });
 };
 
 module.exports.getInbox = async (req, res) => {
   const { id: userId } = req.user;
 
-  const result = await prisma.$queryRaw`
+  const inbox = await prisma.$queryRaw`
     SELECT "id", "fromId", "toId", "text" FROM (
       SELECT DISTINCT ON ("friendId") *
       FROM (
@@ -192,5 +192,5 @@ module.exports.getInbox = async (req, res) => {
     ORDER BY "id" DESC
   `;
 
-  res.json(result);
+  res.json({ inbox });
 };
