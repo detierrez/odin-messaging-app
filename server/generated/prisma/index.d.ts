@@ -28,6 +28,11 @@ export type Message = $Result.DefaultSelection<Prisma.$MessagePayload>
  * 
  */
 export type Friendship = $Result.DefaultSelection<Prisma.$FriendshipPayload>
+/**
+ * Model Request
+ * 
+ */
+export type Request = $Result.DefaultSelection<Prisma.$RequestPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -179,6 +184,16 @@ export class PrismaClient<
     * ```
     */
   get friendship(): Prisma.FriendshipDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.request`: Exposes CRUD operations for the **Request** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Requests
+    * const requests = await prisma.request.findMany()
+    * ```
+    */
+  get request(): Prisma.RequestDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -615,7 +630,8 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     Message: 'Message',
-    Friendship: 'Friendship'
+    Friendship: 'Friendship',
+    Request: 'Request'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -631,7 +647,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "message" | "friendship"
+      modelProps: "user" | "message" | "friendship" | "request"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -857,6 +873,80 @@ export namespace Prisma {
           }
         }
       }
+      Request: {
+        payload: Prisma.$RequestPayload<ExtArgs>
+        fields: Prisma.RequestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RequestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RequestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RequestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RequestPayload>
+          }
+          findFirst: {
+            args: Prisma.RequestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RequestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RequestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RequestPayload>
+          }
+          findMany: {
+            args: Prisma.RequestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RequestPayload>[]
+          }
+          create: {
+            args: Prisma.RequestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RequestPayload>
+          }
+          createMany: {
+            args: Prisma.RequestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RequestCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RequestPayload>[]
+          }
+          delete: {
+            args: Prisma.RequestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RequestPayload>
+          }
+          update: {
+            args: Prisma.RequestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RequestPayload>
+          }
+          deleteMany: {
+            args: Prisma.RequestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RequestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.RequestUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RequestPayload>[]
+          }
+          upsert: {
+            args: Prisma.RequestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RequestPayload>
+          }
+          aggregate: {
+            args: Prisma.RequestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRequest>
+          }
+          groupBy: {
+            args: Prisma.RequestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RequestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RequestCountArgs<ExtArgs>
+            result: $Utils.Optional<RequestCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -968,6 +1058,7 @@ export namespace Prisma {
     user?: UserOmit
     message?: MessageOmit
     friendship?: FriendshipOmit
+    request?: RequestOmit
   }
 
   /* Types for Logging */
@@ -1052,6 +1143,8 @@ export namespace Prisma {
     received: number
     lessIdFriends: number
     greaterIdFriends: number
+    sentRequests: number
+    receivedRequests: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1059,6 +1152,8 @@ export namespace Prisma {
     received?: boolean | UserCountOutputTypeCountReceivedArgs
     lessIdFriends?: boolean | UserCountOutputTypeCountLessIdFriendsArgs
     greaterIdFriends?: boolean | UserCountOutputTypeCountGreaterIdFriendsArgs
+    sentRequests?: boolean | UserCountOutputTypeCountSentRequestsArgs
+    receivedRequests?: boolean | UserCountOutputTypeCountReceivedRequestsArgs
   }
 
   // Custom InputTypes
@@ -1098,6 +1193,20 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountGreaterIdFriendsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: FriendshipWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSentRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RequestWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountReceivedRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RequestWhereInput
   }
 
 
@@ -1283,6 +1392,8 @@ export namespace Prisma {
     received?: boolean | User$receivedArgs<ExtArgs>
     lessIdFriends?: boolean | User$lessIdFriendsArgs<ExtArgs>
     greaterIdFriends?: boolean | User$greaterIdFriendsArgs<ExtArgs>
+    sentRequests?: boolean | User$sentRequestsArgs<ExtArgs>
+    receivedRequests?: boolean | User$receivedRequestsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1307,6 +1418,8 @@ export namespace Prisma {
     received?: boolean | User$receivedArgs<ExtArgs>
     lessIdFriends?: boolean | User$lessIdFriendsArgs<ExtArgs>
     greaterIdFriends?: boolean | User$greaterIdFriendsArgs<ExtArgs>
+    sentRequests?: boolean | User$sentRequestsArgs<ExtArgs>
+    receivedRequests?: boolean | User$receivedRequestsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1319,6 +1432,8 @@ export namespace Prisma {
       received: Prisma.$MessagePayload<ExtArgs>[]
       lessIdFriends: Prisma.$FriendshipPayload<ExtArgs>[]
       greaterIdFriends: Prisma.$FriendshipPayload<ExtArgs>[]
+      sentRequests: Prisma.$RequestPayload<ExtArgs>[]
+      receivedRequests: Prisma.$RequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -1721,6 +1836,8 @@ export namespace Prisma {
     received<T extends User$receivedArgs<ExtArgs> = {}>(args?: Subset<T, User$receivedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     lessIdFriends<T extends User$lessIdFriendsArgs<ExtArgs> = {}>(args?: Subset<T, User$lessIdFriendsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FriendshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     greaterIdFriends<T extends User$greaterIdFriendsArgs<ExtArgs> = {}>(args?: Subset<T, User$greaterIdFriendsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FriendshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sentRequests<T extends User$sentRequestsArgs<ExtArgs> = {}>(args?: Subset<T, User$sentRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    receivedRequests<T extends User$receivedRequestsArgs<ExtArgs> = {}>(args?: Subset<T, User$receivedRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2238,6 +2355,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: FriendshipScalarFieldEnum | FriendshipScalarFieldEnum[]
+  }
+
+  /**
+   * User.sentRequests
+   */
+  export type User$sentRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Request
+     */
+    select?: RequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Request
+     */
+    omit?: RequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RequestInclude<ExtArgs> | null
+    where?: RequestWhereInput
+    orderBy?: RequestOrderByWithRelationInput | RequestOrderByWithRelationInput[]
+    cursor?: RequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RequestScalarFieldEnum | RequestScalarFieldEnum[]
+  }
+
+  /**
+   * User.receivedRequests
+   */
+  export type User$receivedRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Request
+     */
+    select?: RequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Request
+     */
+    omit?: RequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RequestInclude<ExtArgs> | null
+    where?: RequestWhereInput
+    orderBy?: RequestOrderByWithRelationInput | RequestOrderByWithRelationInput[]
+    cursor?: RequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RequestScalarFieldEnum | RequestScalarFieldEnum[]
   }
 
   /**
@@ -4430,6 +4595,1093 @@ export namespace Prisma {
 
 
   /**
+   * Model Request
+   */
+
+  export type AggregateRequest = {
+    _count: RequestCountAggregateOutputType | null
+    _avg: RequestAvgAggregateOutputType | null
+    _sum: RequestSumAggregateOutputType | null
+    _min: RequestMinAggregateOutputType | null
+    _max: RequestMaxAggregateOutputType | null
+  }
+
+  export type RequestAvgAggregateOutputType = {
+    id: number | null
+    fromId: number | null
+    toId: number | null
+  }
+
+  export type RequestSumAggregateOutputType = {
+    id: number | null
+    fromId: number | null
+    toId: number | null
+  }
+
+  export type RequestMinAggregateOutputType = {
+    id: number | null
+    fromId: number | null
+    toId: number | null
+  }
+
+  export type RequestMaxAggregateOutputType = {
+    id: number | null
+    fromId: number | null
+    toId: number | null
+  }
+
+  export type RequestCountAggregateOutputType = {
+    id: number
+    fromId: number
+    toId: number
+    _all: number
+  }
+
+
+  export type RequestAvgAggregateInputType = {
+    id?: true
+    fromId?: true
+    toId?: true
+  }
+
+  export type RequestSumAggregateInputType = {
+    id?: true
+    fromId?: true
+    toId?: true
+  }
+
+  export type RequestMinAggregateInputType = {
+    id?: true
+    fromId?: true
+    toId?: true
+  }
+
+  export type RequestMaxAggregateInputType = {
+    id?: true
+    fromId?: true
+    toId?: true
+  }
+
+  export type RequestCountAggregateInputType = {
+    id?: true
+    fromId?: true
+    toId?: true
+    _all?: true
+  }
+
+  export type RequestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Request to aggregate.
+     */
+    where?: RequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Requests to fetch.
+     */
+    orderBy?: RequestOrderByWithRelationInput | RequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Requests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Requests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Requests
+    **/
+    _count?: true | RequestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: RequestAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: RequestSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RequestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RequestMaxAggregateInputType
+  }
+
+  export type GetRequestAggregateType<T extends RequestAggregateArgs> = {
+        [P in keyof T & keyof AggregateRequest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRequest[P]>
+      : GetScalarType<T[P], AggregateRequest[P]>
+  }
+
+
+
+
+  export type RequestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RequestWhereInput
+    orderBy?: RequestOrderByWithAggregationInput | RequestOrderByWithAggregationInput[]
+    by: RequestScalarFieldEnum[] | RequestScalarFieldEnum
+    having?: RequestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RequestCountAggregateInputType | true
+    _avg?: RequestAvgAggregateInputType
+    _sum?: RequestSumAggregateInputType
+    _min?: RequestMinAggregateInputType
+    _max?: RequestMaxAggregateInputType
+  }
+
+  export type RequestGroupByOutputType = {
+    id: number
+    fromId: number
+    toId: number
+    _count: RequestCountAggregateOutputType | null
+    _avg: RequestAvgAggregateOutputType | null
+    _sum: RequestSumAggregateOutputType | null
+    _min: RequestMinAggregateOutputType | null
+    _max: RequestMaxAggregateOutputType | null
+  }
+
+  type GetRequestGroupByPayload<T extends RequestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RequestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RequestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RequestGroupByOutputType[P]>
+            : GetScalarType<T[P], RequestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    fromId?: boolean
+    toId?: boolean
+    from?: boolean | UserDefaultArgs<ExtArgs>
+    to?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["request"]>
+
+  export type RequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    fromId?: boolean
+    toId?: boolean
+    from?: boolean | UserDefaultArgs<ExtArgs>
+    to?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["request"]>
+
+  export type RequestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    fromId?: boolean
+    toId?: boolean
+    from?: boolean | UserDefaultArgs<ExtArgs>
+    to?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["request"]>
+
+  export type RequestSelectScalar = {
+    id?: boolean
+    fromId?: boolean
+    toId?: boolean
+  }
+
+  export type RequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fromId" | "toId", ExtArgs["result"]["request"]>
+  export type RequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    from?: boolean | UserDefaultArgs<ExtArgs>
+    to?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type RequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    from?: boolean | UserDefaultArgs<ExtArgs>
+    to?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type RequestIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    from?: boolean | UserDefaultArgs<ExtArgs>
+    to?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $RequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Request"
+    objects: {
+      from: Prisma.$UserPayload<ExtArgs>
+      to: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      fromId: number
+      toId: number
+    }, ExtArgs["result"]["request"]>
+    composites: {}
+  }
+
+  type RequestGetPayload<S extends boolean | null | undefined | RequestDefaultArgs> = $Result.GetResult<Prisma.$RequestPayload, S>
+
+  type RequestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RequestFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RequestCountAggregateInputType | true
+    }
+
+  export interface RequestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Request'], meta: { name: 'Request' } }
+    /**
+     * Find zero or one Request that matches the filter.
+     * @param {RequestFindUniqueArgs} args - Arguments to find a Request
+     * @example
+     * // Get one Request
+     * const request = await prisma.request.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RequestFindUniqueArgs>(args: SelectSubset<T, RequestFindUniqueArgs<ExtArgs>>): Prisma__RequestClient<$Result.GetResult<Prisma.$RequestPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Request that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RequestFindUniqueOrThrowArgs} args - Arguments to find a Request
+     * @example
+     * // Get one Request
+     * const request = await prisma.request.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RequestFindUniqueOrThrowArgs>(args: SelectSubset<T, RequestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RequestClient<$Result.GetResult<Prisma.$RequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Request that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RequestFindFirstArgs} args - Arguments to find a Request
+     * @example
+     * // Get one Request
+     * const request = await prisma.request.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RequestFindFirstArgs>(args?: SelectSubset<T, RequestFindFirstArgs<ExtArgs>>): Prisma__RequestClient<$Result.GetResult<Prisma.$RequestPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Request that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RequestFindFirstOrThrowArgs} args - Arguments to find a Request
+     * @example
+     * // Get one Request
+     * const request = await prisma.request.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RequestFindFirstOrThrowArgs>(args?: SelectSubset<T, RequestFindFirstOrThrowArgs<ExtArgs>>): Prisma__RequestClient<$Result.GetResult<Prisma.$RequestPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Requests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RequestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Requests
+     * const requests = await prisma.request.findMany()
+     * 
+     * // Get first 10 Requests
+     * const requests = await prisma.request.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const requestWithIdOnly = await prisma.request.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RequestFindManyArgs>(args?: SelectSubset<T, RequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Request.
+     * @param {RequestCreateArgs} args - Arguments to create a Request.
+     * @example
+     * // Create one Request
+     * const Request = await prisma.request.create({
+     *   data: {
+     *     // ... data to create a Request
+     *   }
+     * })
+     * 
+     */
+    create<T extends RequestCreateArgs>(args: SelectSubset<T, RequestCreateArgs<ExtArgs>>): Prisma__RequestClient<$Result.GetResult<Prisma.$RequestPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Requests.
+     * @param {RequestCreateManyArgs} args - Arguments to create many Requests.
+     * @example
+     * // Create many Requests
+     * const request = await prisma.request.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RequestCreateManyArgs>(args?: SelectSubset<T, RequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Requests and returns the data saved in the database.
+     * @param {RequestCreateManyAndReturnArgs} args - Arguments to create many Requests.
+     * @example
+     * // Create many Requests
+     * const request = await prisma.request.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Requests and only return the `id`
+     * const requestWithIdOnly = await prisma.request.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RequestCreateManyAndReturnArgs>(args?: SelectSubset<T, RequestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RequestPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Request.
+     * @param {RequestDeleteArgs} args - Arguments to delete one Request.
+     * @example
+     * // Delete one Request
+     * const Request = await prisma.request.delete({
+     *   where: {
+     *     // ... filter to delete one Request
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RequestDeleteArgs>(args: SelectSubset<T, RequestDeleteArgs<ExtArgs>>): Prisma__RequestClient<$Result.GetResult<Prisma.$RequestPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Request.
+     * @param {RequestUpdateArgs} args - Arguments to update one Request.
+     * @example
+     * // Update one Request
+     * const request = await prisma.request.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RequestUpdateArgs>(args: SelectSubset<T, RequestUpdateArgs<ExtArgs>>): Prisma__RequestClient<$Result.GetResult<Prisma.$RequestPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Requests.
+     * @param {RequestDeleteManyArgs} args - Arguments to filter Requests to delete.
+     * @example
+     * // Delete a few Requests
+     * const { count } = await prisma.request.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RequestDeleteManyArgs>(args?: SelectSubset<T, RequestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Requests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RequestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Requests
+     * const request = await prisma.request.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RequestUpdateManyArgs>(args: SelectSubset<T, RequestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Requests and returns the data updated in the database.
+     * @param {RequestUpdateManyAndReturnArgs} args - Arguments to update many Requests.
+     * @example
+     * // Update many Requests
+     * const request = await prisma.request.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Requests and only return the `id`
+     * const requestWithIdOnly = await prisma.request.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends RequestUpdateManyAndReturnArgs>(args: SelectSubset<T, RequestUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RequestPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Request.
+     * @param {RequestUpsertArgs} args - Arguments to update or create a Request.
+     * @example
+     * // Update or create a Request
+     * const request = await prisma.request.upsert({
+     *   create: {
+     *     // ... data to create a Request
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Request we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RequestUpsertArgs>(args: SelectSubset<T, RequestUpsertArgs<ExtArgs>>): Prisma__RequestClient<$Result.GetResult<Prisma.$RequestPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Requests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RequestCountArgs} args - Arguments to filter Requests to count.
+     * @example
+     * // Count the number of Requests
+     * const count = await prisma.request.count({
+     *   where: {
+     *     // ... the filter for the Requests we want to count
+     *   }
+     * })
+    **/
+    count<T extends RequestCountArgs>(
+      args?: Subset<T, RequestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RequestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Request.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RequestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RequestAggregateArgs>(args: Subset<T, RequestAggregateArgs>): Prisma.PrismaPromise<GetRequestAggregateType<T>>
+
+    /**
+     * Group by Request.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RequestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RequestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RequestGroupByArgs['orderBy'] }
+        : { orderBy?: RequestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RequestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRequestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Request model
+   */
+  readonly fields: RequestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Request.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    from<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    to<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Request model
+   */
+  interface RequestFieldRefs {
+    readonly id: FieldRef<"Request", 'Int'>
+    readonly fromId: FieldRef<"Request", 'Int'>
+    readonly toId: FieldRef<"Request", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Request findUnique
+   */
+  export type RequestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Request
+     */
+    select?: RequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Request
+     */
+    omit?: RequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RequestInclude<ExtArgs> | null
+    /**
+     * Filter, which Request to fetch.
+     */
+    where: RequestWhereUniqueInput
+  }
+
+  /**
+   * Request findUniqueOrThrow
+   */
+  export type RequestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Request
+     */
+    select?: RequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Request
+     */
+    omit?: RequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RequestInclude<ExtArgs> | null
+    /**
+     * Filter, which Request to fetch.
+     */
+    where: RequestWhereUniqueInput
+  }
+
+  /**
+   * Request findFirst
+   */
+  export type RequestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Request
+     */
+    select?: RequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Request
+     */
+    omit?: RequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RequestInclude<ExtArgs> | null
+    /**
+     * Filter, which Request to fetch.
+     */
+    where?: RequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Requests to fetch.
+     */
+    orderBy?: RequestOrderByWithRelationInput | RequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Requests.
+     */
+    cursor?: RequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Requests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Requests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Requests.
+     */
+    distinct?: RequestScalarFieldEnum | RequestScalarFieldEnum[]
+  }
+
+  /**
+   * Request findFirstOrThrow
+   */
+  export type RequestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Request
+     */
+    select?: RequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Request
+     */
+    omit?: RequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RequestInclude<ExtArgs> | null
+    /**
+     * Filter, which Request to fetch.
+     */
+    where?: RequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Requests to fetch.
+     */
+    orderBy?: RequestOrderByWithRelationInput | RequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Requests.
+     */
+    cursor?: RequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Requests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Requests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Requests.
+     */
+    distinct?: RequestScalarFieldEnum | RequestScalarFieldEnum[]
+  }
+
+  /**
+   * Request findMany
+   */
+  export type RequestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Request
+     */
+    select?: RequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Request
+     */
+    omit?: RequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RequestInclude<ExtArgs> | null
+    /**
+     * Filter, which Requests to fetch.
+     */
+    where?: RequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Requests to fetch.
+     */
+    orderBy?: RequestOrderByWithRelationInput | RequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Requests.
+     */
+    cursor?: RequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Requests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Requests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Requests.
+     */
+    distinct?: RequestScalarFieldEnum | RequestScalarFieldEnum[]
+  }
+
+  /**
+   * Request create
+   */
+  export type RequestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Request
+     */
+    select?: RequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Request
+     */
+    omit?: RequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RequestInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Request.
+     */
+    data: XOR<RequestCreateInput, RequestUncheckedCreateInput>
+  }
+
+  /**
+   * Request createMany
+   */
+  export type RequestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Requests.
+     */
+    data: RequestCreateManyInput | RequestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Request createManyAndReturn
+   */
+  export type RequestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Request
+     */
+    select?: RequestSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Request
+     */
+    omit?: RequestOmit<ExtArgs> | null
+    /**
+     * The data used to create many Requests.
+     */
+    data: RequestCreateManyInput | RequestCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RequestIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Request update
+   */
+  export type RequestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Request
+     */
+    select?: RequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Request
+     */
+    omit?: RequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RequestInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Request.
+     */
+    data: XOR<RequestUpdateInput, RequestUncheckedUpdateInput>
+    /**
+     * Choose, which Request to update.
+     */
+    where: RequestWhereUniqueInput
+  }
+
+  /**
+   * Request updateMany
+   */
+  export type RequestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Requests.
+     */
+    data: XOR<RequestUpdateManyMutationInput, RequestUncheckedUpdateManyInput>
+    /**
+     * Filter which Requests to update
+     */
+    where?: RequestWhereInput
+    /**
+     * Limit how many Requests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Request updateManyAndReturn
+   */
+  export type RequestUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Request
+     */
+    select?: RequestSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Request
+     */
+    omit?: RequestOmit<ExtArgs> | null
+    /**
+     * The data used to update Requests.
+     */
+    data: XOR<RequestUpdateManyMutationInput, RequestUncheckedUpdateManyInput>
+    /**
+     * Filter which Requests to update
+     */
+    where?: RequestWhereInput
+    /**
+     * Limit how many Requests to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RequestIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Request upsert
+   */
+  export type RequestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Request
+     */
+    select?: RequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Request
+     */
+    omit?: RequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RequestInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Request to update in case it exists.
+     */
+    where: RequestWhereUniqueInput
+    /**
+     * In case the Request found by the `where` argument doesn't exist, create a new Request with this data.
+     */
+    create: XOR<RequestCreateInput, RequestUncheckedCreateInput>
+    /**
+     * In case the Request was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RequestUpdateInput, RequestUncheckedUpdateInput>
+  }
+
+  /**
+   * Request delete
+   */
+  export type RequestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Request
+     */
+    select?: RequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Request
+     */
+    omit?: RequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RequestInclude<ExtArgs> | null
+    /**
+     * Filter which Request to delete.
+     */
+    where: RequestWhereUniqueInput
+  }
+
+  /**
+   * Request deleteMany
+   */
+  export type RequestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Requests to delete
+     */
+    where?: RequestWhereInput
+    /**
+     * Limit how many Requests to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Request without action
+   */
+  export type RequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Request
+     */
+    select?: RequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Request
+     */
+    omit?: RequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RequestInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -4467,6 +5719,15 @@ export namespace Prisma {
   };
 
   export type FriendshipScalarFieldEnum = (typeof FriendshipScalarFieldEnum)[keyof typeof FriendshipScalarFieldEnum]
+
+
+  export const RequestScalarFieldEnum: {
+    id: 'id',
+    fromId: 'fromId',
+    toId: 'toId'
+  };
+
+  export type RequestScalarFieldEnum = (typeof RequestScalarFieldEnum)[keyof typeof RequestScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -4545,6 +5806,8 @@ export namespace Prisma {
     received?: MessageListRelationFilter
     lessIdFriends?: FriendshipListRelationFilter
     greaterIdFriends?: FriendshipListRelationFilter
+    sentRequests?: RequestListRelationFilter
+    receivedRequests?: RequestListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -4554,6 +5817,8 @@ export namespace Prisma {
     received?: MessageOrderByRelationAggregateInput
     lessIdFriends?: FriendshipOrderByRelationAggregateInput
     greaterIdFriends?: FriendshipOrderByRelationAggregateInput
+    sentRequests?: RequestOrderByRelationAggregateInput
+    receivedRequests?: RequestOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -4566,6 +5831,8 @@ export namespace Prisma {
     received?: MessageListRelationFilter
     lessIdFriends?: FriendshipListRelationFilter
     greaterIdFriends?: FriendshipListRelationFilter
+    sentRequests?: RequestListRelationFilter
+    receivedRequests?: RequestListRelationFilter
   }, "id" | "username">
 
   export type UserOrderByWithAggregationInput = {
@@ -4687,12 +5954,65 @@ export namespace Prisma {
     greaterId?: IntWithAggregatesFilter<"Friendship"> | number
   }
 
+  export type RequestWhereInput = {
+    AND?: RequestWhereInput | RequestWhereInput[]
+    OR?: RequestWhereInput[]
+    NOT?: RequestWhereInput | RequestWhereInput[]
+    id?: IntFilter<"Request"> | number
+    fromId?: IntFilter<"Request"> | number
+    toId?: IntFilter<"Request"> | number
+    from?: XOR<UserScalarRelationFilter, UserWhereInput>
+    to?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type RequestOrderByWithRelationInput = {
+    id?: SortOrder
+    fromId?: SortOrder
+    toId?: SortOrder
+    from?: UserOrderByWithRelationInput
+    to?: UserOrderByWithRelationInput
+  }
+
+  export type RequestWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    fromId_toId?: RequestFromIdToIdCompoundUniqueInput
+    AND?: RequestWhereInput | RequestWhereInput[]
+    OR?: RequestWhereInput[]
+    NOT?: RequestWhereInput | RequestWhereInput[]
+    fromId?: IntFilter<"Request"> | number
+    toId?: IntFilter<"Request"> | number
+    from?: XOR<UserScalarRelationFilter, UserWhereInput>
+    to?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "fromId_toId">
+
+  export type RequestOrderByWithAggregationInput = {
+    id?: SortOrder
+    fromId?: SortOrder
+    toId?: SortOrder
+    _count?: RequestCountOrderByAggregateInput
+    _avg?: RequestAvgOrderByAggregateInput
+    _max?: RequestMaxOrderByAggregateInput
+    _min?: RequestMinOrderByAggregateInput
+    _sum?: RequestSumOrderByAggregateInput
+  }
+
+  export type RequestScalarWhereWithAggregatesInput = {
+    AND?: RequestScalarWhereWithAggregatesInput | RequestScalarWhereWithAggregatesInput[]
+    OR?: RequestScalarWhereWithAggregatesInput[]
+    NOT?: RequestScalarWhereWithAggregatesInput | RequestScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Request"> | number
+    fromId?: IntWithAggregatesFilter<"Request"> | number
+    toId?: IntWithAggregatesFilter<"Request"> | number
+  }
+
   export type UserCreateInput = {
     username: string
     sent?: MessageCreateNestedManyWithoutFromInput
     received?: MessageCreateNestedManyWithoutToInput
     lessIdFriends?: FriendshipCreateNestedManyWithoutLesserIdUserInput
     greaterIdFriends?: FriendshipCreateNestedManyWithoutGreaterIdUserInput
+    sentRequests?: RequestCreateNestedManyWithoutFromInput
+    receivedRequests?: RequestCreateNestedManyWithoutToInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -4702,6 +6022,8 @@ export namespace Prisma {
     received?: MessageUncheckedCreateNestedManyWithoutToInput
     lessIdFriends?: FriendshipUncheckedCreateNestedManyWithoutLesserIdUserInput
     greaterIdFriends?: FriendshipUncheckedCreateNestedManyWithoutGreaterIdUserInput
+    sentRequests?: RequestUncheckedCreateNestedManyWithoutFromInput
+    receivedRequests?: RequestUncheckedCreateNestedManyWithoutToInput
   }
 
   export type UserUpdateInput = {
@@ -4710,6 +6032,8 @@ export namespace Prisma {
     received?: MessageUpdateManyWithoutToNestedInput
     lessIdFriends?: FriendshipUpdateManyWithoutLesserIdUserNestedInput
     greaterIdFriends?: FriendshipUpdateManyWithoutGreaterIdUserNestedInput
+    sentRequests?: RequestUpdateManyWithoutFromNestedInput
+    receivedRequests?: RequestUpdateManyWithoutToNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -4719,6 +6043,8 @@ export namespace Prisma {
     received?: MessageUncheckedUpdateManyWithoutToNestedInput
     lessIdFriends?: FriendshipUncheckedUpdateManyWithoutLesserIdUserNestedInput
     greaterIdFriends?: FriendshipUncheckedUpdateManyWithoutGreaterIdUserNestedInput
+    sentRequests?: RequestUncheckedUpdateManyWithoutFromNestedInput
+    receivedRequests?: RequestUncheckedUpdateManyWithoutToNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -4813,6 +6139,44 @@ export namespace Prisma {
     greaterId?: IntFieldUpdateOperationsInput | number
   }
 
+  export type RequestCreateInput = {
+    from: UserCreateNestedOneWithoutSentRequestsInput
+    to: UserCreateNestedOneWithoutReceivedRequestsInput
+  }
+
+  export type RequestUncheckedCreateInput = {
+    id?: number
+    fromId: number
+    toId: number
+  }
+
+  export type RequestUpdateInput = {
+    from?: UserUpdateOneRequiredWithoutSentRequestsNestedInput
+    to?: UserUpdateOneRequiredWithoutReceivedRequestsNestedInput
+  }
+
+  export type RequestUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    fromId?: IntFieldUpdateOperationsInput | number
+    toId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type RequestCreateManyInput = {
+    id?: number
+    fromId: number
+    toId: number
+  }
+
+  export type RequestUpdateManyMutationInput = {
+
+  }
+
+  export type RequestUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    fromId?: IntFieldUpdateOperationsInput | number
+    toId?: IntFieldUpdateOperationsInput | number
+  }
+
   export type IntFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -4851,11 +6215,21 @@ export namespace Prisma {
     none?: FriendshipWhereInput
   }
 
+  export type RequestListRelationFilter = {
+    every?: RequestWhereInput
+    some?: RequestWhereInput
+    none?: RequestWhereInput
+  }
+
   export type MessageOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type FriendshipOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type RequestOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -4984,6 +6358,41 @@ export namespace Prisma {
     greaterId?: SortOrder
   }
 
+  export type RequestFromIdToIdCompoundUniqueInput = {
+    fromId: number
+    toId: number
+  }
+
+  export type RequestCountOrderByAggregateInput = {
+    id?: SortOrder
+    fromId?: SortOrder
+    toId?: SortOrder
+  }
+
+  export type RequestAvgOrderByAggregateInput = {
+    id?: SortOrder
+    fromId?: SortOrder
+    toId?: SortOrder
+  }
+
+  export type RequestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    fromId?: SortOrder
+    toId?: SortOrder
+  }
+
+  export type RequestMinOrderByAggregateInput = {
+    id?: SortOrder
+    fromId?: SortOrder
+    toId?: SortOrder
+  }
+
+  export type RequestSumOrderByAggregateInput = {
+    id?: SortOrder
+    fromId?: SortOrder
+    toId?: SortOrder
+  }
+
   export type MessageCreateNestedManyWithoutFromInput = {
     create?: XOR<MessageCreateWithoutFromInput, MessageUncheckedCreateWithoutFromInput> | MessageCreateWithoutFromInput[] | MessageUncheckedCreateWithoutFromInput[]
     connectOrCreate?: MessageCreateOrConnectWithoutFromInput | MessageCreateOrConnectWithoutFromInput[]
@@ -5012,6 +6421,20 @@ export namespace Prisma {
     connect?: FriendshipWhereUniqueInput | FriendshipWhereUniqueInput[]
   }
 
+  export type RequestCreateNestedManyWithoutFromInput = {
+    create?: XOR<RequestCreateWithoutFromInput, RequestUncheckedCreateWithoutFromInput> | RequestCreateWithoutFromInput[] | RequestUncheckedCreateWithoutFromInput[]
+    connectOrCreate?: RequestCreateOrConnectWithoutFromInput | RequestCreateOrConnectWithoutFromInput[]
+    createMany?: RequestCreateManyFromInputEnvelope
+    connect?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+  }
+
+  export type RequestCreateNestedManyWithoutToInput = {
+    create?: XOR<RequestCreateWithoutToInput, RequestUncheckedCreateWithoutToInput> | RequestCreateWithoutToInput[] | RequestUncheckedCreateWithoutToInput[]
+    connectOrCreate?: RequestCreateOrConnectWithoutToInput | RequestCreateOrConnectWithoutToInput[]
+    createMany?: RequestCreateManyToInputEnvelope
+    connect?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+  }
+
   export type MessageUncheckedCreateNestedManyWithoutFromInput = {
     create?: XOR<MessageCreateWithoutFromInput, MessageUncheckedCreateWithoutFromInput> | MessageCreateWithoutFromInput[] | MessageUncheckedCreateWithoutFromInput[]
     connectOrCreate?: MessageCreateOrConnectWithoutFromInput | MessageCreateOrConnectWithoutFromInput[]
@@ -5038,6 +6461,20 @@ export namespace Prisma {
     connectOrCreate?: FriendshipCreateOrConnectWithoutGreaterIdUserInput | FriendshipCreateOrConnectWithoutGreaterIdUserInput[]
     createMany?: FriendshipCreateManyGreaterIdUserInputEnvelope
     connect?: FriendshipWhereUniqueInput | FriendshipWhereUniqueInput[]
+  }
+
+  export type RequestUncheckedCreateNestedManyWithoutFromInput = {
+    create?: XOR<RequestCreateWithoutFromInput, RequestUncheckedCreateWithoutFromInput> | RequestCreateWithoutFromInput[] | RequestUncheckedCreateWithoutFromInput[]
+    connectOrCreate?: RequestCreateOrConnectWithoutFromInput | RequestCreateOrConnectWithoutFromInput[]
+    createMany?: RequestCreateManyFromInputEnvelope
+    connect?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+  }
+
+  export type RequestUncheckedCreateNestedManyWithoutToInput = {
+    create?: XOR<RequestCreateWithoutToInput, RequestUncheckedCreateWithoutToInput> | RequestCreateWithoutToInput[] | RequestUncheckedCreateWithoutToInput[]
+    connectOrCreate?: RequestCreateOrConnectWithoutToInput | RequestCreateOrConnectWithoutToInput[]
+    createMany?: RequestCreateManyToInputEnvelope
+    connect?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -5098,6 +6535,34 @@ export namespace Prisma {
     update?: FriendshipUpdateWithWhereUniqueWithoutGreaterIdUserInput | FriendshipUpdateWithWhereUniqueWithoutGreaterIdUserInput[]
     updateMany?: FriendshipUpdateManyWithWhereWithoutGreaterIdUserInput | FriendshipUpdateManyWithWhereWithoutGreaterIdUserInput[]
     deleteMany?: FriendshipScalarWhereInput | FriendshipScalarWhereInput[]
+  }
+
+  export type RequestUpdateManyWithoutFromNestedInput = {
+    create?: XOR<RequestCreateWithoutFromInput, RequestUncheckedCreateWithoutFromInput> | RequestCreateWithoutFromInput[] | RequestUncheckedCreateWithoutFromInput[]
+    connectOrCreate?: RequestCreateOrConnectWithoutFromInput | RequestCreateOrConnectWithoutFromInput[]
+    upsert?: RequestUpsertWithWhereUniqueWithoutFromInput | RequestUpsertWithWhereUniqueWithoutFromInput[]
+    createMany?: RequestCreateManyFromInputEnvelope
+    set?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+    disconnect?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+    delete?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+    connect?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+    update?: RequestUpdateWithWhereUniqueWithoutFromInput | RequestUpdateWithWhereUniqueWithoutFromInput[]
+    updateMany?: RequestUpdateManyWithWhereWithoutFromInput | RequestUpdateManyWithWhereWithoutFromInput[]
+    deleteMany?: RequestScalarWhereInput | RequestScalarWhereInput[]
+  }
+
+  export type RequestUpdateManyWithoutToNestedInput = {
+    create?: XOR<RequestCreateWithoutToInput, RequestUncheckedCreateWithoutToInput> | RequestCreateWithoutToInput[] | RequestUncheckedCreateWithoutToInput[]
+    connectOrCreate?: RequestCreateOrConnectWithoutToInput | RequestCreateOrConnectWithoutToInput[]
+    upsert?: RequestUpsertWithWhereUniqueWithoutToInput | RequestUpsertWithWhereUniqueWithoutToInput[]
+    createMany?: RequestCreateManyToInputEnvelope
+    set?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+    disconnect?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+    delete?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+    connect?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+    update?: RequestUpdateWithWhereUniqueWithoutToInput | RequestUpdateWithWhereUniqueWithoutToInput[]
+    updateMany?: RequestUpdateManyWithWhereWithoutToInput | RequestUpdateManyWithWhereWithoutToInput[]
+    deleteMany?: RequestScalarWhereInput | RequestScalarWhereInput[]
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -5164,6 +6629,34 @@ export namespace Prisma {
     deleteMany?: FriendshipScalarWhereInput | FriendshipScalarWhereInput[]
   }
 
+  export type RequestUncheckedUpdateManyWithoutFromNestedInput = {
+    create?: XOR<RequestCreateWithoutFromInput, RequestUncheckedCreateWithoutFromInput> | RequestCreateWithoutFromInput[] | RequestUncheckedCreateWithoutFromInput[]
+    connectOrCreate?: RequestCreateOrConnectWithoutFromInput | RequestCreateOrConnectWithoutFromInput[]
+    upsert?: RequestUpsertWithWhereUniqueWithoutFromInput | RequestUpsertWithWhereUniqueWithoutFromInput[]
+    createMany?: RequestCreateManyFromInputEnvelope
+    set?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+    disconnect?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+    delete?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+    connect?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+    update?: RequestUpdateWithWhereUniqueWithoutFromInput | RequestUpdateWithWhereUniqueWithoutFromInput[]
+    updateMany?: RequestUpdateManyWithWhereWithoutFromInput | RequestUpdateManyWithWhereWithoutFromInput[]
+    deleteMany?: RequestScalarWhereInput | RequestScalarWhereInput[]
+  }
+
+  export type RequestUncheckedUpdateManyWithoutToNestedInput = {
+    create?: XOR<RequestCreateWithoutToInput, RequestUncheckedCreateWithoutToInput> | RequestCreateWithoutToInput[] | RequestUncheckedCreateWithoutToInput[]
+    connectOrCreate?: RequestCreateOrConnectWithoutToInput | RequestCreateOrConnectWithoutToInput[]
+    upsert?: RequestUpsertWithWhereUniqueWithoutToInput | RequestUpsertWithWhereUniqueWithoutToInput[]
+    createMany?: RequestCreateManyToInputEnvelope
+    set?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+    disconnect?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+    delete?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+    connect?: RequestWhereUniqueInput | RequestWhereUniqueInput[]
+    update?: RequestUpdateWithWhereUniqueWithoutToInput | RequestUpdateWithWhereUniqueWithoutToInput[]
+    updateMany?: RequestUpdateManyWithWhereWithoutToInput | RequestUpdateManyWithWhereWithoutToInput[]
+    deleteMany?: RequestScalarWhereInput | RequestScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutSentInput = {
     create?: XOR<UserCreateWithoutSentInput, UserUncheckedCreateWithoutSentInput>
     connectOrCreate?: UserCreateOrConnectWithoutSentInput
@@ -5218,6 +6711,34 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutGreaterIdFriendsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutGreaterIdFriendsInput, UserUpdateWithoutGreaterIdFriendsInput>, UserUncheckedUpdateWithoutGreaterIdFriendsInput>
+  }
+
+  export type UserCreateNestedOneWithoutSentRequestsInput = {
+    create?: XOR<UserCreateWithoutSentRequestsInput, UserUncheckedCreateWithoutSentRequestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSentRequestsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutReceivedRequestsInput = {
+    create?: XOR<UserCreateWithoutReceivedRequestsInput, UserUncheckedCreateWithoutReceivedRequestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReceivedRequestsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutSentRequestsNestedInput = {
+    create?: XOR<UserCreateWithoutSentRequestsInput, UserUncheckedCreateWithoutSentRequestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSentRequestsInput
+    upsert?: UserUpsertWithoutSentRequestsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSentRequestsInput, UserUpdateWithoutSentRequestsInput>, UserUncheckedUpdateWithoutSentRequestsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutReceivedRequestsNestedInput = {
+    create?: XOR<UserCreateWithoutReceivedRequestsInput, UserUncheckedCreateWithoutReceivedRequestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReceivedRequestsInput
+    upsert?: UserUpsertWithoutReceivedRequestsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutReceivedRequestsInput, UserUpdateWithoutReceivedRequestsInput>, UserUncheckedUpdateWithoutReceivedRequestsInput>
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -5367,6 +6888,44 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type RequestCreateWithoutFromInput = {
+    to: UserCreateNestedOneWithoutReceivedRequestsInput
+  }
+
+  export type RequestUncheckedCreateWithoutFromInput = {
+    id?: number
+    toId: number
+  }
+
+  export type RequestCreateOrConnectWithoutFromInput = {
+    where: RequestWhereUniqueInput
+    create: XOR<RequestCreateWithoutFromInput, RequestUncheckedCreateWithoutFromInput>
+  }
+
+  export type RequestCreateManyFromInputEnvelope = {
+    data: RequestCreateManyFromInput | RequestCreateManyFromInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type RequestCreateWithoutToInput = {
+    from: UserCreateNestedOneWithoutSentRequestsInput
+  }
+
+  export type RequestUncheckedCreateWithoutToInput = {
+    id?: number
+    fromId: number
+  }
+
+  export type RequestCreateOrConnectWithoutToInput = {
+    where: RequestWhereUniqueInput
+    create: XOR<RequestCreateWithoutToInput, RequestUncheckedCreateWithoutToInput>
+  }
+
+  export type RequestCreateManyToInputEnvelope = {
+    data: RequestCreateManyToInput | RequestCreateManyToInput[]
+    skipDuplicates?: boolean
+  }
+
   export type MessageUpsertWithWhereUniqueWithoutFromInput = {
     where: MessageWhereUniqueInput
     update: XOR<MessageUpdateWithoutFromInput, MessageUncheckedUpdateWithoutFromInput>
@@ -5449,11 +7008,54 @@ export namespace Prisma {
     data: XOR<FriendshipUpdateManyMutationInput, FriendshipUncheckedUpdateManyWithoutGreaterIdUserInput>
   }
 
+  export type RequestUpsertWithWhereUniqueWithoutFromInput = {
+    where: RequestWhereUniqueInput
+    update: XOR<RequestUpdateWithoutFromInput, RequestUncheckedUpdateWithoutFromInput>
+    create: XOR<RequestCreateWithoutFromInput, RequestUncheckedCreateWithoutFromInput>
+  }
+
+  export type RequestUpdateWithWhereUniqueWithoutFromInput = {
+    where: RequestWhereUniqueInput
+    data: XOR<RequestUpdateWithoutFromInput, RequestUncheckedUpdateWithoutFromInput>
+  }
+
+  export type RequestUpdateManyWithWhereWithoutFromInput = {
+    where: RequestScalarWhereInput
+    data: XOR<RequestUpdateManyMutationInput, RequestUncheckedUpdateManyWithoutFromInput>
+  }
+
+  export type RequestScalarWhereInput = {
+    AND?: RequestScalarWhereInput | RequestScalarWhereInput[]
+    OR?: RequestScalarWhereInput[]
+    NOT?: RequestScalarWhereInput | RequestScalarWhereInput[]
+    id?: IntFilter<"Request"> | number
+    fromId?: IntFilter<"Request"> | number
+    toId?: IntFilter<"Request"> | number
+  }
+
+  export type RequestUpsertWithWhereUniqueWithoutToInput = {
+    where: RequestWhereUniqueInput
+    update: XOR<RequestUpdateWithoutToInput, RequestUncheckedUpdateWithoutToInput>
+    create: XOR<RequestCreateWithoutToInput, RequestUncheckedCreateWithoutToInput>
+  }
+
+  export type RequestUpdateWithWhereUniqueWithoutToInput = {
+    where: RequestWhereUniqueInput
+    data: XOR<RequestUpdateWithoutToInput, RequestUncheckedUpdateWithoutToInput>
+  }
+
+  export type RequestUpdateManyWithWhereWithoutToInput = {
+    where: RequestScalarWhereInput
+    data: XOR<RequestUpdateManyMutationInput, RequestUncheckedUpdateManyWithoutToInput>
+  }
+
   export type UserCreateWithoutSentInput = {
     username: string
     received?: MessageCreateNestedManyWithoutToInput
     lessIdFriends?: FriendshipCreateNestedManyWithoutLesserIdUserInput
     greaterIdFriends?: FriendshipCreateNestedManyWithoutGreaterIdUserInput
+    sentRequests?: RequestCreateNestedManyWithoutFromInput
+    receivedRequests?: RequestCreateNestedManyWithoutToInput
   }
 
   export type UserUncheckedCreateWithoutSentInput = {
@@ -5462,6 +7064,8 @@ export namespace Prisma {
     received?: MessageUncheckedCreateNestedManyWithoutToInput
     lessIdFriends?: FriendshipUncheckedCreateNestedManyWithoutLesserIdUserInput
     greaterIdFriends?: FriendshipUncheckedCreateNestedManyWithoutGreaterIdUserInput
+    sentRequests?: RequestUncheckedCreateNestedManyWithoutFromInput
+    receivedRequests?: RequestUncheckedCreateNestedManyWithoutToInput
   }
 
   export type UserCreateOrConnectWithoutSentInput = {
@@ -5474,6 +7078,8 @@ export namespace Prisma {
     sent?: MessageCreateNestedManyWithoutFromInput
     lessIdFriends?: FriendshipCreateNestedManyWithoutLesserIdUserInput
     greaterIdFriends?: FriendshipCreateNestedManyWithoutGreaterIdUserInput
+    sentRequests?: RequestCreateNestedManyWithoutFromInput
+    receivedRequests?: RequestCreateNestedManyWithoutToInput
   }
 
   export type UserUncheckedCreateWithoutReceivedInput = {
@@ -5482,6 +7088,8 @@ export namespace Prisma {
     sent?: MessageUncheckedCreateNestedManyWithoutFromInput
     lessIdFriends?: FriendshipUncheckedCreateNestedManyWithoutLesserIdUserInput
     greaterIdFriends?: FriendshipUncheckedCreateNestedManyWithoutGreaterIdUserInput
+    sentRequests?: RequestUncheckedCreateNestedManyWithoutFromInput
+    receivedRequests?: RequestUncheckedCreateNestedManyWithoutToInput
   }
 
   export type UserCreateOrConnectWithoutReceivedInput = {
@@ -5505,6 +7113,8 @@ export namespace Prisma {
     received?: MessageUpdateManyWithoutToNestedInput
     lessIdFriends?: FriendshipUpdateManyWithoutLesserIdUserNestedInput
     greaterIdFriends?: FriendshipUpdateManyWithoutGreaterIdUserNestedInput
+    sentRequests?: RequestUpdateManyWithoutFromNestedInput
+    receivedRequests?: RequestUpdateManyWithoutToNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSentInput = {
@@ -5513,6 +7123,8 @@ export namespace Prisma {
     received?: MessageUncheckedUpdateManyWithoutToNestedInput
     lessIdFriends?: FriendshipUncheckedUpdateManyWithoutLesserIdUserNestedInput
     greaterIdFriends?: FriendshipUncheckedUpdateManyWithoutGreaterIdUserNestedInput
+    sentRequests?: RequestUncheckedUpdateManyWithoutFromNestedInput
+    receivedRequests?: RequestUncheckedUpdateManyWithoutToNestedInput
   }
 
   export type UserUpsertWithoutReceivedInput = {
@@ -5531,6 +7143,8 @@ export namespace Prisma {
     sent?: MessageUpdateManyWithoutFromNestedInput
     lessIdFriends?: FriendshipUpdateManyWithoutLesserIdUserNestedInput
     greaterIdFriends?: FriendshipUpdateManyWithoutGreaterIdUserNestedInput
+    sentRequests?: RequestUpdateManyWithoutFromNestedInput
+    receivedRequests?: RequestUpdateManyWithoutToNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReceivedInput = {
@@ -5539,6 +7153,8 @@ export namespace Prisma {
     sent?: MessageUncheckedUpdateManyWithoutFromNestedInput
     lessIdFriends?: FriendshipUncheckedUpdateManyWithoutLesserIdUserNestedInput
     greaterIdFriends?: FriendshipUncheckedUpdateManyWithoutGreaterIdUserNestedInput
+    sentRequests?: RequestUncheckedUpdateManyWithoutFromNestedInput
+    receivedRequests?: RequestUncheckedUpdateManyWithoutToNestedInput
   }
 
   export type UserCreateWithoutLessIdFriendsInput = {
@@ -5546,6 +7162,8 @@ export namespace Prisma {
     sent?: MessageCreateNestedManyWithoutFromInput
     received?: MessageCreateNestedManyWithoutToInput
     greaterIdFriends?: FriendshipCreateNestedManyWithoutGreaterIdUserInput
+    sentRequests?: RequestCreateNestedManyWithoutFromInput
+    receivedRequests?: RequestCreateNestedManyWithoutToInput
   }
 
   export type UserUncheckedCreateWithoutLessIdFriendsInput = {
@@ -5554,6 +7172,8 @@ export namespace Prisma {
     sent?: MessageUncheckedCreateNestedManyWithoutFromInput
     received?: MessageUncheckedCreateNestedManyWithoutToInput
     greaterIdFriends?: FriendshipUncheckedCreateNestedManyWithoutGreaterIdUserInput
+    sentRequests?: RequestUncheckedCreateNestedManyWithoutFromInput
+    receivedRequests?: RequestUncheckedCreateNestedManyWithoutToInput
   }
 
   export type UserCreateOrConnectWithoutLessIdFriendsInput = {
@@ -5566,6 +7186,8 @@ export namespace Prisma {
     sent?: MessageCreateNestedManyWithoutFromInput
     received?: MessageCreateNestedManyWithoutToInput
     lessIdFriends?: FriendshipCreateNestedManyWithoutLesserIdUserInput
+    sentRequests?: RequestCreateNestedManyWithoutFromInput
+    receivedRequests?: RequestCreateNestedManyWithoutToInput
   }
 
   export type UserUncheckedCreateWithoutGreaterIdFriendsInput = {
@@ -5574,6 +7196,8 @@ export namespace Prisma {
     sent?: MessageUncheckedCreateNestedManyWithoutFromInput
     received?: MessageUncheckedCreateNestedManyWithoutToInput
     lessIdFriends?: FriendshipUncheckedCreateNestedManyWithoutLesserIdUserInput
+    sentRequests?: RequestUncheckedCreateNestedManyWithoutFromInput
+    receivedRequests?: RequestUncheckedCreateNestedManyWithoutToInput
   }
 
   export type UserCreateOrConnectWithoutGreaterIdFriendsInput = {
@@ -5597,6 +7221,8 @@ export namespace Prisma {
     sent?: MessageUpdateManyWithoutFromNestedInput
     received?: MessageUpdateManyWithoutToNestedInput
     greaterIdFriends?: FriendshipUpdateManyWithoutGreaterIdUserNestedInput
+    sentRequests?: RequestUpdateManyWithoutFromNestedInput
+    receivedRequests?: RequestUpdateManyWithoutToNestedInput
   }
 
   export type UserUncheckedUpdateWithoutLessIdFriendsInput = {
@@ -5605,6 +7231,8 @@ export namespace Prisma {
     sent?: MessageUncheckedUpdateManyWithoutFromNestedInput
     received?: MessageUncheckedUpdateManyWithoutToNestedInput
     greaterIdFriends?: FriendshipUncheckedUpdateManyWithoutGreaterIdUserNestedInput
+    sentRequests?: RequestUncheckedUpdateManyWithoutFromNestedInput
+    receivedRequests?: RequestUncheckedUpdateManyWithoutToNestedInput
   }
 
   export type UserUpsertWithoutGreaterIdFriendsInput = {
@@ -5623,6 +7251,8 @@ export namespace Prisma {
     sent?: MessageUpdateManyWithoutFromNestedInput
     received?: MessageUpdateManyWithoutToNestedInput
     lessIdFriends?: FriendshipUpdateManyWithoutLesserIdUserNestedInput
+    sentRequests?: RequestUpdateManyWithoutFromNestedInput
+    receivedRequests?: RequestUpdateManyWithoutToNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGreaterIdFriendsInput = {
@@ -5631,6 +7261,116 @@ export namespace Prisma {
     sent?: MessageUncheckedUpdateManyWithoutFromNestedInput
     received?: MessageUncheckedUpdateManyWithoutToNestedInput
     lessIdFriends?: FriendshipUncheckedUpdateManyWithoutLesserIdUserNestedInput
+    sentRequests?: RequestUncheckedUpdateManyWithoutFromNestedInput
+    receivedRequests?: RequestUncheckedUpdateManyWithoutToNestedInput
+  }
+
+  export type UserCreateWithoutSentRequestsInput = {
+    username: string
+    sent?: MessageCreateNestedManyWithoutFromInput
+    received?: MessageCreateNestedManyWithoutToInput
+    lessIdFriends?: FriendshipCreateNestedManyWithoutLesserIdUserInput
+    greaterIdFriends?: FriendshipCreateNestedManyWithoutGreaterIdUserInput
+    receivedRequests?: RequestCreateNestedManyWithoutToInput
+  }
+
+  export type UserUncheckedCreateWithoutSentRequestsInput = {
+    id?: number
+    username: string
+    sent?: MessageUncheckedCreateNestedManyWithoutFromInput
+    received?: MessageUncheckedCreateNestedManyWithoutToInput
+    lessIdFriends?: FriendshipUncheckedCreateNestedManyWithoutLesserIdUserInput
+    greaterIdFriends?: FriendshipUncheckedCreateNestedManyWithoutGreaterIdUserInput
+    receivedRequests?: RequestUncheckedCreateNestedManyWithoutToInput
+  }
+
+  export type UserCreateOrConnectWithoutSentRequestsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSentRequestsInput, UserUncheckedCreateWithoutSentRequestsInput>
+  }
+
+  export type UserCreateWithoutReceivedRequestsInput = {
+    username: string
+    sent?: MessageCreateNestedManyWithoutFromInput
+    received?: MessageCreateNestedManyWithoutToInput
+    lessIdFriends?: FriendshipCreateNestedManyWithoutLesserIdUserInput
+    greaterIdFriends?: FriendshipCreateNestedManyWithoutGreaterIdUserInput
+    sentRequests?: RequestCreateNestedManyWithoutFromInput
+  }
+
+  export type UserUncheckedCreateWithoutReceivedRequestsInput = {
+    id?: number
+    username: string
+    sent?: MessageUncheckedCreateNestedManyWithoutFromInput
+    received?: MessageUncheckedCreateNestedManyWithoutToInput
+    lessIdFriends?: FriendshipUncheckedCreateNestedManyWithoutLesserIdUserInput
+    greaterIdFriends?: FriendshipUncheckedCreateNestedManyWithoutGreaterIdUserInput
+    sentRequests?: RequestUncheckedCreateNestedManyWithoutFromInput
+  }
+
+  export type UserCreateOrConnectWithoutReceivedRequestsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutReceivedRequestsInput, UserUncheckedCreateWithoutReceivedRequestsInput>
+  }
+
+  export type UserUpsertWithoutSentRequestsInput = {
+    update: XOR<UserUpdateWithoutSentRequestsInput, UserUncheckedUpdateWithoutSentRequestsInput>
+    create: XOR<UserCreateWithoutSentRequestsInput, UserUncheckedCreateWithoutSentRequestsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSentRequestsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSentRequestsInput, UserUncheckedUpdateWithoutSentRequestsInput>
+  }
+
+  export type UserUpdateWithoutSentRequestsInput = {
+    username?: StringFieldUpdateOperationsInput | string
+    sent?: MessageUpdateManyWithoutFromNestedInput
+    received?: MessageUpdateManyWithoutToNestedInput
+    lessIdFriends?: FriendshipUpdateManyWithoutLesserIdUserNestedInput
+    greaterIdFriends?: FriendshipUpdateManyWithoutGreaterIdUserNestedInput
+    receivedRequests?: RequestUpdateManyWithoutToNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSentRequestsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    sent?: MessageUncheckedUpdateManyWithoutFromNestedInput
+    received?: MessageUncheckedUpdateManyWithoutToNestedInput
+    lessIdFriends?: FriendshipUncheckedUpdateManyWithoutLesserIdUserNestedInput
+    greaterIdFriends?: FriendshipUncheckedUpdateManyWithoutGreaterIdUserNestedInput
+    receivedRequests?: RequestUncheckedUpdateManyWithoutToNestedInput
+  }
+
+  export type UserUpsertWithoutReceivedRequestsInput = {
+    update: XOR<UserUpdateWithoutReceivedRequestsInput, UserUncheckedUpdateWithoutReceivedRequestsInput>
+    create: XOR<UserCreateWithoutReceivedRequestsInput, UserUncheckedCreateWithoutReceivedRequestsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutReceivedRequestsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutReceivedRequestsInput, UserUncheckedUpdateWithoutReceivedRequestsInput>
+  }
+
+  export type UserUpdateWithoutReceivedRequestsInput = {
+    username?: StringFieldUpdateOperationsInput | string
+    sent?: MessageUpdateManyWithoutFromNestedInput
+    received?: MessageUpdateManyWithoutToNestedInput
+    lessIdFriends?: FriendshipUpdateManyWithoutLesserIdUserNestedInput
+    greaterIdFriends?: FriendshipUpdateManyWithoutGreaterIdUserNestedInput
+    sentRequests?: RequestUpdateManyWithoutFromNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutReceivedRequestsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    sent?: MessageUncheckedUpdateManyWithoutFromNestedInput
+    received?: MessageUncheckedUpdateManyWithoutToNestedInput
+    lessIdFriends?: FriendshipUncheckedUpdateManyWithoutLesserIdUserNestedInput
+    greaterIdFriends?: FriendshipUncheckedUpdateManyWithoutGreaterIdUserNestedInput
+    sentRequests?: RequestUncheckedUpdateManyWithoutFromNestedInput
   }
 
   export type MessageCreateManyFromInput = {
@@ -5651,6 +7391,16 @@ export namespace Prisma {
 
   export type FriendshipCreateManyGreaterIdUserInput = {
     lesserId: number
+  }
+
+  export type RequestCreateManyFromInput = {
+    id?: number
+    toId: number
+  }
+
+  export type RequestCreateManyToInput = {
+    id?: number
+    fromId: number
   }
 
   export type MessageUpdateWithoutFromInput = {
@@ -5709,6 +7459,34 @@ export namespace Prisma {
 
   export type FriendshipUncheckedUpdateManyWithoutGreaterIdUserInput = {
     lesserId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type RequestUpdateWithoutFromInput = {
+    to?: UserUpdateOneRequiredWithoutReceivedRequestsNestedInput
+  }
+
+  export type RequestUncheckedUpdateWithoutFromInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    toId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type RequestUncheckedUpdateManyWithoutFromInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    toId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type RequestUpdateWithoutToInput = {
+    from?: UserUpdateOneRequiredWithoutSentRequestsNestedInput
+  }
+
+  export type RequestUncheckedUpdateWithoutToInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    fromId?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type RequestUncheckedUpdateManyWithoutToInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    fromId?: IntFieldUpdateOperationsInput | number
   }
 
 

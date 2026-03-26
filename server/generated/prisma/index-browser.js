@@ -137,6 +137,12 @@ exports.Prisma.FriendshipScalarFieldEnum = {
   greaterId: 'greaterId'
 };
 
+exports.Prisma.RequestScalarFieldEnum = {
+  id: 'id',
+  fromId: 'fromId',
+  toId: 'toId'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -151,7 +157,8 @@ exports.Prisma.QueryMode = {
 exports.Prisma.ModelName = {
   User: 'User',
   Message: 'Message',
-  Friendship: 'Friendship'
+  Friendship: 'Friendship',
+  Request: 'Request'
 };
 
 /**

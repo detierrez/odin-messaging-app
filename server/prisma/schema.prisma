@@ -46,4 +46,6 @@ model Request {
     fromId Int
     to     User @relation(name: "receivedRequests", fields: [toId], references: [id])
     toId   Int
+
+    @@unique([fromId, toId])
 }

@@ -16,6 +16,9 @@ model User {
 
   lessIdFriends    Friendship[] @relation("lessIdFriendships")
   greaterIdFriends Friendship[] @relation("greaterIdFriendships")
+
+  sentRequests     Request[] @relation("sentRequests")
+  receivedRequests Request[] @relation("receivedRequests")
 }
 
 model Message {
@@ -35,4 +38,14 @@ model Friendship {
   greaterIdUser User @relation("greaterIdFriendships", fields: [greaterId], references: [id], onDelete: Cascade)
 
   @@id([lesserId, greaterId])
+}
+
+model Request {
+  id     Int  @id @default(autoincrement())
+  from   User @relation(name: "sentRequests", fields: [fromId], references: [id])
+  fromId Int
+  to     User @relation(name: "receivedRequests", fields: [toId], references: [id])
+  toId   Int
+
+  @@unique([fromId, toId])
 }

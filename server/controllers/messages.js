@@ -1,5 +1,6 @@
-const { matchedData } = require("express-validator/lib");
+const { matchedData } = require("express-validator");
 const prisma = require("../lib/prisma");
+const { httpError } = require("../middlewares");
 
 module.exports.getFriends = async (req, res) => {
   const { id: userId } = req.user;
@@ -19,6 +20,111 @@ module.exports.getFriends = async (req, res) => {
   );
 
   res.json(friends);
+};
+
+module.exports.postRequest = async (req, res) => {
+  const { id: userId } = req.user;
+  const { toId } = req.body;
+
+  if (userId === toId) {
+    throw new httpError(400, [{ reason: "Cannot send a request to yourself" }]);
+  }
+
+  const lesserId = userId < toId ? userId : toId;
+  const greaterId = userId >= toId ? userId : toId;
+
+  const [existingFriendship, existingRequest] = await Promise.all([
+    prisma.friendship.findUnique({
+      where: { lesserId_greaterId: { lesserId, greaterId } },
+    }),
+    prisma.request.findFirst({
+      where: {
+        OR: [
+          { fromId: userId, toId: toId },
+          { fromId: toId, toId: userId },
+        ],
+      },
+    }),
+  ]);
+
+  if (existingFriendship) {
+    throw new httpError(400, [{ reason: "You are already friends" }]);
+  }
+  if (existingRequest) {
+    throw new httpError(400, [
+      { reason: "A request already exists between these users" },
+    ]);
+  }
+
+  try {
+    const request = await prisma.request.create({
+      data: { fromId: userId, toId },
+    });
+    res.json(request);
+  } catch (error) {
+    if (error.code === "P2002") {
+      throw new httpError(400, [{ reason: "A request already exists" }]);
+    }
+    throw error;
+  }
+};
+
+module.exports.getRequests = async (req, res) => {
+  const { id: userId } = req.user;
+  const { direction } = req.query;
+
+  const where = {};
+  if (direction === "incoming") {
+    where.toId = userId;
+  } else if (direction === "outgoing") {
+    where.fromId = userId;
+  } else {
+    where.OR = [{ fromId: userId }, { toId: userId }];
+  }
+
+  const requests = await prisma.request.findMany({
+    where,
+  });
+
+  res.json(requests);
+};
+
+module.exports.acceptRequest = async (req, res) => {
+  const { id: userId } = req.user;
+  const { requestId } = matchedData(req);
+
+  const request = await prisma.request.delete({
+    where: { id: requestId, toId: userId },
+  });
+
+  const { fromId, toId } = request;
+  const lesserId = fromId < toId ? fromId : toId;
+  const greaterId = fromId >= toId ? fromId : toId;
+  await prisma.friendship.create({ data: { lesserId, greaterId } });
+
+  res.json({ message: "success" });
+};
+
+module.exports.rejectRequest = async (req, res) => {
+  const { id: userId } = req.user;
+  const { requestId } = matchedData(req);
+
+  await prisma.request.delete({
+    where: { id: requestId, toId: userId },
+  });
+
+  res.json({ message: "success" });
+};
+
+module.exports.deleteRequest = async (req, res) => {
+  const { id: userId } = req.user;
+  const { requestId } = matchedData(req);
+
+  await prisma.request.delete({
+    where: { id: requestId, fromId: userId },
+  });
+
+  res.json({ message: "success" });
 };
 
 module.exports.getMessagesByFriend = async (req, res) => {
