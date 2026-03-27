@@ -14,10 +14,8 @@ export default function DataProvider({ children }) {
     {},
   );
   const [inbox, setInbox] = useState(null);
-  const [requests, dispatchRequests] = useReducer(requestsReducer, {
-    sent: [],
-    received: [],
-  });
+  const [friends, dispatchFriends] = useReducer(friendsReducer, null);
+  const [requests, dispatchRequests] = useReducer(requestsReducer, null);
   const {
     activeFriend: { id: activeFriendId },
   } = useActiveFriend();
@@ -41,6 +39,23 @@ export default function DataProvider({ children }) {
             return { ...msg, friendId };
           }),
         );
+      })
+      .catch((error) => {
+        if (error !== abortError) throw error;
+      });
+    return () => {
+      controller.abort(abortError);
+    };
+  }, [userId]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const abortError = new Error("Request aborted");
+    fetchBackend(`/friends?id=${userId}`, {
+      signal: controller.signal,
+    })
+      .then(({ friends }) => {
+        dispatchFriends({ type: "load", friends });
       })
       .catch((error) => {
         if (error !== abortError) throw error;
@@ -113,6 +128,11 @@ export default function DataProvider({ children }) {
       });
     });
 
+    socket.on("friends_mutation", onFriendMutation);
+    function onFriendMutation({ action, ...payload }) {
+      dispatchFriends({ type: action, ...payload });
+    }
+
     socket.on("request_mutation", onRequestMutation);
     function onRequestMutation({ action, direction, request }) {
       dispatchRequests({ type: action, direction, request });
@@ -124,7 +144,7 @@ export default function DataProvider({ children }) {
   }, [userId]);
 
   return (
-    <DataContext value={{ inbox, chat: activeChat, requests }}>
+    <DataContext value={{ inbox, friends, chat: activeChat, requests }}>
       {children}
     </DataContext>
   );
@@ -165,10 +185,6 @@ function requestsReducer(requests, action) {
     case "cancel": {
       const { direction, request } = action;
       const existingRequests = requests[direction];
-      console.log("asd", {
-        ...requests,
-        [direction]: existingRequests.filter((r) => r.id !== request.id),
-      });
       return {
         ...requests,
         [direction]: existingRequests.filter((r) => r.id !== request.id),
@@ -182,6 +198,26 @@ function requestsReducer(requests, action) {
         ...requests,
         [direction]: existingRequests.filter((r) => r.id !== request.id),
       };
+    }
+
+    default: {
+      throw new Error(`Unhandled action type: ${action.type}`);
+    }
+  }
+}
+
+function friendsReducer(friends, action) {
+  switch (action.type) {
+    case "load": {
+      return action.friends;
+    }
+
+    case "add": {
+      return [...friends, action.friend];
+    }
+
+    case "remove": {
+      return friends.filter((f) => f.id !== action.friendId);
     }
 
     default: {

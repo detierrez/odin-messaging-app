@@ -37,6 +37,16 @@ module.exports.deleteFriend = async (req, res) => {
     where: { lesserId_greaterId: { lesserId, greaterId } },
   });
 
+  const io = req.app.get("io");
+  io.to(`${lesserId}`).emit("friends_mutation", {
+    action: "remove",
+    friendId: greaterId,
+  });
+  io.to(`${greaterId}`).emit("friends_mutation", {
+    action: "remove",
+    friendId: lesserId,
+  });
+
   res.json({ message: "success" });
 };
 
@@ -119,8 +129,20 @@ module.exports.acceptRequest = async (req, res) => {
   const { fromId, toId } = request;
   const lesserId = fromId < toId ? fromId : toId;
   const greaterId = fromId >= toId ? fromId : toId;
-  await prisma.friendship.create({ data: { lesserId, greaterId } });
+  const { lesserIdUser, greaterIdUser } = await prisma.friendship.create({
+    data: { lesserId, greaterId },
+    include: { lesserIdUser: true, greaterIdUser: true },
+  });
 
+  const io = req.app.get("io");
+  io.to(`${lesserId}`).emit("friends_mutation", {
+    action: "add",
+    friend: greaterIdUser,
+  });
+  io.to(`${greaterId}`).emit("friends_mutation", {
+    action: "add",
+    friend: lesserIdUser,
+  });
   sendWebsocketRequestEvent(req, "accept", request);
   res.json({ message: "success" });
 };
