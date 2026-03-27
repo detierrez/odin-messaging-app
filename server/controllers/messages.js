@@ -188,12 +188,24 @@ module.exports.getMessagesByFriend = async (req, res) => {
 };
 
 module.exports.postMessageToFriend = async (req, res) => {
-  const { id } = req.user;
+  const { id: userId } = req.user;
   const { friendId } = matchedData(req);
   const { text } = req.body;
 
+  try {
+    const lesserId = userId < friendId ? userId : friendId;
+    const greaterId = userId >= friendId ? userId : friendId;
+    await prisma.friendship.findFirstOrThrow({
+      where: { lesserId, greaterId },
+    });
+  } catch (error) {
+    throw new httpError(400, [
+      { reason: "This user must be your friend first" },
+    ]);
+  }
+
   const message = await prisma.message.create({
-    data: { fromId: id, toId: friendId, text },
+    data: { fromId: userId, toId: friendId, text },
   });
 
   const io = req.app.get("io");
