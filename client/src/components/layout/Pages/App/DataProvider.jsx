@@ -27,11 +27,14 @@ export default function DataProvider({ children }) {
 
   useEffect(() => {
     const controller = new AbortController();
+    const { signal } = controller;
     const abortError = new Error("Request aborted");
-    fetchBackend(`/inbox?id=${userId}`, {
-      signal: controller.signal,
-    })
-      .then(({ inbox }) => {
+
+    const fetchInbox = fetchBackend(`/inbox?id=${userId}`, { signal });
+    const fetchFriends = fetchBackend(`/friends?id=${userId}`, { signal });
+    const fetchRequests = fetchBackend(`/requests?id=${userId}`, { signal });
+    Promise.all([fetchInbox, fetchFriends, fetchRequests])
+      .then(([{ inbox }, { friends }, { requests }]) => {
         setInbox(
           inbox.map((msg) => {
             const { fromId, toId } = msg;
@@ -39,44 +42,13 @@ export default function DataProvider({ children }) {
             return { ...msg, friendId };
           }),
         );
-      })
-      .catch((error) => {
-        if (error !== abortError) throw error;
-      });
-    return () => {
-      controller.abort(abortError);
-    };
-  }, [userId]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const abortError = new Error("Request aborted");
-    fetchBackend(`/friends?id=${userId}`, {
-      signal: controller.signal,
-    })
-      .then(({ friends }) => {
         dispatchFriends({ type: "load", friends });
-      })
-      .catch((error) => {
-        if (error !== abortError) throw error;
-      });
-    return () => {
-      controller.abort(abortError);
-    };
-  }, [userId]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const abortError = new Error("Request aborted");
-    fetchBackend(`/requests?id=${userId}`, {
-      signal: controller.signal,
-    })
-      .then(({ requests }) => {
         dispatchRequests({ type: "load", requests });
       })
       .catch((error) => {
         if (error !== abortError) throw error;
       });
+
     return () => {
       controller.abort(abortError);
     };
@@ -111,7 +83,8 @@ export default function DataProvider({ children }) {
       auth: { token: userId },
     });
 
-    socket.on("new_message", (message) => {
+    socket.on("new_message", onNewMessage);
+    function onNewMessage(message) {
       const friendId = getFriendId(userId, message);
 
       setInbox((prevInbox) => {
@@ -126,7 +99,7 @@ export default function DataProvider({ children }) {
         friendId,
         message,
       });
-    });
+    }
 
     socket.on("friends_mutation", onFriendMutation);
     function onFriendMutation({ action, ...payload }) {
@@ -139,6 +112,9 @@ export default function DataProvider({ children }) {
     }
 
     return () => {
+      socket.off("new_message", onNewMessage);
+      socket.off("friends_mutation", onFriendMutation);
+      socket.off("request_mutation", onRequestMutation);
       socket.disconnect();
     };
   }, [userId]);
