@@ -1,20 +1,22 @@
 import { useData, useUser } from "../../../../../hooks";
 import { fetchBackend } from "../../../../../router/actions-loaders";
 
-export default function OutgoingRequests() {
+export default function SentRequests() {
   const { user } = useUser();
-  const { outgoingRequests } = useData();
+  const {
+    requests: { sent: sentRequests },
+  } = useData();
 
   return (
     <ul>
-      {outgoingRequests &&
-        outgoingRequests.map((request) => {
+      {sentRequests &&
+        sentRequests.map((request) => {
           return (
-            <li className="outgoingRequest" key={request.id}>
+            <li className="sentRequest" key={request.id}>
               <b>{request.toId}</b>
               <button
                 onClick={() => {
-                  fetchBackend(`/requests/${request.toId}?id=${user.id}`, {
+                  fetchBackend(`/requests/${request.id}?id=${user.id}`, {
                     method: "DELETE",
                   });
                 }}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import io from "socket.io-client";
 import {
   SERVER_BASE_URL,
@@ -9,10 +9,15 @@ import { getFriendId } from "../../../../utils";
 import { DataContext } from "../../../../contexts/contexts";
 
 export default function DataProvider({ children }) {
-  const [chatHistories, setChatHistories] = useState({});
+  const [chatHistories, dispatchChatHistories] = useReducer(
+    chatHistoriesReducer,
+    {},
+  );
   const [inbox, setInbox] = useState(null);
-  const [incomingRequests, setIncomingRequests] = useState(null);
-  const [outgoingRequests, setOutgoingRequests] = useState(null);
+  const [requests, dispatchRequests] = useReducer(requestsReducer, {
+    sent: [],
+    received: [],
+  });
   const {
     activeFriend: { id: activeFriendId },
   } = useActiveFriend();
@@ -48,28 +53,11 @@ export default function DataProvider({ children }) {
   useEffect(() => {
     const controller = new AbortController();
     const abortError = new Error("Request aborted");
-    fetchBackend(`/requests?direction=incoming&id=${userId}`, {
+    fetchBackend(`/requests?id=${userId}`, {
       signal: controller.signal,
     })
       .then(({ requests }) => {
-        setIncomingRequests(requests);
-      })
-      .catch((error) => {
-        if (error !== abortError) throw error;
-      });
-    return () => {
-      controller.abort(abortError);
-    };
-  }, [userId]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const abortError = new Error("Request aborted");
-    fetchBackend(`/requests?direction=outgoing&id=${userId}`, {
-      signal: controller.signal,
-    })
-      .then(({ requests }) => {
-        setOutgoingRequests(requests);
+        dispatchRequests({ type: "load", requests });
       })
       .catch((error) => {
         if (error !== abortError) throw error;
@@ -89,10 +77,11 @@ export default function DataProvider({ children }) {
       signal: controller.signal,
     })
       .then(({ messages }) => {
-        setChatHistories((prev) => ({
-          ...prev,
-          [activeFriendId]: messages,
-        }));
+        dispatchChatHistories({
+          type: "add_chat",
+          friendId: activeFriendId,
+          chat: messages,
+        });
       })
       .catch((error) => {
         if (error !== abortError) throw error;
@@ -106,47 +95,97 @@ export default function DataProvider({ children }) {
     const socket = io(SERVER_BASE_URL, {
       auth: { token: userId },
     });
-    socket.on("new_message", onNewMessage);
-    function onNewMessage(newMessage) {
-      const friendId = getFriendId(userId, newMessage);
+
+    socket.on("new_message", (message) => {
+      const friendId = getFriendId(userId, message);
+
       setInbox((prevInbox) => {
         return [
-          newMessage,
+          message,
           ...prevInbox.filter((msg) => getFriendId(userId, msg) !== friendId),
         ];
       });
 
-      setChatHistories((prevHistory) => {
-        const existingChat = prevHistory[friendId];
-        if (!existingChat) return prevHistory;
-        return {
-          ...prevHistory,
-          [friendId]: [...existingChat, newMessage],
-        };
+      dispatchChatHistories({
+        type: "add_message",
+        friendId,
+        message,
       });
-    }
+    });
 
-    socket.on("incoming_request", onIncomingRequest);
-    function onIncomingRequest(newRequest) {
-      setIncomingRequests((prev) => [...prev, newRequest]);
-    }
-
-    socket.on("outgoing_request", onOutgoingRequest);
-    function onOutgoingRequest(newRequest) {
-      setOutgoingRequests((prev) => [...prev, newRequest]);
+    socket.on("request_mutation", onRequestMutation);
+    function onRequestMutation({ action, direction, request }) {
+      dispatchRequests({ type: action, direction, request });
     }
 
     return () => {
-      socket.off("new_message", onNewMessage);
       socket.disconnect();
     };
   }, [userId]);
 
   return (
-    <DataContext
-      value={{ inbox, chat: activeChat, incomingRequests, outgoingRequests }}
-    >
+    <DataContext value={{ inbox, chat: activeChat, requests }}>
       {children}
     </DataContext>
   );
+}
+
+function chatHistoriesReducer(chatHistories, action) {
+  switch (action.type) {
+    case "add_chat": {
+      const { friendId, chat } = action;
+      return { ...chatHistories, [friendId]: chat };
+    }
+    case "add_message": {
+      const { friendId, message } = action;
+      const existingChat = chatHistories[friendId];
+      if (!existingChat) return chatHistories;
+      return {
+        ...chatHistories,
+        [friendId]: [...existingChat, message],
+      };
+    }
+    default: {
+      throw new Error(`Unhandled action type: ${action.type}`);
+    }
+  }
+}
+
+function requestsReducer(requests, action) {
+  switch (action.type) {
+    case "load": {
+      return action.requests;
+    }
+    case "add": {
+      const { direction, request } = action;
+      const existingRequests = requests[direction];
+      return { ...requests, [direction]: [...existingRequests, request] };
+    }
+
+    case "cancel": {
+      const { direction, request } = action;
+      const existingRequests = requests[direction];
+      console.log("asd", {
+        ...requests,
+        [direction]: existingRequests.filter((r) => r.id !== request.id),
+      });
+      return {
+        ...requests,
+        [direction]: existingRequests.filter((r) => r.id !== request.id),
+      };
+    }
+
+    case "accept": {
+      const { direction, request } = action;
+      const existingRequests = requests[direction];
+      return {
+        ...requests,
+        [direction]: existingRequests.filter((r) => r.id !== request.id),
+      };
+    }
+
+    default: {
+      throw new Error(`Unhandled action type: ${action.type}`);
+    }
+  }
 }

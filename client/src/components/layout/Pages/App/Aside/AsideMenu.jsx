@@ -1,7 +1,8 @@
 import { useState } from "react";
 import Inbox from "./Inbox/Inbox";
-import IncomingRequests from "./IncomingRequests";
-import OutgoingRequests from "./OutgoingRequests";
+import ReceivedRequests from "./ReceivedRequests";
+import SentRequests from "./SentRequests";
+import AddFriendInput from "./AddFriendInput";
 
 export default function AsideMenu() {
   const [menu, setMenu] = useState("main");
@@ -26,7 +27,7 @@ export default function AsideMenu() {
               <br />
               <button onClick={() => setMenu("newGroup")}>New group</button>
               <h3>Friend requests</h3>
-              <IncomingRequests />
+              <ReceivedRequests />
             </>
           ),
           addFriend: (
@@ -34,11 +35,10 @@ export default function AsideMenu() {
               <h2>Add friend</h2>
               <button onClick={() => setMenu("friends")}>&lt;</button>
               <br />
-              <input type="text" placeholder="Enter username..." />
-              <button>Send request</button>
+              <AddFriendInput />
               <br />
               <h3>Pending requests</h3>
-              <OutgoingRequests />
+              <SentRequests />
             </>
           ),
           newGroup: (

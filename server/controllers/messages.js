@@ -42,7 +42,15 @@ module.exports.deleteFriend = async (req, res) => {
 
 module.exports.postRequest = async (req, res) => {
   const { id: userId } = req.user;
-  const { toId } = req.body;
+  const { username } = req.body;
+
+  let toId;
+  try {
+    const user = await prisma.user.findFirstOrThrow({ where: { username } });
+    toId = user.id;
+  } catch (error) {
+    throw new httpError(400, [{ reason: "User does not exist" }]);
+  }
 
   if (userId === toId) {
     throw new httpError(400, [{ reason: "Cannot send a request to yourself" }]);
@@ -78,7 +86,9 @@ module.exports.postRequest = async (req, res) => {
     const request = await prisma.request.create({
       data: { fromId: userId, toId },
     });
-    res.json(request);
+
+    sendWebsocketRequestEvent(req, "add", request);
+    res.json({ message: "success" });
   } catch (error) {
     if (error.code === "P2002") {
       throw new httpError(400, [{ reason: "A request already exists" }]);
@@ -89,22 +99,13 @@ module.exports.postRequest = async (req, res) => {
 
 module.exports.getRequests = async (req, res) => {
   const { id: userId } = req.user;
-  const { direction } = req.query;
 
-  const where = {};
-  if (direction === "incoming") {
-    where.toId = userId;
-  } else if (direction === "outgoing") {
-    where.fromId = userId;
-  } else {
-    where.OR = [{ fromId: userId }, { toId: userId }];
-  }
+  const [sent, received] = await Promise.all([
+    prisma.request.findMany({ where: { fromId: userId } }),
+    prisma.request.findMany({ where: { toId: userId } }),
+  ]);
 
-  const requests = await prisma.request.findMany({
-    where,
-  });
-
-  res.json({ requests });
+  res.json({ requests: { sent, received } });
 };
 
 module.exports.acceptRequest = async (req, res) => {
@@ -120,6 +121,7 @@ module.exports.acceptRequest = async (req, res) => {
   const greaterId = fromId >= toId ? fromId : toId;
   await prisma.friendship.create({ data: { lesserId, greaterId } });
 
+  sendWebsocketRequestEvent(req, "accept", request);
   res.json({ message: "success" });
 };
 
@@ -127,10 +129,11 @@ module.exports.rejectRequest = async (req, res) => {
   const { id: userId } = req.user;
   const { requestId } = matchedData(req);
 
-  await prisma.request.delete({
+  const request = await prisma.request.delete({
     where: { id: requestId, toId: userId },
   });
 
+  sendWebsocketRequestEvent(req, "cancel", request);
   res.json({ message: "success" });
 };
 
@@ -138,10 +141,11 @@ module.exports.deleteRequest = async (req, res) => {
   const { id: userId } = req.user;
   const { requestId } = matchedData(req);
 
-  await prisma.request.delete({
+  const request = await prisma.request.delete({
     where: { id: requestId, fromId: userId },
   });
 
+  sendWebsocketRequestEvent(req, "cancel", request);
   res.json({ message: "success" });
 };
 
@@ -194,3 +198,17 @@ module.exports.getInbox = async (req, res) => {
 
   res.json({ inbox });
 };
+
+function sendWebsocketRequestEvent(req, action, friendRequest) {
+  const io = req.app.get("io");
+  io.to(`${friendRequest.fromId}`).emit("request_mutation", {
+    action,
+    direction: "sent",
+    request: friendRequest,
+  });
+  io.to(`${friendRequest.toId}`).emit("request_mutation", {
+    action,
+    direction: "received",
+    request: friendRequest,
+  });
+}
