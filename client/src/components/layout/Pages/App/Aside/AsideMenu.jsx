@@ -5,6 +5,7 @@ import SentRequests from "./SentRequests";
 import AddFriendInput from "./AddFriendInput";
 import FriendList from "./FriendList";
 import NewGroupFrom from "./NewGroupForm";
+import GroupList from "./GroupList";
 
 export default function AsideMenu() {
   const [menu, setMenu] = useState("main");
@@ -30,6 +31,8 @@ export default function AsideMenu() {
               <button onClick={() => setMenu("newGroup")}>New group</button>
               <h3>Friend requests</h3>
               <ReceivedRequests />
+              <h3>Groups</h3>
+              <GroupList />
               <h3>Friends</h3>
               <FriendList />
             </>

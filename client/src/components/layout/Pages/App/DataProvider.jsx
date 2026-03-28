@@ -19,6 +19,7 @@ export default function DataProvider({ children }) {
     sent: [],
     received: [],
   });
+  const [groups, dispatchGroups] = useReducer(groupsReducer, null);
   const {
     activeFriend: { id: activeFriendId },
   } = useActiveFriend();
@@ -36,8 +37,9 @@ export default function DataProvider({ children }) {
     const fetchInbox = fetchBackend(`/inbox?id=${userId}`, { signal });
     const fetchFriends = fetchBackend(`/friends?id=${userId}`, { signal });
     const fetchRequests = fetchBackend(`/requests?id=${userId}`, { signal });
-    Promise.all([fetchInbox, fetchFriends, fetchRequests])
-      .then(([{ inbox }, { friends }, { requests }]) => {
+    const fetchGroups = fetchBackend(`/groups?id=${userId}`, { signal });
+    Promise.all([fetchInbox, fetchFriends, fetchRequests, fetchGroups])
+      .then(([{ inbox }, { friends }, { requests }, { groups }]) => {
         setInbox(
           inbox.map((msg) => {
             const { fromId, toId } = msg;
@@ -47,6 +49,7 @@ export default function DataProvider({ children }) {
         );
         dispatchFriends({ type: "load", friends });
         dispatchRequests({ type: "load", requests });
+        dispatchGroups({ type: "load", groups });
       })
       .catch((error) => {
         if (error !== abortError) throw error;
@@ -123,7 +126,7 @@ export default function DataProvider({ children }) {
   }, [userId]);
 
   return (
-    <DataContext value={{ inbox, friends, chat: activeChat, requests }}>
+    <DataContext value={{ inbox, friends, chat: activeChat, requests, groups }}>
       {children}
     </DataContext>
   );
@@ -177,6 +180,8 @@ function requestsReducer(requests, action) {
         ...requests,
         [direction]: existingRequests.filter((r) => r.id !== request.id),
       };
+
+      //TODO: update friendlist
     }
 
     default: {
@@ -197,6 +202,26 @@ function friendsReducer(friends, action) {
 
     case "remove": {
       return friends.filter((f) => f.id !== action.friendId);
+    }
+
+    default: {
+      throw new Error(`Unhandled action type: ${action.type}`);
+    }
+  }
+}
+
+function groupsReducer(groups, action) {
+  switch (action.type) {
+    case "load": {
+      return action.groups;
+    }
+
+    case "add": {
+      return [...groups, action.group];
+    }
+
+    case "remove": {
+      return groups.filter((g) => g.id !== action.groupId);
     }
 
     default: {

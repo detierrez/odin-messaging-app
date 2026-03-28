@@ -144,6 +144,12 @@ exports.Prisma.RequestScalarFieldEnum = {
   toId: 'toId'
 };
 
+exports.Prisma.GroupScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  avatarUrl: 'avatarUrl'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -159,7 +165,8 @@ exports.Prisma.ModelName = {
   User: 'User',
   Message: 'Message',
   Friendship: 'Friendship',
-  Request: 'Request'
+  Request: 'Request',
+  Group: 'Group'
 };
 
 /**

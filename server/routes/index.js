@@ -20,10 +20,14 @@ const {
   deleteRequest,
 } = require("../controllers/requests");
 const { getInbox } = require("../controllers/inbox");
+const { getGroups, postGroup } = require("../controllers/groups");
 
 const friends = Router();
 const friendId = Router({ mergeParams: true });
 const messages = Router({ mergeParams: true });
+
+const inbox = Router();
+inbox.get("/", getInbox);
 
 friends.get("/", getFriends);
 
@@ -45,15 +49,17 @@ requestId.post("/accept", acceptRequest);
 requestId.post("/reject", rejectRequest);
 requestId.delete("/", deleteRequest);
 
-const inbox = Router();
-inbox.get("/", getInbox);
+const groups = Router();
+groups.get("/", getGroups);
+groups.post("/", postGroup);
 
 const index = Router();
 index.use(logger);
 index.use(strictAuthenticate);
+index.use("/inbox", inbox);
 index.use("/friends", friends);
 index.use("/requests", requests);
-index.use("/inbox", inbox);
+index.use("/groups", groups);
 index.use(throw404, maskInternalErrors, sendError);
 
 module.exports = index;

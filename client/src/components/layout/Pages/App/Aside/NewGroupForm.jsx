@@ -5,7 +5,7 @@ import { fetchBackend } from "../../../../../router/actions-loaders";
 export default function NewGroupFrom() {
   const { user } = useUser();
   const { friends } = useData();
-  const [name, setName] = useState(null);
+  const [name, setName] = useState("");
   const [selected, setSelected] = useState(new Set());
 
   return (
@@ -23,7 +23,7 @@ export default function NewGroupFrom() {
       <button
         onClick={() => {
           fetchBackend(`/groups?id=${user.id}`, {
-            body: { name, friendIds: selected },
+            body: { name, friendIds: Array.from(selected) },
           });
         }}
       >

@@ -20,6 +20,8 @@ model User {
 
   sentRequests     Request[] @relation("sentRequests")
   receivedRequests Request[] @relation("receivedRequests")
+
+  groups Group[]
 }
 
 model Message {
@@ -49,4 +51,12 @@ model Request {
   toId   Int
 
   @@unique([fromId, toId])
+}
+
+model Group {
+  id        Int    @id @default(autoincrement())
+  name      String @unique
+  avatarUrl String @default("https://www.tenniscall.com/images/chat.jpg")
+
+  members User[]
 }
