@@ -3,7 +3,8 @@ import Inbox from "./Inbox/Inbox";
 import ReceivedRequests from "./ReceivedRequests";
 import SentRequests from "./SentRequests";
 import AddFriendInput from "./AddFriendInput";
-import Friends from "./Friends";
+import FriendList from "./FriendList";
+import NewGroupFrom from "./NewGroupForm";
 
 export default function AsideMenu() {
   const [menu, setMenu] = useState("main");
@@ -30,7 +31,7 @@ export default function AsideMenu() {
               <h3>Friend requests</h3>
               <ReceivedRequests />
               <h3>Friends</h3>
-              <Friends />
+              <FriendList />
             </>
           ),
           addFriend: (
@@ -48,13 +49,8 @@ export default function AsideMenu() {
             <>
               <h2>New group</h2>
               <button onClick={() => setMenu("friends")}>&lt;</button>
-              <br />
-              <button>Upload group picture</button>
-              <br />
-              <input type="text" placeholder="Group name..." />
-              <button>Send request</button>
-              <br />
-              <h3>Select members</h3>
+
+              <NewGroupFrom />
             </>
           ),
         }[menu]

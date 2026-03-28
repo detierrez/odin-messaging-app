@@ -1,7 +1,7 @@
 import { useUser, useData } from "../../../../../hooks";
 import { fetchBackend } from "../../../../../router/actions-loaders";
 
-export default function Friends() {
+export default function FriendList() {
   const { user } = useUser();
   const { friends } = useData();
 

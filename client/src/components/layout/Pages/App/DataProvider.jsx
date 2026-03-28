@@ -15,7 +15,10 @@ export default function DataProvider({ children }) {
   );
   const [inbox, setInbox] = useState(null);
   const [friends, dispatchFriends] = useReducer(friendsReducer, null);
-  const [requests, dispatchRequests] = useReducer(requestsReducer, null);
+  const [requests, dispatchRequests] = useReducer(requestsReducer, {
+    sent: [],
+    received: [],
+  });
   const {
     activeFriend: { id: activeFriendId },
   } = useActiveFriend();
