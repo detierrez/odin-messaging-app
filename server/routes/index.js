@@ -1,17 +1,5 @@
 const { Router } = require("express");
 const {
-  getMessagesByFriend,
-  postMessageToFriend,
-  getInbox,
-  getFriends,
-  getRequests,
-  acceptRequest,
-  postRequest,
-  rejectRequest,
-  deleteRequest,
-  deleteFriend,
-} = require("../controllers/messages");
-const {
   logger,
   maskInternalErrors,
   throw404,
@@ -19,19 +7,39 @@ const {
 } = require("../middlewares");
 const { strictAuthenticate } = require("../middlewares");
 const { validateId } = require("../middlewares");
+const { getFriends, deleteFriend } = require("../controllers/friends");
+const {
+  getMessagesByFriend,
+  postMessageToFriend,
+} = require("../controllers/messages");
+const {
+  getRequests,
+  postRequest,
+  acceptRequest,
+  rejectRequest,
+  deleteRequest,
+} = require("../controllers/requests");
+const { getInbox } = require("../controllers/inbox");
 
 const friends = Router();
 const friendId = Router({ mergeParams: true });
-friends.route("/").get(getFriends);
+const messages = Router({ mergeParams: true });
+
+friends.get("/", getFriends);
+
 friends.use("/:friendId", validateId("friendId"), friendId);
-friendId.get("/messages", getMessagesByFriend);
-friendId.post("/messages", postMessageToFriend);
 friendId.delete("/", deleteFriend);
+
+friendId.use("/messages", messages);
+messages.get("/", getMessagesByFriend);
+messages.post("/", postMessageToFriend);
 
 const requests = Router();
 const requestId = Router({ mergeParams: true });
+
 requests.get("/", getRequests);
 requests.post("/", postRequest);
+
 requests.use("/:requestId", validateId("requestId"), requestId);
 requestId.post("/accept", acceptRequest);
 requestId.post("/reject", rejectRequest);
