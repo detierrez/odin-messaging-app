@@ -17,10 +17,6 @@ export default function App() {
             <AsideMenu />
           </div>
           <div className="n">
-            {" "}
-            <button>I</button>
-            <button>C</button>
-            <button>F</button>
             <button onClick={() => setUser({ id: 1 })}>1</button>
             <button onClick={() => setUser({ id: 2 })}>2</button>
             <button onClick={() => setUser({ id: 3 })}>3</button>

@@ -139,15 +139,21 @@ exports.Prisma.FriendshipScalarFieldEnum = {
 };
 
 exports.Prisma.RequestScalarFieldEnum = {
-  id: 'id',
   fromId: 'fromId',
   toId: 'toId'
 };
 
-exports.Prisma.GroupScalarFieldEnum = {
+exports.Prisma.ChatScalarFieldEnum = {
   id: 'id',
+  type: 'type',
   name: 'name',
   avatarUrl: 'avatarUrl'
+};
+
+exports.Prisma.ParticipationScalarFieldEnum = {
+  userId: 'userId',
+  chatId: 'chatId',
+  role: 'role'
 };
 
 exports.Prisma.SortOrder = {
@@ -160,13 +166,27 @@ exports.Prisma.QueryMode = {
   insensitive: 'insensitive'
 };
 
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+exports.ChatType = exports.$Enums.ChatType = {
+  DIRECT: 'DIRECT',
+  GROUP: 'GROUP'
+};
+
+exports.Role = exports.$Enums.Role = {
+  MEMBER: 'MEMBER',
+  ADMIN: 'ADMIN'
+};
 
 exports.Prisma.ModelName = {
   User: 'User',
   Message: 'Message',
   Friendship: 'Friendship',
   Request: 'Request',
-  Group: 'Group'
+  Chat: 'Chat',
+  Participation: 'Participation'
 };
 
 /**

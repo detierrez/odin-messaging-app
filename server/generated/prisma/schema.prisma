@@ -12,23 +12,22 @@ model User {
   username  String @unique
   avatarUrl String @default("https://media.muckrack.com/profile/images/2061376/peter-mansell.png.256x256_q100_crop-smart.png")
 
-  sent     Message[] @relation(name: "sent")
-  received Message[] @relation(name: "received")
+  sentMessages Message[] @relation("sentMessages")
 
-  lessIdFriends    Friendship[] @relation("lessIdFriendships")
-  greaterIdFriends Friendship[] @relation("greaterIdFriendships")
+  greaterIdFriends Friendship[] @relation("lesserIdUserFriendships")
+  lesserIdFriends  Friendship[] @relation("greaterIdUserFriendships")
 
   sentRequests     Request[] @relation("sentRequests")
   receivedRequests Request[] @relation("receivedRequests")
 
-  groups Group[]
+  participations Participation[] @relation("userParticipations")
 }
 
 model Message {
   id     Int    @id @default(autoincrement())
-  from   User   @relation(name: "sent", fields: [fromId], references: [id])
+  from   User   @relation("sentMessages", fields: [fromId], references: [id])
   fromId Int
-  to     User   @relation(name: "received", fields: [toId], references: [id])
+  to     Chat   @relation("chatMessages", fields: [toId], references: [id])
   toId   Int
   text   String
 }
@@ -37,26 +36,47 @@ model Friendship {
   lesserId  Int
   greaterId Int
 
-  lesserIdUser  User @relation("lessIdFriendships", fields: [lesserId], references: [id], onDelete: Cascade)
-  greaterIdUser User @relation("greaterIdFriendships", fields: [greaterId], references: [id], onDelete: Cascade)
+  lesserIdUser  User @relation("lesserIdUserFriendships", fields: [lesserId], references: [id], onDelete: Cascade)
+  greaterIdUser User @relation("greaterIdUserFriendships", fields: [greaterId], references: [id], onDelete: Cascade)
 
   @@id([lesserId, greaterId])
 }
 
 model Request {
-  id     Int  @id @default(autoincrement())
-  from   User @relation(name: "sentRequests", fields: [fromId], references: [id])
+  from   User @relation("sentRequests", fields: [fromId], references: [id])
   fromId Int
-  to     User @relation(name: "receivedRequests", fields: [toId], references: [id])
+  to     User @relation("receivedRequests", fields: [toId], references: [id])
   toId   Int
 
-  @@unique([fromId, toId])
+  @@id([fromId, toId])
 }
 
-model Group {
-  id        Int    @id @default(autoincrement())
-  name      String @unique
-  avatarUrl String @default("https://www.tenniscall.com/images/chat.jpg")
+model Chat {
+  id        Int      @id @default(autoincrement())
+  type      ChatType @default(DIRECT)
+  name      String?
+  avatarUrl String?
 
-  members User[]
+  messages       Message[]       @relation("chatMessages")
+  participations Participation[] @relation("chatParticipations")
+}
+
+model Participation {
+  user   User @relation("userParticipations", fields: [userId], references: [id])
+  userId Int
+  chat   Chat @relation("chatParticipations", fields: [chatId], references: [id])
+  chatId Int
+  role   Role @default(MEMBER)
+
+  @@id([userId, chatId])
+}
+
+enum Role {
+  MEMBER
+  ADMIN
+}
+
+enum ChatType {
+  DIRECT
+  GROUP
 }

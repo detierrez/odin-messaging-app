@@ -164,7 +164,7 @@ function requestsReducer(requests, action) {
       return { ...requests, [direction]: [...existingRequests, request] };
     }
 
-    case "cancel": {
+    case "remove": {
       const { direction, request } = action;
       const existingRequests = requests[direction];
       return {

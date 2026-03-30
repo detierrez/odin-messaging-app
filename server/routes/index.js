@@ -9,49 +9,52 @@ const { strictAuthenticate } = require("../middlewares");
 const { validateId } = require("../middlewares");
 const { getFriends, deleteFriend } = require("../controllers/friends");
 const {
-  getMessagesByFriend,
-  postMessageToFriend,
-} = require("../controllers/messages");
-const {
   getRequests,
   postRequest,
   acceptRequest,
-  rejectRequest,
   deleteRequest,
 } = require("../controllers/requests");
 const { getInbox } = require("../controllers/inbox");
-const { getGroups, postGroup } = require("../controllers/groups");
+const { getChat, postChat } = require("../controllers/chats");
 
+// INBOX
+const inbox = Router();
+
+inbox.get("/", getInbox);
+
+// FRIENDS
 const friends = Router();
 const friendId = Router({ mergeParams: true });
-const messages = Router({ mergeParams: true });
-
-const inbox = Router();
-inbox.get("/", getInbox);
 
 friends.get("/", getFriends);
 
 friends.use("/:friendId", validateId("friendId"), friendId);
 friendId.delete("/", deleteFriend);
 
-friendId.use("/messages", messages);
-messages.get("/", getMessagesByFriend);
-messages.post("/", postMessageToFriend);
-
+// REQUESTS
 const requests = Router();
-const requestId = Router({ mergeParams: true });
+const partyId = Router({ mergeParams: true });
 
 requests.get("/", getRequests);
 requests.post("/", postRequest);
 
-requests.use("/:requestId", validateId("requestId"), requestId);
-requestId.post("/accept", acceptRequest);
-requestId.post("/reject", rejectRequest);
-requestId.delete("/", deleteRequest);
+requests.use("/:partyId", validateId("partyId"), partyId);
+partyId.post("/accept", acceptRequest);
+partyId.delete("/", deleteRequest);
 
-const groups = Router();
-groups.get("/", getGroups);
-groups.post("/", postGroup);
+// CHATS
+const chats = Router();
+const chatId = Router({ mergeParams: true });
+// const participants = Router({ mergeParams: true });
+
+chats.use("/:chatId", validateId("chatId"), chatId);
+chatId.get("/", getChat);
+chatId.post("/", postChat);
+
+// chats.use("/participants", participants);
+// participants.post("/", postParticipant);
+// participants.patch("/", patchParticipant);
+// participants.delete("/", deleteParticipant);
 
 const index = Router();
 index.use(logger);
@@ -59,7 +62,7 @@ index.use(strictAuthenticate);
 index.use("/inbox", inbox);
 index.use("/friends", friends);
 index.use("/requests", requests);
-index.use("/groups", groups);
+index.use("/chats", chats);
 index.use(throw404, maskInternalErrors, sendError);
 
 module.exports = index;

@@ -6,21 +6,19 @@ module.exports.postRequest = async (req, res) => {
   const { id: userId } = req.user;
   const { username } = req.body;
 
-  let toId;
+  let partyId;
   try {
-    const user = await prisma.user.findFirstOrThrow({ where: { username } });
-    toId = user.id;
+    const party = await prisma.user.findFirstOrThrow({ where: { username } });
+    partyId = party.id;
   } catch (error) {
     throw new httpError(400, [{ reason: "User does not exist" }]);
   }
 
-  if (userId === toId) {
+  if (userId === partyId) {
     throw new httpError(400, [{ reason: "Cannot send a request to yourself" }]);
   }
 
-  const lesserId = userId < toId ? userId : toId;
-  const greaterId = userId >= toId ? userId : toId;
-
+  const [lesserId, greaterId] = toSorted([userId, partyId]);
   const [existingFriendship, existingRequest] = await Promise.all([
     prisma.friendship.findUnique({
       where: { lesserId_greaterId: { lesserId, greaterId } },
@@ -28,8 +26,8 @@ module.exports.postRequest = async (req, res) => {
     prisma.request.findFirst({
       where: {
         OR: [
-          { fromId: userId, toId: toId },
-          { fromId: toId, toId: userId },
+          { fromId: userId, toId: partyId },
+          { fromId: partyId, toId: userId },
         ],
       },
     }),
@@ -46,7 +44,7 @@ module.exports.postRequest = async (req, res) => {
 
   try {
     const request = await prisma.request.create({
-      data: { fromId: userId, toId },
+      data: { fromId: userId, toId: partyId },
     });
 
     sendWebsocketRequestEvent(req, "add", request);
@@ -70,17 +68,32 @@ module.exports.getRequests = async (req, res) => {
   res.json({ requests: { sent, received } });
 };
 
-module.exports.acceptRequest = async (req, res) => {
+module.exports.deleteRequest = async (req, res) => {
   const { id: userId } = req.user;
-  const { requestId } = matchedData(req);
+  const { partyId } = matchedData(req);
 
   const request = await prisma.request.delete({
-    where: { id: requestId, toId: userId },
+    where: {
+      OR: [
+        { fromId: userId, toId: partyId },
+        { fromId: partyId, toId: userId },
+      ],
+    },
   });
 
-  const { fromId, toId } = request;
-  const lesserId = fromId < toId ? fromId : toId;
-  const greaterId = fromId >= toId ? fromId : toId;
+  sendWebsocketRequestEvent(req, "remove", request);
+  res.json({ message: "success" });
+};
+
+module.exports.acceptRequest = async (req, res) => {
+  const { id: userId } = req.user;
+  const { partyId } = matchedData(req);
+
+  const request = await prisma.request.delete({
+    where: { from: partyId, toId: userId },
+  });
+
+  const [lesserId, greaterId] = toSorted([userId, partyId]);
   const { lesserIdUser, greaterIdUser } = await prisma.friendship.create({
     data: { lesserId, greaterId },
     include: { lesserIdUser: true, greaterIdUser: true },
@@ -99,30 +112,6 @@ module.exports.acceptRequest = async (req, res) => {
   res.json({ message: "success" });
 };
 
-module.exports.rejectRequest = async (req, res) => {
-  const { id: userId } = req.user;
-  const { requestId } = matchedData(req);
-
-  const request = await prisma.request.delete({
-    where: { id: requestId, toId: userId },
-  });
-
-  sendWebsocketRequestEvent(req, "cancel", request);
-  res.json({ message: "success" });
-};
-
-module.exports.deleteRequest = async (req, res) => {
-  const { id: userId } = req.user;
-  const { requestId } = matchedData(req);
-
-  const request = await prisma.request.delete({
-    where: { id: requestId, fromId: userId },
-  });
-
-  sendWebsocketRequestEvent(req, "cancel", request);
-  res.json({ message: "success" });
-};
-
 function sendWebsocketRequestEvent(req, action, friendRequest) {
   const io = req.app.get("io");
   io.to(`${friendRequest.fromId}`).emit("request_mutation", {
@@ -135,4 +124,8 @@ function sendWebsocketRequestEvent(req, action, friendRequest) {
     direction: "received",
     request: friendRequest,
   });
+}
+
+function toSorted(array) {
+  return array.toSorted((a, b) => a - b);
 }
