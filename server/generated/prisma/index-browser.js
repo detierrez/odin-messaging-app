@@ -139,8 +139,8 @@ exports.Prisma.FriendshipScalarFieldEnum = {
 };
 
 exports.Prisma.RequestScalarFieldEnum = {
-  fromId: 'fromId',
-  toId: 'toId'
+  senderId: 'senderId',
+  receiverId: 'receiverId'
 };
 
 exports.Prisma.ChatScalarFieldEnum = {

@@ -14,10 +14,7 @@ export default function DataProvider({ children }) {
   );
   const [inbox, setInbox] = useState(null);
   const [friends, dispatchFriends] = useReducer(friendsReducer, null);
-  const [requests, dispatchRequests] = useReducer(requestsReducer, {
-    sent: [],
-    received: [],
-  });
+  const [requests, dispatchRequests] = useReducer(requestsReducer, null);
   const [groups, dispatchGroups] = useReducer(groupsReducer, null);
   const [activeChatId, setActiveChatId] = useState(null);
 
@@ -104,8 +101,8 @@ export default function DataProvider({ children }) {
     }
 
     socket.on("request_mutation", onRequestMutation);
-    function onRequestMutation({ action, direction, request }) {
-      dispatchRequests({ type: action, direction, request });
+    function onRequestMutation({ action, ...payload }) {
+      dispatchRequests({ type: action, ...payload });
     }
 
     return () => {
@@ -154,31 +151,18 @@ function requestsReducer(requests, action) {
       return action.requests;
     }
     case "add": {
-      const { direction, request } = action;
-      const existingRequests = requests[direction];
-      return { ...requests, [direction]: [...existingRequests, request] };
+      const { listName, otherUser } = action;
+      const prevList = requests[listName];
+      return { ...requests, [listName]: [...prevList, otherUser] };
     }
-
     case "remove": {
-      const { direction, request } = action;
-      const existingRequests = requests[direction];
+      const { listName, otherUser } = action;
+      const prevList = requests[listName];
       return {
         ...requests,
-        [direction]: existingRequests.filter((r) => r.id !== request.id),
+        [listName]: prevList.filter((user) => user.id !== otherUser.id),
       };
     }
-
-    case "accept": {
-      const { direction, request } = action;
-      const existingRequests = requests[direction];
-      return {
-        ...requests,
-        [direction]: existingRequests.filter((r) => r.id !== request.id),
-      };
-
-      //TODO: update friendlist
-    }
-
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
     }

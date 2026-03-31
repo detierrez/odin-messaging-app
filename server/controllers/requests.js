@@ -6,19 +6,21 @@ module.exports.postRequest = async (req, res) => {
   const { id: userId } = req.user;
   const { username } = req.body;
 
-  let partyId;
+  let otherUserId;
   try {
-    const party = await prisma.user.findFirstOrThrow({ where: { username } });
-    partyId = party.id;
+    const otherUser = await prisma.user.findFirstOrThrow({
+      where: { username },
+    });
+    otherUserId = otherUser.id;
   } catch (error) {
     throw new httpError(400, [{ reason: "User does not exist" }]);
   }
 
-  if (userId === partyId) {
+  if (userId === otherUserId) {
     throw new httpError(400, [{ reason: "Cannot send a request to yourself" }]);
   }
 
-  const [lesserId, greaterId] = toSorted([userId, partyId]);
+  const [lesserId, greaterId] = toSorted([userId, otherUserId]);
   const [existingFriendship, existingRequest] = await Promise.all([
     prisma.friendship.findUnique({
       where: { lesserId_greaterId: { lesserId, greaterId } },
@@ -26,8 +28,8 @@ module.exports.postRequest = async (req, res) => {
     prisma.request.findFirst({
       where: {
         OR: [
-          { fromId: userId, toId: partyId },
-          { fromId: partyId, toId: userId },
+          { senderId: userId, receiverId: otherUserId },
+          { senderId: otherUserId, receiverId: userId },
         ],
       },
     }),
@@ -44,7 +46,8 @@ module.exports.postRequest = async (req, res) => {
 
   try {
     const request = await prisma.request.create({
-      data: { fromId: userId, toId: partyId },
+      data: { senderId: userId, receiverId: otherUserId },
+      include: { sender: true, receiver: true },
     });
 
     sendWebsocketRequestEvent(req, "add", request);
@@ -61,23 +64,46 @@ module.exports.getRequests = async (req, res) => {
   const { id: userId } = req.user;
 
   const [sent, received] = await Promise.all([
-    prisma.request.findMany({ where: { fromId: userId } }),
-    prisma.request.findMany({ where: { toId: userId } }),
+    prisma.request.findMany({
+      where: { senderId: userId },
+      select: { receiver: true },
+    }),
+    prisma.request.findMany({
+      where: { receiverId: userId },
+      select: { sender: true },
+    }),
   ]);
 
-  res.json({ requests: { sent, received } });
+  const sentTo = sent.map(({ receiver }) => receiver);
+  const receivedFrom = received.map(({ sender }) => sender);
+
+  res.json({ requests: { sentTo, receivedFrom } });
 };
 
 module.exports.deleteRequest = async (req, res) => {
   const { id: userId } = req.user;
-  const { partyId } = matchedData(req);
+  const { otherUserId } = matchedData(req);
 
-  const request = await prisma.request.delete({
+  const request = await prisma.request.findFirst({
     where: {
       OR: [
-        { fromId: userId, toId: partyId },
-        { fromId: partyId, toId: userId },
+        { senderId: userId, receiverId: otherUserId },
+        { senderId: otherUserId, receiverId: userId },
       ],
+    },
+    include: { sender: true, receiver: true },
+  });
+
+  if (!request) {
+    throw new httpError(404, [{ reason: "Request not found" }]);
+  }
+
+  await prisma.request.delete({
+    where: {
+      senderId_receiverId: {
+        senderId: request.senderId,
+        receiverId: request.receiverId,
+      },
     },
   });
 
@@ -87,42 +113,53 @@ module.exports.deleteRequest = async (req, res) => {
 
 module.exports.acceptRequest = async (req, res) => {
   const { id: userId } = req.user;
-  const { partyId } = matchedData(req);
+  const { otherUserId } = matchedData(req);
 
-  const request = await prisma.request.delete({
-    where: { from: partyId, toId: userId },
+  const { request, friendship } = await prisma.$transaction(async (tx) => {
+    const deletedRequest = await tx.request.delete({
+      where: {
+        senderId_receiverId: { senderId: otherUserId, receiverId: userId },
+      },
+      include: { sender: true, receiver: true },
+    });
+
+    const [lesserId, greaterId] = toSorted([userId, otherUserId]);
+    const newFriendship = await tx.friendship.create({
+      data: { lesserId, greaterId },
+      include: { lesserIdUser: true, greaterIdUser: true },
+    });
+
+    return { request: deletedRequest, friendship: newFriendship };
   });
 
-  const [lesserId, greaterId] = toSorted([userId, partyId]);
-  const { lesserIdUser, greaterIdUser } = await prisma.friendship.create({
-    data: { lesserId, greaterId },
-    include: { lesserIdUser: true, greaterIdUser: true },
-  });
-
+  const { lesserIdUser, greaterIdUser } = friendship;
   const io = req.app.get("io");
-  io.to(`${lesserId}`).emit("friends_mutation", {
+  io.to(`${lesserIdUser.id}`).emit("friends_mutation", {
     action: "add",
     friend: greaterIdUser,
   });
-  io.to(`${greaterId}`).emit("friends_mutation", {
+  io.to(`${greaterIdUser.id}`).emit("friends_mutation", {
     action: "add",
     friend: lesserIdUser,
   });
-  sendWebsocketRequestEvent(req, "accept", request);
+
+  sendWebsocketRequestEvent(req, "remove", request);
   res.json({ message: "success" });
 };
 
-function sendWebsocketRequestEvent(req, action, friendRequest) {
+function sendWebsocketRequestEvent(req, action, request) {
+  const { sender, receiver } = request;
   const io = req.app.get("io");
-  io.to(`${friendRequest.fromId}`).emit("request_mutation", {
+
+  io.to(`${sender.id}`).emit("request_mutation", {
     action,
-    direction: "sent",
-    request: friendRequest,
+    listName: "sentTo",
+    otherUser: receiver,
   });
-  io.to(`${friendRequest.toId}`).emit("request_mutation", {
+  io.to(`${receiver.id}`).emit("request_mutation", {
     action,
-    direction: "received",
-    request: friendRequest,
+    listName: "receivedFrom",
+    otherUser: sender,
   });
 }
 

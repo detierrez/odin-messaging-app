@@ -43,12 +43,12 @@ model Friendship {
 }
 
 model Request {
-    from   User @relation("sentRequests", fields: [fromId], references: [id])
-    fromId Int
-    to     User @relation("receivedRequests", fields: [toId], references: [id])
-    toId   Int
+    sender     User @relation("sentRequests", fields: [senderId], references: [id])
+    senderId   Int
+    receiver   User @relation("receivedRequests", fields: [receiverId], references: [id])
+    receiverId Int
 
-    @@id([fromId, toId])
+    @@id([senderId, receiverId])
 }
 
 model Chat {

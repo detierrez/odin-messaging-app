@@ -4,29 +4,28 @@ import { fetchBackend } from "../../../../../router/actions-loaders";
 export default function SentRequests() {
   const { user } = useUser();
   const {
-    requests: { sent: sentRequests },
-  } = useData();
+    requests: { sentTo },
+  } = useData() || {};
 
   return (
     <ul>
-      {sentRequests &&
-        sentRequests.map((request) => {
-          const { toId } = request;
-          return (
-            <li className="sentRequest" key={toId}>
-              <b>{toId}</b>
-              <button
-                onClick={() => {
-                  fetchBackend(`/requests/${toId}?id=${user.id}`, {
-                    method: "DELETE",
-                  });
-                }}
-              >
-                Cancel
-              </button>
-            </li>
-          );
-        })}
+      {sentTo?.map((otherUser) => {
+        const { id } = otherUser;
+        return (
+          <li className="sentRequest" key={id}>
+            <b>{id}</b>
+            <button
+              onClick={() => {
+                fetchBackend(`/requests/${id}?id=${user.id}`, {
+                  method: "DELETE",
+                });
+              }}
+            >
+              Cancel
+            </button>
+          </li>
+        );
+      })}
     </ul>
   );
 }

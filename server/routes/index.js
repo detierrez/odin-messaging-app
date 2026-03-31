@@ -33,14 +33,14 @@ friendId.delete("/", deleteFriend);
 
 // REQUESTS
 const requests = Router();
-const partyId = Router({ mergeParams: true });
+const otherUserId = Router({ mergeParams: true });
 
 requests.get("/", getRequests);
 requests.post("/", postRequest);
 
-requests.use("/:partyId", validateId("partyId"), partyId);
-partyId.post("/accept", acceptRequest);
-partyId.delete("/", deleteRequest);
+requests.use("/:otherUserId", validateId("otherUserId"), otherUserId);
+otherUserId.post("/accept", acceptRequest);
+otherUserId.delete("/", deleteRequest);
 
 // CHATS
 const chats = Router();
