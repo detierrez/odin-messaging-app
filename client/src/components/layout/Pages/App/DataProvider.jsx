@@ -4,9 +4,8 @@ import {
   SERVER_BASE_URL,
   fetchBackend,
 } from "../../../../router/actions-loaders";
-import { useActiveFriend, useUser } from "../../../../hooks";
-import { getFriendId } from "../../../../utils";
-import { DataContext } from "../../../../contexts/contexts";
+import { useUser } from "../../../../hooks";
+import { DataContext, SetChatContext } from "../../../../contexts/contexts";
 
 export default function DataProvider({ children }) {
   const [chatHistories, dispatchChatHistories] = useReducer(
@@ -20,14 +19,12 @@ export default function DataProvider({ children }) {
     received: [],
   });
   const [groups, dispatchGroups] = useReducer(groupsReducer, null);
-  const {
-    activeFriend: { id: activeFriendId },
-  } = useActiveFriend();
+  const [activeChatId, setActiveChatId] = useState(null);
 
   const { user } = useUser();
   const userId = user.id;
 
-  const activeChat = chatHistories[activeFriendId];
+  const activeChat = chatHistories[activeChatId];
 
   useEffect(() => {
     const controller = new AbortController();
@@ -37,16 +34,12 @@ export default function DataProvider({ children }) {
     const fetchInbox = fetchBackend(`/inbox?id=${userId}`, { signal });
     const fetchFriends = fetchBackend(`/friends?id=${userId}`, { signal });
     const fetchRequests = fetchBackend(`/requests?id=${userId}`, { signal });
-    const fetchGroups = fetchBackend(`/groups?id=${userId}`, { signal });
+    const fetchGroups =
+      // fetchBackend(`/groups?id=${userId}`, { signal });
+      Promise.resolve({ groups: null });
     Promise.all([fetchInbox, fetchFriends, fetchRequests, fetchGroups])
       .then(([{ inbox }, { friends }, { requests }, { groups }]) => {
-        setInbox(
-          inbox.map((msg) => {
-            const { fromId, toId } = msg;
-            const friendId = userId !== fromId ? fromId : toId;
-            return { ...msg, friendId };
-          }),
-        );
+        setInbox(inbox);
         dispatchFriends({ type: "load", friends });
         dispatchRequests({ type: "load", requests });
         dispatchGroups({ type: "load", groups });
@@ -61,19 +54,18 @@ export default function DataProvider({ children }) {
   }, [userId]);
 
   useEffect(() => {
-    if (!activeFriendId) return;
+    if (!activeChatId) return;
     if (activeChat) return;
 
     const controller = new AbortController();
     const abortError = new Error("Request aborted");
-    fetchBackend(`/friends/${activeFriendId}/messages?id=${userId}`, {
+    fetchBackend(`/chats/${activeChatId}?id=${userId}`, {
       signal: controller.signal,
     })
-      .then(({ messages }) => {
+      .then(({ chat }) => {
         dispatchChatHistories({
           type: "add_chat",
-          friendId: activeFriendId,
-          chat: messages,
+          chat,
         });
       })
       .catch((error) => {
@@ -82,7 +74,7 @@ export default function DataProvider({ children }) {
     return () => {
       controller.abort(abortError);
     };
-  }, [userId, activeFriendId, activeChat]);
+  }, [userId, activeChatId, activeChat]);
 
   useEffect(() => {
     const socket = io(SERVER_BASE_URL, {
@@ -91,18 +83,17 @@ export default function DataProvider({ children }) {
 
     socket.on("new_message", onNewMessage);
     function onNewMessage(message) {
-      const friendId = getFriendId(userId, message);
-
       setInbox((prevInbox) => {
-        return [
-          message,
-          ...prevInbox.filter((msg) => getFriendId(userId, msg) !== friendId),
-        ];
+        if (!prevInbox) return prevInbox;
+
+        const oldEntry = prevInbox.find((e) => e.chatId === message.chatId);
+        const rest = prevInbox.filter((e) => e.chatId !== message.chatId);
+
+        return [{ ...oldEntry, lastMessage: message }, ...rest];
       });
 
       dispatchChatHistories({
         type: "add_message",
-        friendId,
         message,
       });
     }
@@ -127,7 +118,7 @@ export default function DataProvider({ children }) {
 
   return (
     <DataContext value={{ inbox, friends, chat: activeChat, requests, groups }}>
-      {children}
+      <SetChatContext value={{ setActiveChatId }}>{children}</SetChatContext>
     </DataContext>
   );
 }
@@ -135,16 +126,20 @@ export default function DataProvider({ children }) {
 function chatHistoriesReducer(chatHistories, action) {
   switch (action.type) {
     case "add_chat": {
-      const { friendId, chat } = action;
-      return { ...chatHistories, [friendId]: chat };
+      const { chat } = action;
+      return { ...chatHistories, [chat.id]: chat };
     }
     case "add_message": {
-      const { friendId, message } = action;
-      const existingChat = chatHistories[friendId];
+      const { message } = action;
+      const { chatId } = message;
+      const existingChat = chatHistories[chatId];
       if (!existingChat) return chatHistories;
       return {
         ...chatHistories,
-        [friendId]: [...existingChat, message],
+        [chatId]: {
+          ...existingChat,
+          messages: [...existingChat.messages, message],
+        },
       };
     }
     default: {

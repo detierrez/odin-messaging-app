@@ -5,14 +5,13 @@ export default function Inbox() {
   const { inbox } = useData();
   return (
     <ul>
-      {inbox &&
-        inbox.map((message) => {
-          return (
-            <li key={message.id}>
-              <InboxEntry message={message} />
-            </li>
-          );
-        })}
+      {inbox?.map((entry) => {
+        return (
+          <li key={entry.chatId}>
+            <InboxEntry entry={entry} />
+          </li>
+        );
+      })}
     </ul>
   );
 }

@@ -1,11 +1,14 @@
-import { useActiveFriend } from "../../../../../hooks";
+import s from "@styles/Banner.module.css";
+import { useData } from "../../../../../hooks";
 
 export default function Banner() {
-  const { activeFriend } = useActiveFriend();
+  const { chat } = useData();
+  const { id, avatarUrl } = chat ?? {};
 
   return (
     <div className="banner">
-      <h1>{activeFriend.id}</h1>
+      <img src={avatarUrl} alt="" className={s.avatar} />
+      <span>{id}</span>
     </div>
   );
 }

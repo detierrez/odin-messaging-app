@@ -11,12 +11,13 @@ export default function SentRequests() {
     <ul>
       {sentRequests &&
         sentRequests.map((request) => {
+          const { toId } = request;
           return (
-            <li className="sentRequest" key={request.id}>
-              <b>{request.toId}</b>
+            <li className="sentRequest" key={toId}>
+              <b>{toId}</b>
               <button
                 onClick={() => {
-                  fetchBackend(`/requests/${request.id}?id=${user.id}`, {
+                  fetchBackend(`/requests/${toId}?id=${user.id}`, {
                     method: "DELETE",
                   });
                 }}

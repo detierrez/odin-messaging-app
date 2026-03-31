@@ -1,8 +1,6 @@
-import { useUser, useData } from "../../../../../hooks";
-import { fetchBackend } from "../../../../../router/actions-loaders";
+import { useData } from "../../../../../hooks";
 
 export default function GroupList() {
-  const { user } = useUser();
   const { groups } = useData();
 
   return (

@@ -5,19 +5,36 @@
   text-overflow: ellipsis;
 }
 
-.top {
-  display: flex;
+.entry {
+  display: grid;
+  grid-template:
+    "avatar name date"
+    "avatar text text" / max-content 1fr max-content;
   justify-content: space-between;
   align-items: center;
+  gap: 0.25em 0.5em;
+
+  .avatar {
+    grid-area: avatar;
+  }
+  .name {
+    grid-area: name;
+  }
+  .date {
+    grid-area: date;
+  }
+  .text {
+    grid-area: text;
+  }
 }
 
-.bot {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+.avatar {
+  width: 45px;
+  aspect-ratio: 1;
+  border-radius: 50%;
 }
-
 .date {
+  margin-left: auto;
   font-size: 0.8rem;
 }
 

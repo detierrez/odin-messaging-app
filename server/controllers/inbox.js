@@ -11,7 +11,6 @@ module.exports.getInbox = async (req, res) => {
           id: true,
           type: true,
           messages: {
-            select: { id: true, text: true },
             orderBy: { id: "desc" },
             take: 1,
           },
@@ -34,7 +33,6 @@ module.exports.getInbox = async (req, res) => {
           name: true,
           avatarUrl: true,
           messages: {
-            select: { id: true, text: true },
             orderBy: { id: "desc" },
             take: 1,
           },

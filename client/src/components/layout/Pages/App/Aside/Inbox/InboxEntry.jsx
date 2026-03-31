@@ -1,23 +1,15 @@
-import { useActiveFriend, useUser } from "../../../../../../hooks";
+import { useSetChat } from "../../../../../../hooks";
 import s from "@styles/InboxEntry.module.css";
-import { getFriendId } from "../../../../../../utils";
 
-export default function InboxEntry({ message }) {
-  const { user } = useUser();
-  const { setActiveFriend } = useActiveFriend();
-  const friendId = getFriendId(user.id, message);
+export default function InboxEntry({ entry }) {
+  const { setActiveChatId } = useSetChat();
+  const { chatId, name, avatarUrl, lastMessage } = entry;
   return (
-    <div className={s.entry} onClick={() => setActiveFriend({ id: friendId })}>
-      <div className={s.top}>
-        <span className={s.friendName}>{friendId}</span>{" "}
-        <span className={s.date}>{message.id}</span>
-      </div>
-      <div className={s.bot}>
-        <span className={s.prepend}>
-          {message.fromId === user.id ? "You: " : ""}
-        </span>
-        {message.text}
-      </div>
+    <div className={s.entry} onClick={() => setActiveChatId(chatId)}>
+      <img src={avatarUrl} alt="" className={s.avatar} />
+      <span className={s.name}>{name}</span>
+      {lastMessage && <span className={s.date}>{lastMessage.id}</span>}
+      {lastMessage && <div className={s.text}>{lastMessage.text}</div>}
     </div>
   );
 }

@@ -10,31 +10,40 @@ export default function ChatWindow() {
     user: { id: userId },
   } = useUser();
   const scrollable = useRef();
+
   useEffect(() => {
-    scrollable.current.scrollTop = scrollable.current.scrollHeight;
-  }, [chat]);
+    const { current } = scrollable;
+    if (current) {
+      current.scrollTop = current.scrollHeight;
+    }
+  }, [chat?.messages]);
+
   return (
-    <div className={s.chat}>
-      <div className={s.banner}>
-        <Banner />
-      </div>
-      <ul className={s.history} ref={scrollable}>
-        {chat &&
-          chat.map((m) => {
-            const className =
-              m.fromId === userId ? s.userMessage : s.friendMessage;
+    chat && (
+      <div className={s.chat}>
+        <div className={s.banner}>
+          <Banner />
+        </div>
+        <ul className={s.history} ref={scrollable}>
+          {chat.messages.map(({ id, userId: authorId, text }) => {
             return (
-              <li className={className} key={m.id}>
-                <b>{m.fromId}</b> - {m.id}
+              <li
+                className={
+                  authorId === userId ? s.userMessage : s.friendMessage
+                }
+                key={id}
+              >
+                <b>{authorId}</b> - {id}
                 <br />
-                {m.text}
+                {text}
               </li>
             );
           })}
-      </ul>
-      <div className={s.textBox}>
-        <TextBox />
+        </ul>
+        <div className={s.textBox}>
+          <TextBox />
+        </div>
       </div>
-    </div>
+    )
   );
 }

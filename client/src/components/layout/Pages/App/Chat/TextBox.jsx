@@ -1,18 +1,16 @@
 import { useState } from "react";
 import { fetchBackend } from "../../../../../router/actions-loaders";
-import { useActiveFriend, useUser } from "../../../../../hooks";
+import { useData, useUser } from "../../../../../hooks";
 
 export default function TextBox() {
-  const {
-    activeFriend: { id: friendId },
-  } = useActiveFriend();
+  const { chat } = useData();
   const { user } = useUser();
   const [drafts, setDrafts] = useState({});
 
-  const text = drafts[friendId] || "";
+  const text = drafts[chat.id] || "";
 
   const updateActiveDraft = (text) => {
-    setDrafts((prev) => ({ ...prev, [friendId]: text }));
+    setDrafts((prev) => ({ ...prev, [chat.id]: text }));
   };
 
   return (
@@ -25,15 +23,15 @@ export default function TextBox() {
       onKeyDown={(e) => {
         if (e.key === "Enter") {
           if (!e.shiftKey) {
-            e.preventDefault(); // Avoid adding new line
-            fetchBackend(`/friends/${friendId}/messages?id=${user.id}`, {
+            e.preventDefault(); // do not add new line
+            fetchBackend(`/chats/${chat.id}?id=${user.id}`, {
               body: { text },
             })
               .then((data) => {
-                console.log(data);
+                console.log(`Success posting message: `, data);
               })
               .catch((err) => {
-                console.log(err);
+                console.log(`Error posting message: `, err);
               });
             updateActiveDraft("");
           }

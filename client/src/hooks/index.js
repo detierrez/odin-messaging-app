@@ -1,17 +1,13 @@
 import { useContext } from "react";
 
-import {
-  ActiveFriendContext,
-  DataContext,
-  UserContext,
-} from "../contexts/contexts";
+import { SetChatContext, DataContext, UserContext } from "../contexts/contexts";
 
 export function useUser() {
   return useContext(UserContext);
 }
 
-export function useActiveFriend() {
-  return useContext(ActiveFriendContext);
+export function useSetChat() {
+  return useContext(SetChatContext);
 }
 
 export function useData() {

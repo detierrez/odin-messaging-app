@@ -17,12 +17,11 @@ export default function AddFriendInput() {
       body: { username },
     })
       .then((data) => {
-        console.log(data);
+        console.log("Success posting request: ", data);
       })
       .catch((err) => {
-        console.log(err);
+        console.log("Error posting request: ", err);
       });
-    console.log("asd");
   };
 
   return (
