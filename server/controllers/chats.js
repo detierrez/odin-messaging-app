@@ -1,6 +1,7 @@
 const { matchedData } = require("express-validator");
 const prisma = require("../lib/prisma");
 const { httpError } = require("../middlewares");
+const { toSorted } = require("../lib/common");
 
 module.exports.getChat = async (req, res) => {
   const { id: userId } = req.user;
@@ -62,6 +63,14 @@ module.exports.postChat = async (req, res) => {
 
   const participation = await prisma.participation.findUnique({
     where: { userId_chatId: { userId, chatId } },
+    select: {
+      chat: {
+        select: {
+          type: true,
+          participations: { where: { userId: { not: userId } } },
+        },
+      },
+    },
   });
 
   if (!participation) {
@@ -70,18 +79,29 @@ module.exports.postChat = async (req, res) => {
     ]);
   }
 
+  const {
+    chat: { type, participations: otherParticipations },
+  } = participation;
+  if (type === "DIRECT") {
+    const otherUserId = otherParticipations[0].userId;
+    const [lesserId, greaterId] = toSorted([userId, otherUserId]);
+    const friendship = await prisma.friendship.findUnique({
+      where: { lesserId_greaterId: { lesserId, greaterId } },
+    });
+    if (!friendship) {
+      throw new httpError(400, [
+        { reason: "You are not friends with this user" },
+      ]);
+    }
+  }
+
   const message = await prisma.message.create({
     data: { userId, chatId, text },
   });
 
-  const allParticipations = await prisma.participation.findMany({
-    where: { chatId },
-    select: { userId: true },
-  });
-
   const io = req.app.get("io");
-  const recipientIds = allParticipations.map(({ userId }) => `${userId}`);
-  io.to(recipientIds).emit("new_message", message);
+  const otherUsersIds = otherParticipations.map(({ userId }) => `${userId}`);
+  io.to([`${userId}`, ...otherUsersIds]).emit("new_message", message);
 
   res.json({ message });
 };

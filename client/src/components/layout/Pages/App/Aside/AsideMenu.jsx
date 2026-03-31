@@ -16,25 +16,27 @@ export default function AsideMenu() {
         {
           main: (
             <>
-              <h2>Chats</h2>
-              <button onClick={() => setMenu("friends")}>+</button>
+              <h2>
+                Chats <button onClick={() => setMenu("friends")}>+</button>
+              </h2>
               <Inbox />
             </>
           ),
           friends: (
             <>
-              <h2>Friends</h2>
-              <button onClick={() => setMenu("main")}>&lt;</button>
-              <br />
-              <button onClick={() => setMenu("addFriend")}>Add friend</button>
-              <br />
-              <button onClick={() => setMenu("newGroup")}>New group</button>
-              <h3>Friend requests</h3>
+              <h2>
+                <button onClick={() => setMenu("main")}>&lt;</button>
+                Friends
+              </h2>
               <ReceivedRequests />
-              <h3>Groups</h3>
-              <GroupList />
-              <h3>Friends</h3>
+              <h3>
+                Friends <button onClick={() => setMenu("addFriend")}>+</button>
+              </h3>
               <FriendList />
+              <h3>
+                Groups <button onClick={() => setMenu("newGroup")}>+</button>
+              </h3>
+              <GroupList />
             </>
           ),
           addFriend: (

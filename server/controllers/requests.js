@@ -1,6 +1,7 @@
 const { matchedData } = require("express-validator");
 const prisma = require("../lib/prisma");
 const { httpError } = require("../middlewares");
+const { toSorted } = require("../lib/common");
 
 module.exports.postRequest = async (req, res) => {
   const { id: userId } = req.user;
@@ -161,8 +162,4 @@ function sendWebsocketRequestEvent(req, action, request) {
     listName: "receivedFrom",
     otherUser: sender,
   });
-}
-
-function toSorted(array) {
-  return array.toSorted((a, b) => a - b);
 }

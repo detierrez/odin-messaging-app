@@ -1,3 +1,4 @@
+import s from "@styles/Requests.module.css";
 import { useUser, useData } from "../../../../../hooks";
 import { fetchBackend } from "../../../../../router/actions-loaders";
 
@@ -7,29 +8,31 @@ export default function FriendList() {
 
   return (
     <ul>
-      {friends &&
-        friends.map((friend) => {
-          return (
-            <li className="friend" key={friend.id}>
-              <b>{friend.id}</b>
-              <button
-                onClick={() => {
-                  fetchBackend(`/friends/${friend.id}?id=${user.id}`, {
-                    method: "DELETE",
-                  })
-                    .then(() =>
-                      console.log(`Friend ${friend.id} removed successfully`),
-                    )
-                    .catch((error) =>
-                      console.log(`Error removing friend: ${error}`),
-                    );
-                }}
-              >
-                Remove
-              </button>
-            </li>
-          );
-        })}
+      {friends?.map((friend) => {
+        const { id: friendId, username, avatarUrl } = friend;
+        return (
+          <li className={s.entry} key={friendId}>
+            <img className={s.avatar} src={avatarUrl} alt="" />
+            <span className={s.username}>{username}</span>
+            <button
+              className={s.button}
+              onClick={() => {
+                fetchBackend(`/friends/${friendId}?id=${user.id}`, {
+                  method: "DELETE",
+                })
+                  .then(() =>
+                    console.log(`Friend ${friendId} removed successfully`),
+                  )
+                  .catch((error) =>
+                    console.log(`Error removing friend: ${error}`),
+                  );
+              }}
+            >
+              -
+            </button>
+          </li>
+        );
+      })}
     </ul>
   );
 }

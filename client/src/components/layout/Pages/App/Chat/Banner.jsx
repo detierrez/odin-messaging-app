@@ -3,12 +3,12 @@ import { useData } from "../../../../../hooks";
 
 export default function Banner() {
   const { chat } = useData();
-  const { id, avatarUrl } = chat ?? {};
+  const { avatarUrl, name } = chat ?? {};
 
   return (
-    <div className="banner">
+    <div className={s.banner}>
       <img src={avatarUrl} alt="" className={s.avatar} />
-      <span>{id}</span>
+      <span>{name}</span>
     </div>
   );
 }
