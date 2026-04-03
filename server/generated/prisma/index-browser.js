@@ -126,16 +126,21 @@ exports.Prisma.UserScalarFieldEnum = {
   avatarUrl: 'avatarUrl'
 };
 
-exports.Prisma.MessageScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  chatId: 'chatId',
-  text: 'text'
-};
-
 exports.Prisma.FriendshipScalarFieldEnum = {
   lesserId: 'lesserId',
   greaterId: 'greaterId'
+};
+
+exports.Prisma.GroupScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  avatarUrl: 'avatarUrl'
+};
+
+exports.Prisma.MembershipScalarFieldEnum = {
+  userId: 'userId',
+  groupId: 'groupId',
+  role: 'role'
 };
 
 exports.Prisma.RequestScalarFieldEnum = {
@@ -143,17 +148,18 @@ exports.Prisma.RequestScalarFieldEnum = {
   receiverId: 'receiverId'
 };
 
-exports.Prisma.ChatScalarFieldEnum = {
+exports.Prisma.MessageScalarFieldEnum = {
   id: 'id',
-  type: 'type',
-  name: 'name',
-  avatarUrl: 'avatarUrl'
-};
-
-exports.Prisma.ParticipationScalarFieldEnum = {
   userId: 'userId',
   chatId: 'chatId',
-  role: 'role'
+  text: 'text'
+};
+
+exports.Prisma.ChatScalarFieldEnum = {
+  id: 'id',
+  lesserFriendshipId: 'lesserFriendshipId',
+  greaterFriendshipId: 'greaterFriendshipId',
+  groupId: 'groupId'
 };
 
 exports.Prisma.SortOrder = {
@@ -170,11 +176,6 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-exports.ChatType = exports.$Enums.ChatType = {
-  DIRECT: 'DIRECT',
-  GROUP: 'GROUP'
-};
-
 exports.Role = exports.$Enums.Role = {
   MEMBER: 'MEMBER',
   ADMIN: 'ADMIN'
@@ -182,11 +183,12 @@ exports.Role = exports.$Enums.Role = {
 
 exports.Prisma.ModelName = {
   User: 'User',
-  Message: 'Message',
   Friendship: 'Friendship',
+  Group: 'Group',
+  Membership: 'Membership',
   Request: 'Request',
-  Chat: 'Chat',
-  Participation: 'Participation'
+  Message: 'Message',
+  Chat: 'Chat'
 };
 
 /**

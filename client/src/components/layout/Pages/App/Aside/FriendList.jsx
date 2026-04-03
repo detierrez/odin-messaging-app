@@ -1,10 +1,10 @@
 import s from "@styles/Requests.module.css";
-import { useUser, useData } from "../../../../../hooks";
+import { useUser, useFriends } from "../../../../../hooks";
 import { fetchBackend } from "../../../../../router/actions-loaders";
 
 export default function FriendList() {
   const { user } = useUser();
-  const { friends } = useData();
+  const friends = useFriends();
 
   return (
     <ul>
@@ -13,7 +13,7 @@ export default function FriendList() {
         return (
           <li className={s.entry} key={friendId}>
             <img className={s.avatar} src={avatarUrl} alt="" />
-            <span className={s.username}>{username}</span>
+            <span className={s.name}>{username}</span>
             <button
               className={s.button}
               onClick={() => {

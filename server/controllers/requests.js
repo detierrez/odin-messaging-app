@@ -126,23 +126,32 @@ module.exports.acceptRequest = async (req, res) => {
 
     const [lesserId, greaterId] = toSorted([userId, otherUserId]);
     const newFriendship = await tx.friendship.create({
-      data: { lesserId, greaterId },
-      include: { lesserIdUser: true, greaterIdUser: true },
+      data: { lesserId, greaterId, chat: { create: {} } },
+      select: {
+        lesserId: true,
+        greaterId: true,
+        chat: {
+          select: {
+            id: true,
+            messages: true,
+            group: true,
+            friendship: {
+              select: { lesserIdUser: true, greaterIdUser: true },
+            },
+          },
+        },
+      },
     });
 
-    return { request: deletedRequest, friendship: newFriendship };
+    return {
+      request: deletedRequest,
+      friendship: newFriendship,
+    };
   });
 
-  const { lesserIdUser, greaterIdUser } = friendship;
+  const { lesserId, greaterId, chat } = friendship;
   const io = req.app.get("io");
-  io.to(`${lesserIdUser.id}`).emit("friends_mutation", {
-    action: "add",
-    friend: greaterIdUser,
-  });
-  io.to(`${greaterIdUser.id}`).emit("friends_mutation", {
-    action: "add",
-    friend: lesserIdUser,
-  });
+  io.to([`${lesserId}`, `${greaterId}`]).emit("new_chat", chat);
 
   sendWebsocketRequestEvent(req, "remove", request);
   res.json({ message: "success" });

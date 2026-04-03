@@ -1,9 +1,7 @@
 const prisma = require("./prisma");
 
 (async function main() {
-  await prisma.message.deleteMany();
-  await prisma.participation.deleteMany();
-  await prisma.chat.deleteMany();
+  await prisma.group.deleteMany();
   await prisma.friendship.deleteMany();
 
   // await prisma.user.deleteMany();
@@ -25,7 +23,6 @@ const prisma = require("./prisma");
     { lesserId: 3, greaterId: 4 },
     { lesserId: 3, greaterId: 5 },
   ];
-  await prisma.friendship.createMany({ data: friendships });
 
   const messagesByChat = {
     "1-2": [
@@ -97,45 +94,51 @@ const prisma = require("./prisma");
     const key = `${id1}-${id2}`;
     const chatMessages = messagesByChat[key] || [];
 
-    await prisma.chat.create({
+    await prisma.friendship.create({
       data: {
-        type: "DIRECT",
-        participations: { create: [{ userId: id1 }, { userId: id2 }] },
-        messages: {
-          create: chatMessages,
-        },
+        lesserId: id1,
+        greaterId: id2,
+        chat: { create: { messages: { create: chatMessages } } },
       },
     });
   }
 
-  await prisma.chat.create({
+  await prisma.group.create({
     data: {
-      type: "GROUP",
       name: "Memes",
       avatarUrl:
         "https://i.pinimg.com/474x/7b/8c/c0/7b8cc0d2f68f3453b34924b06032d810.jpg",
-      participations: { create: [{ userId: 1 }, { userId: 3 }, { userId: 5 }] },
-      messages: {
-        create: [
-          { userId: 1, text: "Did you guys see the new trailer?" },
-          { userId: 1, text: "It looks absolutely insane." },
-          { userId: 1, text: "I've watched it like five times already." },
-          { userId: 1, text: "The cinematography is top notch." },
-          {
-            userId: 1,
-            text: "We should definitely go see it on opening night.",
+      memberships: {
+        create: [{ userId: 1 }, { userId: 3, role: "ADMIN" }, { userId: 5 }],
+      },
+      chat: {
+        create: {
+          messages: {
+            create: [
+              { userId: 1, text: "Did you guys see the new trailer?" },
+              { userId: 1, text: "It looks absolutely insane." },
+              { userId: 1, text: "I've watched it like five times already." },
+              { userId: 1, text: "The cinematography is top notch." },
+              {
+                userId: 1,
+                text: "We should definitely go see it on opening night.",
+              },
+              { userId: 3, text: "I'm down for that!" },
+              { userId: 3, text: "The soundtrack also sounds promising." },
+              { userId: 3, text: "I heard they filmed it in Iceland." },
+              { userId: 3, text: "The lead actor is one of my favorites." },
+              {
+                userId: 3,
+                text: "Let's book the tickets as soon as they're out.",
+              },
+              { userId: 5, text: "Count me in too." },
+              { userId: 5, text: "I'll bring the popcorn." },
+              { userId: 5, text: "Is it a sequel or a standalone movie?" },
+              { userId: 5, text: "Either way, the hype is real." },
+              { userId: 5, text: "Can't wait for next month." },
+            ],
           },
-          { userId: 3, text: "I'm down for that!" },
-          { userId: 3, text: "The soundtrack also sounds promising." },
-          { userId: 3, text: "I heard they filmed it in Iceland." },
-          { userId: 3, text: "The lead actor is one of my favorites." },
-          { userId: 3, text: "Let's book the tickets as soon as they're out." },
-          { userId: 5, text: "Count me in too." },
-          { userId: 5, text: "I'll bring the popcorn." },
-          { userId: 5, text: "Is it a sequel or a standalone movie?" },
-          { userId: 5, text: "Either way, the hype is real." },
-          { userId: 5, text: "Can't wait for next month." },
-        ],
+        },
       },
     },
   });

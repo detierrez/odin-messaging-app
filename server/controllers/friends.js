@@ -33,19 +33,14 @@ module.exports.deleteFriend = async (req, res) => {
   const lesserId = userId < friendId ? userId : friendId;
   const greaterId = userId >= friendId ? userId : friendId;
 
-  await prisma.friendship.delete({
+  const friendship = await prisma.friendship.delete({
     where: { lesserId_greaterId: { lesserId, greaterId } },
+    select: { chat: { select: { id: true } } },
   });
 
   const io = req.app.get("io");
-  io.to(`${lesserId}`).emit("friends_mutation", {
-    action: "remove",
-    friendId: greaterId,
-  });
-  io.to(`${greaterId}`).emit("friends_mutation", {
-    action: "remove",
-    friendId: lesserId,
-  });
+  const { id } = friendship.chat;
+  io.to([`${lesserId}`, `${greaterId}`]).emit("remove_chat", id);
 
   res.json({ message: "success" });
 };

@@ -14,13 +14,7 @@ const {
   acceptRequest,
   deleteRequest,
 } = require("../controllers/requests");
-const { getInbox } = require("../controllers/inbox");
-const { getChat, postChat } = require("../controllers/chats");
-
-// INBOX
-const inbox = Router();
-
-inbox.get("/", getInbox);
+const { getInbox, getChat, postChat } = require("../controllers/chats");
 
 // FRIENDS
 const friends = Router();
@@ -46,7 +40,7 @@ otherUserId.delete("/", deleteRequest);
 const chats = Router();
 const chatId = Router({ mergeParams: true });
 // const participants = Router({ mergeParams: true });
-
+chats.get("/inbox", getInbox);
 chats.use("/:chatId", validateId("chatId"), chatId);
 chatId.get("/", getChat);
 chatId.post("/", postChat);
@@ -59,7 +53,6 @@ chatId.post("/", postChat);
 const index = Router();
 index.use(logger);
 index.use(strictAuthenticate);
-index.use("/inbox", inbox);
 index.use("/friends", friends);
 index.use("/requests", requests);
 index.use("/chats", chats);

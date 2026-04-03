@@ -1,10 +1,11 @@
+import s from "@styles/Requests.module.css";
 import { useState } from "react";
-import { useUser, useData } from "../../../../../hooks";
+import { useUser, useFriends } from "../../../../../hooks";
 import { fetchBackend } from "../../../../../router/actions-loaders";
 
 export default function NewGroupFrom() {
   const { user } = useUser();
-  const { friends } = useData();
+  const friends = useFriends();
   const [name, setName] = useState("");
   const [selected, setSelected] = useState(new Set());
 
@@ -32,30 +33,30 @@ export default function NewGroupFrom() {
       <br />
       <h3>Select members</h3>
       <ul>
-        {friends &&
-          friends.map((friend) => {
-            return (
-              <li className="friend" key={friend.id}>
-                <b>{friend.id}</b>
-                <input
-                  type="checkbox"
-                  name="friends"
-                  id="friends"
-                  checked={selected.has(friend.id)}
-                  onChange={() =>
-                    setSelected((prev) => {
-                      const copy = new Set(prev);
-                      copy.has(friend.id)
-                        ? copy.delete(friend.id)
-                        : copy.add(friend.id);
-                      return copy;
-                    })
-                  }
-                  readOnly
-                />
-              </li>
-            );
-          })}
+        {friends?.map(({ id: friendId, avatarUrl, username }) => {
+          return (
+            <li className={s.entry} key={friendId}>
+              <img className={s.avatar} src={avatarUrl} alt="" />
+              <span className={s.name}>{username}</span>
+              <input
+                type="checkbox"
+                name="friends"
+                id="friends"
+                checked={selected.has(friendId)}
+                onChange={() =>
+                  setSelected((prev) => {
+                    const copy = new Set(prev);
+                    copy.has(friendId)
+                      ? copy.delete(friendId)
+                      : copy.add(friendId);
+                    return copy;
+                  })
+                }
+                readOnly
+              />
+            </li>
+          );
+        })}
       </ul>
     </>
   );

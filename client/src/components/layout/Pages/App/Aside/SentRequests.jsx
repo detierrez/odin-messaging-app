@@ -15,7 +15,7 @@ export default function SentRequests() {
         return (
           <li className={s.entry} key={id}>
             <img className={s.avatar} src={avatarUrl} alt="" />
-            <span className={s.username}>{username}</span>
+            <span className={s.name}>{username}</span>
             <button
               className={s.button}
               onClick={() => {

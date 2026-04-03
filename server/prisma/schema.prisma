@@ -8,75 +8,83 @@ datasource db {
 }
 
 model User {
-    id        Int    @id @default(autoincrement())
-    username  String @unique
-    avatarUrl String @default("https://media.muckrack.com/profile/images/2061376/peter-mansell.png.256x256_q100_crop-smart.png")
+    id        Int     @id @default(autoincrement())
+    username  String  @unique
+    avatarUrl String?
 
-    sentMessages Message[] @relation("sentMessages")
-
+    sentMessages     Message[]    @relation("sentMessages")
     greaterIdFriends Friendship[] @relation("lesserIdUserFriendships")
     lesserIdFriends  Friendship[] @relation("greaterIdUserFriendships")
-
-    sentRequests     Request[] @relation("sentRequests")
-    receivedRequests Request[] @relation("receivedRequests")
-
-    participations Participation[] @relation("userParticipations")
-}
-
-model Message {
-    id     Int    @id @default(autoincrement())
-    user   User   @relation("sentMessages", fields: [userId], references: [id])
-    userId Int
-    chat   Chat   @relation("chatMessages", fields: [chatId], references: [id])
-    chatId Int
-    text   String
+    sentRequests     Request[]    @relation("sentRequests")
+    receivedRequests Request[]    @relation("receivedRequests")
+    memberships      Membership[] @relation("userMemberships")
 }
 
 model Friendship {
     lesserId  Int
     greaterId Int
 
-    lesserIdUser  User @relation("lesserIdUserFriendships", fields: [lesserId], references: [id], onDelete: Cascade)
-    greaterIdUser User @relation("greaterIdUserFriendships", fields: [greaterId], references: [id], onDelete: Cascade)
+    lesserIdUser  User  @relation("lesserIdUserFriendships", fields: [lesserId], references: [id], onDelete: Cascade)
+    greaterIdUser User  @relation("greaterIdUserFriendships", fields: [greaterId], references: [id], onDelete: Cascade)
+    chat          Chat? @relation("chatFriendship")
 
     @@id([lesserId, greaterId])
 }
 
+model Group {
+    id        Int     @id @default(autoincrement())
+    name      String?
+    avatarUrl String?
+
+    memberships Membership[] @relation("groupMemberships")
+    chat        Chat?        @relation("chatGroup")
+}
+
+model Membership {
+    userId  Int
+    groupId Int
+    role    Role @default(MEMBER)
+
+    user  User  @relation("userMemberships", fields: [userId], references: [id], onDelete: Cascade)
+    group Group @relation("groupMemberships", fields: [groupId], references: [id], onDelete: Cascade)
+
+    @@id([userId, groupId])
+}
+
 model Request {
-    sender     User @relation("sentRequests", fields: [senderId], references: [id])
     senderId   Int
-    receiver   User @relation("receivedRequests", fields: [receiverId], references: [id])
     receiverId Int
+
+    sender   User @relation("sentRequests", fields: [senderId], references: [id])
+    receiver User @relation("receivedRequests", fields: [receiverId], references: [id])
 
     @@id([senderId, receiverId])
 }
 
 model Chat {
-    id        Int      @id @default(autoincrement())
-    type      ChatType @default(DIRECT)
-    name      String?
-    avatarUrl String?
+    id                  Int  @id @default(autoincrement())
+    lesserFriendshipId  Int?
+    greaterFriendshipId Int?
+    groupId             Int? @unique
 
-    messages       Message[]       @relation("chatMessages")
-    participations Participation[] @relation("chatParticipations")
+    messages   Message[]   @relation("chatMessages")
+    friendship Friendship? @relation("chatFriendship", fields: [lesserFriendshipId, greaterFriendshipId], references: [lesserId, greaterId], onDelete: Cascade)
+    group      Group?      @relation("chatGroup", fields: [groupId], references: [id], onDelete: Cascade)
+
+    @@unique([lesserFriendshipId, greaterFriendshipId])
 }
 
-model Participation {
-    user   User @relation("userParticipations", fields: [userId], references: [id])
+model Message {
+    id     Int    @id @default(autoincrement())
     userId Int
-    chat   Chat @relation("chatParticipations", fields: [chatId], references: [id])
     chatId Int
-    role   Role @default(MEMBER)
+    text   String
 
-    @@id([userId, chatId])
+    user User @relation("sentMessages", fields: [userId], references: [id])
+    chat Chat @relation("chatMessages", fields: [chatId], references: [id], onDelete: Cascade)
 }
 
 enum Role {
     MEMBER
     ADMIN
-}
-
-enum ChatType {
-    DIRECT
-    GROUP
 }

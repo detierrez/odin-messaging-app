@@ -8,7 +8,6 @@ export default function ReceivedRequests() {
     requests: { receivedFrom },
   } = useData() ?? {};
 
-  console.log({ receivedFrom });
   return (
     receivedFrom.length > 0 && (
       <ul>
@@ -18,7 +17,7 @@ export default function ReceivedRequests() {
           return (
             <li className={s.entry} key={otherUserId}>
               <img className={s.avatar} src={avatarUrl} alt="" />
-              <span className={s.username}>{username}</span>
+              <span className={s.name}>{username}</span>
               <button
                 className={s.button}
                 onClick={() => {
