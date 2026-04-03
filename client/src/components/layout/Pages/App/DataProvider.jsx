@@ -71,28 +71,11 @@ export default function DataProvider({ children }) {
       auth: { token: userId },
     });
 
-    socket.on("new_message", onNewMessage);
-    function onNewMessage(message) {
-      dispatchChatHistories({
-        type: "add_message",
-        message,
-      });
-    }
-
-    socket.on("new_chat", onNewChat);
-    function onNewChat(chat) {
-      dispatchChatHistories({
-        type: "add_chat",
-        chat: parseChat(userId, chat),
-      });
-    }
-
-    socket.on("remove_chat", onRemoveChat);
-    function onRemoveChat(chatId) {
-      dispatchChatHistories({
-        type: "remove_chat",
-        chatId,
-      });
+    socket.on("chats_mutation", onChatsMutation);
+    function onChatsMutation({ action, ...payload }) {
+      const { chat } = payload;
+      if (payload.chat) payload.chat = parseChat(userId, chat);
+      dispatchChatHistories({ type: action, ...payload });
     }
 
     socket.on("request_mutation", onRequestMutation);
@@ -101,8 +84,7 @@ export default function DataProvider({ children }) {
     }
 
     return () => {
-      socket.off("new_message", onNewMessage);
-      socket.off("new_chat", onNewChat);
+      socket.off("chats_mutation", onChatsMutation);
       socket.off("request_mutation", onRequestMutation);
       socket.disconnect();
     };

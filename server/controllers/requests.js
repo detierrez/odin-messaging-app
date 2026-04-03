@@ -151,7 +151,10 @@ module.exports.acceptRequest = async (req, res) => {
 
   const { lesserId, greaterId, chat } = friendship;
   const io = req.app.get("io");
-  io.to([`${lesserId}`, `${greaterId}`]).emit("new_chat", chat);
+  io.to([`${lesserId}`, `${greaterId}`]).emit("chats_mutation", {
+    action: "add_chat",
+    chat,
+  });
 
   sendWebsocketRequestEvent(req, "remove", request);
   res.json({ message: "success" });

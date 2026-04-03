@@ -39,8 +39,11 @@ module.exports.deleteFriend = async (req, res) => {
   });
 
   const io = req.app.get("io");
-  const { id } = friendship.chat;
-  io.to([`${lesserId}`, `${greaterId}`]).emit("remove_chat", id);
+  const { id: chatId } = friendship.chat;
+  io.to([`${lesserId}`, `${greaterId}`]).emit("chats_mutation", {
+    action: "remove_chat",
+    chatId,
+  });
 
   res.json({ message: "success" });
 };
