@@ -117,8 +117,7 @@ function chatHistoriesReducer(chatHistories, action) {
       return rest;
     }
     case "add_message": {
-      const { message } = action;
-      const { chatId } = message;
+      const { chatId, message } = action;
       const existingChat = chatHistories[chatId];
       if (!existingChat) return chatHistories;
       return {

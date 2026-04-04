@@ -71,38 +71,28 @@ module.exports.postChat = async (req, res) => {
   const { chatId } = matchedData(req);
   const { text } = req.body;
 
-  const participation = await prisma.participation.findUnique({
-    where: { userId_chatId: { userId, chatId } },
+  const chat = await prisma.chat.findUnique({
+    where: { id: chatId },
     select: {
-      chat: {
-        select: {
-          type: true,
-          participations: { where: { userId: { not: userId } } },
-        },
-      },
+      group: { select: { memberships: { select: { userId: true } } } },
+      friendship: { select: { greaterId: true, lesserId: true } },
     },
   });
 
-  if (!participation) {
+  if (!chat) {
+    throw new httpError(404, [{ reason: "This chat does not exist" }]);
+  }
+
+  const { group, friendship } = chat;
+  let isParticipant =
+    group?.memberships.some(({ userId: memberId }) => memberId === userId) ||
+    friendship?.lesserId === userId ||
+    friendship?.greaterId === userId;
+
+  if (!isParticipant) {
     throw new httpError(404, [
       { reason: "You do not participate in this chat" },
     ]);
-  }
-
-  const {
-    chat: { type, participations: otherParticipations },
-  } = participation;
-  if (type === "DIRECT") {
-    const otherUserId = otherParticipations[0].userId;
-    const [lesserId, greaterId] = toSorted([userId, otherUserId]);
-    const friendship = await prisma.friendship.findUnique({
-      where: { lesserId_greaterId: { lesserId, greaterId } },
-    });
-    if (!friendship) {
-      throw new httpError(400, [
-        { reason: "You are not friends with this user" },
-      ]);
-    }
   }
 
   const message = await prisma.message.create({
@@ -110,8 +100,15 @@ module.exports.postChat = async (req, res) => {
   });
 
   const io = req.app.get("io");
-  const otherUsersIds = otherParticipations.map(({ userId }) => `${userId}`);
-  io.to([`${userId}`, ...otherUsersIds]).emit("new_message", message);
+  const allParticipants = group?.memberships.map(
+    ({ userId }) => `${userId}`,
+  ) || [`${friendship.lesserId}`, `${friendship.greaterId}`];
+
+  io.to(allParticipants).emit("chats_mutation", {
+    action: "add_message",
+    chatId,
+    message,
+  });
 
   res.json({ message });
 };

@@ -27,7 +27,9 @@ export default function App() {
 
           <ProfileButtons className={s.menuBar} />
         </aside>
-        {/* <main className={s.main}>{<ChatWindow />}</main> */}
+        <main className={s.main}>
+          <ChatWindow />
+        </main>
       </div>
     </DataProvider>
   );
