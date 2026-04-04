@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useUser, useFriends } from "../../../../../hooks";
 import { fetchBackend } from "../../../../../router/actions-loaders";
 
-export default function NewGroupFrom() {
+export default function NewGroupFrom({ onCreate }) {
   const { user } = useUser();
   const friends = useFriends();
   const [name, setName] = useState("");
@@ -24,8 +24,13 @@ export default function NewGroupFrom() {
       <button
         onClick={() => {
           fetchBackend(`/groups?id=${user.id}`, {
-            body: { name, friendIds: Array.from(selected) },
-          });
+            body: { name, membersIds: Array.from(selected) },
+          })
+            .then(() => {
+              console.log("Success creating group");
+              onCreate();
+            })
+            .catch((e) => console.log("Error creating group", e));
         }}
       >
         Create group
@@ -40,8 +45,8 @@ export default function NewGroupFrom() {
               <span className={s.name}>{username}</span>
               <input
                 type="checkbox"
-                name="friends"
-                id="friends"
+                name="membersIds"
+                id="membersIds"
                 checked={selected.has(friendId)}
                 onChange={() =>
                   setSelected((prev) => {

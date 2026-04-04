@@ -2,6 +2,7 @@ const { matchedData } = require("express-validator");
 const prisma = require("../lib/prisma");
 const { httpError } = require("../middlewares");
 const { toSorted } = require("../lib/common");
+const { apiChatSelect } = require("./common");
 
 module.exports.postRequest = async (req, res) => {
   const { id: userId } = req.user;
@@ -130,16 +131,7 @@ module.exports.acceptRequest = async (req, res) => {
       select: {
         lesserId: true,
         greaterId: true,
-        chat: {
-          select: {
-            id: true,
-            messages: true,
-            group: true,
-            friendship: {
-              select: { lesserIdUser: true, greaterIdUser: true },
-            },
-          },
-        },
+        chat: { select: apiChatSelect },
       },
     });
 

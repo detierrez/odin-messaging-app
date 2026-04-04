@@ -74,7 +74,7 @@ export default function DataProvider({ children }) {
     socket.on("chats_mutation", onChatsMutation);
     function onChatsMutation({ action, ...payload }) {
       const { chat } = payload;
-      if (payload.chat) payload.chat = parseChat(userId, chat);
+      if (chat) payload.chat = parseChat(userId, chat);
       dispatchChatHistories({ type: action, ...payload });
     }
 
@@ -168,11 +168,13 @@ function parseChat(userId, chat) {
     const { lesserIdUser, greaterIdUser } = friendship;
     friend = userId === lesserIdUser.id ? greaterIdUser : lesserIdUser;
   }
+  const name = group ? group.name : friend.username;
+  const avatarUrl = group ? group.avatarUrl : friend.avatarUrl;
 
   return {
     ...chat,
-    name: group ? group.name : friend.username,
-    avatarUrl: group ? group.avatarUrl : friend.avatarUrl,
+    name,
+    avatarUrl,
     friend,
   };
 }

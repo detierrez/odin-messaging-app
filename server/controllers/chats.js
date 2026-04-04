@@ -2,6 +2,7 @@ const { matchedData } = require("express-validator");
 const prisma = require("../lib/prisma");
 const { httpError } = require("../middlewares");
 const { toSorted } = require("../lib/common");
+const { apiInboxChatSelect } = require("./common");
 
 module.exports.getInbox = async (req, res) => {
   const { id: userId } = req.user;
@@ -14,12 +15,7 @@ module.exports.getInbox = async (req, res) => {
         { group: { memberships: { some: { userId } } } },
       ],
     },
-    select: {
-      id: true,
-      messages: { orderBy: { id: "desc" }, take: 1 },
-      group: true,
-      friendship: { select: { lesserIdUser: true, greaterIdUser: true } },
-    },
+    select: apiInboxChatSelect,
   });
 
   chats.sort((a, b) => {

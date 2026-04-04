@@ -148,18 +148,18 @@ exports.Prisma.RequestScalarFieldEnum = {
   receiverId: 'receiverId'
 };
 
-exports.Prisma.MessageScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  chatId: 'chatId',
-  text: 'text'
-};
-
 exports.Prisma.ChatScalarFieldEnum = {
   id: 'id',
   lesserFriendshipId: 'lesserFriendshipId',
   greaterFriendshipId: 'greaterFriendshipId',
   groupId: 'groupId'
+};
+
+exports.Prisma.MessageScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  chatId: 'chatId',
+  text: 'text'
 };
 
 exports.Prisma.SortOrder = {
@@ -187,8 +187,8 @@ exports.Prisma.ModelName = {
   Group: 'Group',
   Membership: 'Membership',
   Request: 'Request',
-  Message: 'Message',
-  Chat: 'Chat'
+  Chat: 'Chat',
+  Message: 'Message'
 };
 
 /**

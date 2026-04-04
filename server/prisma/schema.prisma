@@ -8,9 +8,9 @@ datasource db {
 }
 
 model User {
-    id        Int     @id @default(autoincrement())
-    username  String  @unique
-    avatarUrl String?
+    id        Int    @id @default(autoincrement())
+    username  String @unique
+    avatarUrl String @default("https://static.vecteezy.com/system/resources/thumbnails/067/451/117/small/avatar-simple-flat-default-user-profile-icon-gender-neutral-person-silhouette-profile-picture-symbol-user-account-dp-sign-best-for-social-media-icons-web-and-app-design-illustration-vector.jpg")
 
     sentMessages     Message[]    @relation("sentMessages")
     greaterIdFriends Friendship[] @relation("lesserIdUserFriendships")
@@ -32,9 +32,9 @@ model Friendship {
 }
 
 model Group {
-    id        Int     @id @default(autoincrement())
-    name      String?
-    avatarUrl String?
+    id        Int    @id @default(autoincrement())
+    name      String
+    avatarUrl String @default("https://cdn-icons-png.flaticon.com/512/17860/17860138.png")
 
     memberships Membership[] @relation("groupMemberships")
     chat        Chat?        @relation("chatGroup")

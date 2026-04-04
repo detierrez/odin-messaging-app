@@ -15,6 +15,7 @@ const {
   deleteRequest,
 } = require("../controllers/requests");
 const { getInbox, getChat, postChat } = require("../controllers/chats");
+const { postGroup, deleteGroup } = require("../controllers/groups");
 
 // FRIENDS
 const friends = Router();
@@ -24,6 +25,13 @@ friends.get("/", getFriends);
 
 friends.use("/:friendId", validateId("friendId"), friendId);
 friendId.delete("/", deleteFriend);
+
+// GROUPS
+const groups = Router();
+const groupId = Router({ mergeParams: true });
+groups.post("/", postGroup);
+groups.use("/:groupId", validateId("groupId"), groupId);
+groupId.delete("/", deleteGroup);
 
 // REQUESTS
 const requests = Router();
@@ -56,6 +64,7 @@ index.use(strictAuthenticate);
 index.use("/friends", friends);
 index.use("/requests", requests);
 index.use("/chats", chats);
+index.use("/groups", groups);
 index.use(throw404, maskInternalErrors, sendError);
 
 module.exports = index;

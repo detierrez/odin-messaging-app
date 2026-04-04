@@ -1,7 +1,9 @@
 import s from "@styles/Requests.module.css";
-import { useGroups } from "../../../../../hooks";
+import { useGroups, useUser } from "../../../../../hooks";
+import { fetchBackend } from "../../../../../router/actions-loaders";
 
 export default function GroupList() {
+  const { user } = useUser();
   const groups = useGroups();
 
   return (
@@ -15,7 +17,15 @@ export default function GroupList() {
             <button
               className={s.button}
               onClick={() => {
-                console.log(groupId);
+                fetchBackend(`/groups/${groupId}?id=${user.id}`, {
+                  method: "DELETE",
+                })
+                  .then(() =>
+                    console.log(`Group ${groupId} removed successfully`),
+                  )
+                  .catch((error) =>
+                    console.log(`Error removing group: ${error}`),
+                  );
               }}
             >
               -

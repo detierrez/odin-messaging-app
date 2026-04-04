@@ -55,7 +55,7 @@ export default function AsideMenu() {
               <h2>New group</h2>
               <button onClick={() => setMenu("friends")}>&lt;</button>
 
-              <NewGroupFrom />
+              <NewGroupFrom onCreate={() => setMenu("friends")} />
             </>
           ),
         }[menu]
