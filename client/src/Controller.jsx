@@ -1,6 +1,6 @@
 import { useState } from "react";
-import App from "./components/layout/Pages/App/App";
-import { UserContext } from "./contexts/contexts";
+import App from "@components/App";
+import { UserContext } from "@contexts";
 
 export default function Controller() {
   const [user, setUser] = useState({ id: 1 });

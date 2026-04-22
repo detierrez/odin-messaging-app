@@ -1,5 +1,6 @@
 // const { strictAuthenticate, looseAuthenticate } = require("./passport");
-const { validateId, validateLogin, validateSignup } = require("./validators");
+const validators = require("./validators");
+
 const {
   httpError,
   throw404,
@@ -8,11 +9,7 @@ const {
 } = require("./errorHandlers");
 
 const logger = (req, res, next) => {
-  console.log("Incoming request:", {
-    url: req.url,
-    // body: req.body,
-    // query: req.query,
-  });
+  console.log(`Incoming request: ${req.method} ${req.originalUrl}`);
   next();
 };
 
@@ -33,7 +30,5 @@ module.exports = {
   httpError,
   strictAuthenticate,
   // looseAuthenticate,
-  validateId,
-  // validateLogin,
-  // validateSignup,
+  validators,
 };

@@ -10,6 +10,10 @@
   border: 1px solid #61ef0969;
 }
 
+.aside h1 {
+  font-size: 1rem;
+}
+
 .main {
   flex: 2 1 200px;
   min-width: 0;

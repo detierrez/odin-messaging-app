@@ -1,31 +1,50 @@
 const { matchedData } = require("express-validator");
 const prisma = require("../lib/prisma");
 const { httpError } = require("../middlewares");
-const { toSorted } = require("../lib/common");
-const { apiChatSelect } = require("./common");
+const { notifyRequest } = require("../socket.io");
+
+module.exports.getRequests = async (req, res) => {
+  const { id: userId } = req.user;
+
+  const [sent, received] = await Promise.all([
+    prisma.request.findMany({
+      where: { senderId: userId },
+      select: { receiverId: true },
+    }),
+    prisma.request.findMany({
+      where: { receiverId: userId },
+      select: { senderId: true },
+    }),
+  ]);
+
+  const sentTo = sent.map(({ receiverId }) => receiverId);
+  const receivedFrom = received.map(({ senderId }) => senderId);
+
+  res.json({ requests: { sentTo, receivedFrom } });
+};
 
 module.exports.postRequest = async (req, res) => {
   const { id: userId } = req.user;
-  const { username } = req.body;
+  const { username } = matchedData(req);
 
-  let otherUserId;
-  try {
-    const otherUser = await prisma.user.findFirstOrThrow({
-      where: { username },
-    });
-    otherUserId = otherUser.id;
-  } catch (error) {
-    throw new httpError(400, [{ reason: "User does not exist" }]);
-  }
+  const otherUser = await prisma.user.findFirst({ where: { username } });
+  if (!otherUser) throw new httpError(400, [{ reason: "User does not exist" }]);
 
+  const otherUserId = otherUser.id;
   if (userId === otherUserId) {
     throw new httpError(400, [{ reason: "Cannot send a request to yourself" }]);
   }
 
-  const [lesserId, greaterId] = toSorted([userId, otherUserId]);
-  const [existingFriendship, existingRequest] = await Promise.all([
-    prisma.friendship.findUnique({
-      where: { lesserId_greaterId: { lesserId, greaterId } },
+  const [existingDirect, existingRequest] = await Promise.all([
+    prisma.chat.findFirst({
+      where: {
+        type: "DIRECT",
+        AND: [
+          { writeAccesses: { some: { userId, endedAt: null } } },
+          { writeAccesses: { some: { userId: otherUserId, endedAt: null } } },
+        ],
+      },
+      select: { id: true },
     }),
     prisma.request.findFirst({
       where: {
@@ -37,7 +56,7 @@ module.exports.postRequest = async (req, res) => {
     }),
   ]);
 
-  if (existingFriendship) {
+  if (existingDirect) {
     throw new httpError(400, [{ reason: "You are already friends" }]);
   }
   if (existingRequest) {
@@ -46,40 +65,12 @@ module.exports.postRequest = async (req, res) => {
     ]);
   }
 
-  try {
-    const request = await prisma.request.create({
-      data: { senderId: userId, receiverId: otherUserId },
-      include: { sender: true, receiver: true },
-    });
+  await prisma.request.create({
+    data: { senderId: userId, receiverId: otherUserId },
+  });
 
-    sendWebsocketRequestEvent(req, "add", request);
-    res.json({ message: "success" });
-  } catch (error) {
-    if (error.code === "P2002") {
-      throw new httpError(400, [{ reason: "A request already exists" }]);
-    }
-    throw error;
-  }
-};
-
-module.exports.getRequests = async (req, res) => {
-  const { id: userId } = req.user;
-
-  const [sent, received] = await Promise.all([
-    prisma.request.findMany({
-      where: { senderId: userId },
-      select: { receiver: true },
-    }),
-    prisma.request.findMany({
-      where: { receiverId: userId },
-      select: { sender: true },
-    }),
-  ]);
-
-  const sentTo = sent.map(({ receiver }) => receiver);
-  const receivedFrom = received.map(({ sender }) => sender);
-
-  res.json({ requests: { sentTo, receivedFrom } });
+  notifyRequest("add_request", userId, otherUserId);
+  res.json({ success: true });
 };
 
 module.exports.deleteRequest = async (req, res) => {
@@ -93,77 +84,16 @@ module.exports.deleteRequest = async (req, res) => {
         { senderId: otherUserId, receiverId: userId },
       ],
     },
-    include: { sender: true, receiver: true },
+    select: { senderId: true, receiverId: true },
   });
 
-  if (!request) {
-    throw new httpError(404, [{ reason: "Request not found" }]);
-  }
+  if (!request) throw new httpError(404, [{ reason: "Request not found" }]);
 
+  const { senderId, receiverId } = request;
   await prisma.request.delete({
-    where: {
-      senderId_receiverId: {
-        senderId: request.senderId,
-        receiverId: request.receiverId,
-      },
-    },
+    where: { senderId_receiverId: { senderId, receiverId } },
   });
 
-  sendWebsocketRequestEvent(req, "remove", request);
-  res.json({ message: "success" });
+  notifyRequest("remove_request", senderId, receiverId);
+  res.json({ success: true });
 };
-
-module.exports.acceptRequest = async (req, res) => {
-  const { id: userId } = req.user;
-  const { otherUserId } = matchedData(req);
-
-  const { request, friendship } = await prisma.$transaction(async (tx) => {
-    const deletedRequest = await tx.request.delete({
-      where: {
-        senderId_receiverId: { senderId: otherUserId, receiverId: userId },
-      },
-      include: { sender: true, receiver: true },
-    });
-
-    const [lesserId, greaterId] = toSorted([userId, otherUserId]);
-    const newFriendship = await tx.friendship.create({
-      data: { lesserId, greaterId, chat: { create: {} } },
-      select: {
-        lesserId: true,
-        greaterId: true,
-        chat: { select: apiChatSelect },
-      },
-    });
-
-    return {
-      request: deletedRequest,
-      friendship: newFriendship,
-    };
-  });
-
-  const { lesserId, greaterId, chat } = friendship;
-  const io = req.app.get("io");
-  io.to([`${lesserId}`, `${greaterId}`]).emit("chats_mutation", {
-    action: "add_chat",
-    chat,
-  });
-
-  sendWebsocketRequestEvent(req, "remove", request);
-  res.json({ message: "success" });
-};
-
-function sendWebsocketRequestEvent(req, action, request) {
-  const { sender, receiver } = request;
-  const io = req.app.get("io");
-
-  io.to(`${sender.id}`).emit("request_mutation", {
-    action,
-    listName: "sentTo",
-    otherUser: receiver,
-  });
-  io.to(`${receiver.id}`).emit("request_mutation", {
-    action,
-    listName: "receivedFrom",
-    otherUser: sender,
-  });
-}

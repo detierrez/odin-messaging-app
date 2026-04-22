@@ -123,24 +123,8 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   username: 'username',
-  avatarUrl: 'avatarUrl'
-};
-
-exports.Prisma.FriendshipScalarFieldEnum = {
-  lesserId: 'lesserId',
-  greaterId: 'greaterId'
-};
-
-exports.Prisma.GroupScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  avatarUrl: 'avatarUrl'
-};
-
-exports.Prisma.MembershipScalarFieldEnum = {
-  userId: 'userId',
-  groupId: 'groupId',
-  role: 'role'
+  avatarUrl: 'avatarUrl',
+  description: 'description'
 };
 
 exports.Prisma.RequestScalarFieldEnum = {
@@ -148,18 +132,33 @@ exports.Prisma.RequestScalarFieldEnum = {
   receiverId: 'receiverId'
 };
 
+exports.Prisma.WriteAccessScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  chatId: 'chatId',
+  startedAt: 'startedAt',
+  endedAt: 'endedAt',
+  role: 'role'
+};
+
+exports.Prisma.ReadAccessScalarFieldEnum = {
+  userId: 'userId',
+  chatId: 'chatId'
+};
+
 exports.Prisma.ChatScalarFieldEnum = {
   id: 'id',
-  lesserFriendshipId: 'lesserFriendshipId',
-  greaterFriendshipId: 'greaterFriendshipId',
-  groupId: 'groupId'
+  name: 'name',
+  avatarUrl: 'avatarUrl',
+  type: 'type'
 };
 
 exports.Prisma.MessageScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   chatId: 'chatId',
-  text: 'text'
+  content: 'content',
+  sentAt: 'sentAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -181,12 +180,16 @@ exports.Role = exports.$Enums.Role = {
   ADMIN: 'ADMIN'
 };
 
+exports.Type = exports.$Enums.Type = {
+  DIRECT: 'DIRECT',
+  GROUP: 'GROUP'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
-  Friendship: 'Friendship',
-  Group: 'Group',
-  Membership: 'Membership',
   Request: 'Request',
+  WriteAccess: 'WriteAccess',
+  ReadAccess: 'ReadAccess',
   Chat: 'Chat',
   Message: 'Message'
 };

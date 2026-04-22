@@ -1,6 +1,6 @@
 import { useContext } from "react";
-
-import { SetChatContext, DataContext, UserContext } from "../contexts/contexts";
+import { SetChatContext, DataContext, UserContext } from "@contexts";
+import { ApiContext } from "@contexts/index";
 
 export function useUser() {
   return useContext(UserContext);
@@ -12,6 +12,10 @@ export function useSetChat() {
 
 export function useData() {
   return useContext(DataContext);
+}
+
+export function useApi() {
+  return useContext(ApiContext);
 }
 
 export function useInbox() {

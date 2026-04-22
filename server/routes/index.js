@@ -1,70 +1,63 @@
 const { Router } = require("express");
-const {
-  logger,
-  maskInternalErrors,
-  throw404,
-  sendError,
-} = require("../middlewares");
-const { strictAuthenticate } = require("../middlewares");
-const { validateId } = require("../middlewares");
-const { getFriends, deleteFriend } = require("../controllers/friends");
-const {
-  getRequests,
-  postRequest,
-  acceptRequest,
-  deleteRequest,
-} = require("../controllers/requests");
-const { getInbox, getChat, postChat } = require("../controllers/chats");
-const { postGroup, deleteGroup } = require("../controllers/groups");
+const m = require("../middlewares");
+const c = require("../controllers");
+
+const { validators: v } = m;
+
+// USERS
+const users = Router();
+users.get("/me", c.users.getMe);
+users.patch("/me", v.patchMe, c.users.patchMe);
+users.get("/:userId", v.paramId("userId"), c.users.getUser);
 
 // FRIENDS
 const friends = Router();
-const friendId = Router({ mergeParams: true });
-
-friends.get("/", getFriends);
-
-friends.use("/:friendId", validateId("friendId"), friendId);
-friendId.delete("/", deleteFriend);
-
-// GROUPS
-const groups = Router();
-const groupId = Router({ mergeParams: true });
-groups.post("/", postGroup);
-groups.use("/:groupId", validateId("groupId"), groupId);
-groupId.delete("/", deleteGroup);
+friends.use("/:friendId", v.paramId("friendId"));
+friends.post("/:friendId", c.friends.postFriend);
+friends.delete("/:friendId", c.friends.deleteFriend);
 
 // REQUESTS
 const requests = Router();
-const otherUserId = Router({ mergeParams: true });
-
-requests.get("/", getRequests);
-requests.post("/", postRequest);
-
-requests.use("/:otherUserId", validateId("otherUserId"), otherUserId);
-otherUserId.post("/accept", acceptRequest);
-otherUserId.delete("/", deleteRequest);
+requests.get("/", c.requests.getRequests);
+requests.post("/", v.postRequest, c.requests.postRequest);
+requests.delete(
+  "/:otherUserId",
+  v.paramId("otherUserId"),
+  c.requests.deleteRequest,
+);
 
 // CHATS
 const chats = Router();
-const chatId = Router({ mergeParams: true });
-// const participants = Router({ mergeParams: true });
-chats.get("/inbox", getInbox);
-chats.use("/:chatId", validateId("chatId"), chatId);
-chatId.get("/", getChat);
-chatId.post("/", postChat);
+chats.get("/inbox", c.chats.getInbox);
+chats.post("/", v.postChat, c.chats.postChat);
 
-// chats.use("/participants", participants);
-// participants.post("/", postParticipant);
-// participants.patch("/", patchParticipant);
-// participants.delete("/", deleteParticipant);
+chats.use(
+  "/:chatId",
+  v.paramId("chatId"),
+  v.access("MEMBER"),
+  v.chatType("GROUP"),
+);
 
+chats.get("/:chatId/messages", v.getMessages, c.messages.getMessages);
+chats.post("/:chatId/messages", v.postMessage, c.messages.postMessage);
+chats.delete("/:chatId/members/me", c.members.deleteMemberMe);
+
+chats.use("/:chatId", v.access("ADMIN"));
+chats.patch("/:chatId", v.patchChat, c.chats.patchChat);
+chats.post("/:chatId/members", v.postMember, c.members.postMember);
+
+chats.use("/:chatId/members/:memberId", v.paramId("memberId"));
+chats.patch("/:chatId/members/:memberId", v.patchMember, c.members.patchMember);
+chats.delete("/:chatId/members/:memberId", c.members.deleteMember);
+
+// MAIN ROUTER
 const index = Router();
-index.use(logger);
-index.use(strictAuthenticate);
+index.use(m.logger);
+index.use(m.strictAuthenticate);
+index.use("/users", users);
 index.use("/friends", friends);
 index.use("/requests", requests);
 index.use("/chats", chats);
-index.use("/groups", groups);
-index.use(throw404, maskInternalErrors, sendError);
+index.use(m.throw404, m.maskInternalErrors, m.sendError);
 
 module.exports = index;
