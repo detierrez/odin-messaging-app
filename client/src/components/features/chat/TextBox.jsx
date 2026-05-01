@@ -1,16 +1,17 @@
 import { useState } from "react";
-import { fetchBackend } from "@lib";
-import { useData, useUser } from "@hooks";
+import { useData } from "@hooks";
+import { useApi } from "@hooks/index";
 
 export default function TextBox() {
   const { chat } = useData();
-  const { user } = useUser();
   const [drafts, setDrafts] = useState({});
+  const { fetchApi } = useApi();
 
-  const text = drafts[chat.id] || "";
+  const chatId = chat?.id;
+  const content = drafts[chatId] || "";
 
   const updateActiveDraft = (text) => {
-    setDrafts((prev) => ({ ...prev, [chat.id]: text }));
+    setDrafts((prev) => ({ ...prev, [chatId]: text }));
   };
 
   return (
@@ -18,15 +19,14 @@ export default function TextBox() {
       type="text"
       name="text"
       id="text"
-      value={text}
+      value={content}
+      disabled={!chat || !chat.isActive}
       onChange={(e) => updateActiveDraft(e.target.value)}
       onKeyDown={(e) => {
         if (e.key === "Enter") {
           if (!e.shiftKey) {
             e.preventDefault(); // do not add new line
-            fetchBackend(`/chats/${chat.id}?id=${user.id}`, {
-              body: { text },
-            })
+            fetchApi(`/chats/${chatId}/messages`, { body: { content } })
               .then((data) => {
                 console.log(`Success posting message: `, data);
               })

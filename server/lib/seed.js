@@ -2,6 +2,7 @@ const prisma = require("./prisma");
 
 (async function main() {
   await prisma.chat.deleteMany();
+  await prisma.request.deleteMany();
 
   // await prisma.user.deleteMany();
 
@@ -105,6 +106,13 @@ const prisma = require("./prisma");
     });
   }
 
+  await prisma.request.createMany({
+    data: [
+      { senderId: 3, receiverId: 7 },
+      { senderId: 7, receiverId: 5 },
+    ],
+  });
+
   await prisma.chat.create({
     data: {
       type: "GROUP",
@@ -140,6 +148,76 @@ const prisma = require("./prisma");
           { userId: 5, content: "Is it a sequel or a standalone movie?" },
           { userId: 5, content: "Either way, the hype is real." },
           { userId: 5, content: "Can't wait for next month." },
+          { userId: 1, content: "We should set up a group chat reminder." },
+          { userId: 3, content: "I can organize the tickets." },
+          { userId: 1, content: "Let me know when the pre-sale starts." },
+          { userId: 5, content: "I hope they do a midnight showing." },
+          { userId: 3, content: "A midnight showing would be epic." },
+          { userId: 1, content: "Do you think there will be merch?" },
+          { userId: 5, content: "If there is, I'm buying the poster." },
+          {
+            userId: 3,
+            content: "I love the soundtrack even without seeing the movie.",
+          },
+          {
+            userId: 1,
+            content: "The visual effects in the trailer were insane.",
+          },
+          { userId: 5, content: "I wonder if the director will do a Q&A." },
+          { userId: 3, content: "That would be awesome. I would go for sure." },
+          { userId: 1, content: "Maybe we can grab dinner before the show." },
+          { userId: 5, content: "Yes, let's do tacos. Or burgers." },
+          { userId: 3, content: "Tacos sound perfect. I know a great place." },
+          { userId: 1, content: "I'll check the schedule and send it here." },
+          { userId: 5, content: "Thanks! Can't wait to see it with you guys." },
+          {
+            userId: 1,
+            content: "I'll create a calendar invite for the group.",
+          },
+          {
+            userId: 3,
+            content: "Don't forget to include the restaurant address.",
+          },
+          {
+            userId: 5,
+            content: "I'm already getting hungry thinking about those tacos.",
+          },
+          {
+            userId: 1,
+            content: "Should we invite anyone else from the office?",
+          },
+          {
+            userId: 3,
+            content: "Maybe just keep it to our small group for now.",
+          },
+          {
+            userId: 5,
+            content: "Agreed, easier to coordinate seating that way.",
+          },
+          { userId: 1, content: "True, IMAX theaters fill up so fast." },
+          { userId: 3, content: "I'll try to get the center row seats." },
+          { userId: 5, content: "You're the MVP if you manage that." },
+          { userId: 1, content: "Has anyone read the book it's based on?" },
+          { userId: 3, content: "I didn't even know there was a book!" },
+          { userId: 5, content: "I read it last summer, the ending is wild." },
+          { userId: 1, content: "No spoilers please! I want to be surprised." },
+          { userId: 5, content: "My lips are sealed. 🤐" },
+          {
+            userId: 3,
+            content: "I'm going to avoid all reviews until we see it.",
+          },
+          { userId: 1, content: "That's the best way to experience it." },
+          {
+            userId: 5,
+            content:
+              "I'm going to re-watch the director's previous film tonight.",
+          },
+          { userId: 3, content: "The one about the time travelers?" },
+          { userId: 5, content: "Yeah, that one is a masterpiece." },
+          {
+            userId: 1,
+            content: "Okay, I'm officially hyped. See you guys then!",
+          },
         ],
       },
     },

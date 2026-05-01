@@ -45,3 +45,8 @@
     background-color: #4444;
   }
 }
+
+.usernameInput {
+  min-width: 0;
+  width: 100%;
+}

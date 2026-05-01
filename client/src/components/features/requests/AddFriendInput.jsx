@@ -1,9 +1,9 @@
+import s from "@styles/Requests.module.css";
 import { useState } from "react";
-import { fetchBackend } from "@lib";
-import { useUser } from "@hooks";
+import { useApi } from "@hooks";
 
 export default function AddFriendInput() {
-  const { user } = useUser();
+  const { fetchApi } = useApi();
   const [username, setUsername] = useState("");
 
   const isValidUsername = !!username.trim();
@@ -13,7 +13,7 @@ export default function AddFriendInput() {
 
     if (!isValidUsername) return;
 
-    fetchBackend(`/requests?id=${user.id}`, {
+    fetchApi(`/requests`, {
       body: { username },
     })
       .then((data) => {
@@ -28,6 +28,7 @@ export default function AddFriendInput() {
     <>
       <input
         type="text"
+        className={s.usernameInput}
         placeholder="Enter username..."
         value={username}
         onChange={(e) => {

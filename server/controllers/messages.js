@@ -24,7 +24,7 @@ module.exports.getMessages = async (req, res) => {
     throw new httpError(404, [{ reason: "Chat not found" }]);
   }
 
-  res.json({ messages: chat.messages });
+  res.json({ messages: chat.messages.toReversed() });
 };
 
 module.exports.postMessage = async (req, res) => {

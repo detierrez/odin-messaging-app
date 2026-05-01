@@ -1,5 +1,5 @@
 require("dotenv/config");
-const { PORT, CLIENT_URL } = process.env;
+const { PORT, CLIENT_URL: origin } = process.env;
 
 const { createServer } = require("node:http");
 const cors = require("cors");
@@ -9,11 +9,10 @@ const { initializeIo } = require("./socket.io");
 
 const app = express();
 const server = createServer(app);
-
-initializeIo(server, { cors: { origin: CLIENT_URL } });
+initializeIo(server, { cors: { origin } });
 
 app.use(express.json());
-app.use(cors({ origin: CLIENT_URL }));
+app.use(cors({ origin }));
 app.use("/", index);
 
 server.listen(PORT, () => console.log(`http://localhost:${PORT}`));

@@ -13,24 +13,19 @@ export async function fetchBackend(path, { body, method, signal } = {}) {
   };
 
   const response = await fetch(SERVER_BASE_URL + path, options);
-  const data = await response.json();
+  const payload = await response.json();
   const { status } = response;
 
   console.log({
-    a: method,
-    b: path,
-    c: body,
-
-    d: status,
-    e: response.statusText,
-    f: data,
+    req: { endpoint: `${method} ${path}`, body },
+    res: { status, text: response.statusText, payload },
   });
 
   if (status >= 400) {
     // if (status === 401) logout();
-    const { cause } = data;
+    const { cause } = payload;
     throw new Error(response.statusText, { cause });
   }
 
-  return data;
+  return payload;
 }

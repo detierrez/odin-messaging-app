@@ -1,13 +1,14 @@
 import s from "@styles/App.module.css";
-import { useUser } from "@hooks";
-import { ApiProvider, DataProvider } from "@providers/ApiProvider";
-import ChatWindow from "./features/chat/ChatWindow";
+import { useId } from "@hooks";
+import ApiProvider from "@providers/ApiProvider";
+import DataProvider from "@providers/DataProvider";
 import AsideMenu from "./features/aside/AsideMenu";
-import ProfileButtons from "./features/aside/inbox/ProfileButtons";
+import ChatWindow from "./features/chat/ChatWindow";
+import Debugger from "./common/Debugger";
+import { useData } from "@hooks/index";
 
 export default function App() {
-  const { setUser } = useUser();
-
+  const { setId } = useId();
   return (
     <ApiProvider>
       <DataProvider>
@@ -18,21 +19,27 @@ export default function App() {
               <AsideMenu />
             </div>
             <div className="n">
-              <button onClick={() => setUser({ id: 1 })}>1</button>
-              <button onClick={() => setUser({ id: 2 })}>2</button>
-              <button onClick={() => setUser({ id: 3 })}>3</button>
-              <button onClick={() => setUser({ id: 4 })}>4</button>
-              <button onClick={() => setUser({ id: 5 })}>5</button>
-              <button onClick={() => setUser({ id: 7 })}>7</button>
+              <button onClick={() => setId(1)}>1</button>
+              <button onClick={() => setId(2)}>2</button>
+              <button onClick={() => setId(3)}>3</button>
+              <button onClick={() => setId(4)}>4</button>
+              <button onClick={() => setId(5)}>5</button>
+              <button onClick={() => setId(7)}>7</button>
             </div>
 
-            <ProfileButtons className={s.menuBar} />
+            {/* <ProfileButtons className={s.menuBar} /> */}
           </aside>
           <main className={s.main}>
-            <ChatWindow />
+            <Main />
           </main>
         </div>
+        <Debugger />
       </DataProvider>
     </ApiProvider>
   );
+}
+
+function Main() {
+  const { id: chatId } = useData().chat || {};
+  return <ChatWindow key={chatId} />;
 }

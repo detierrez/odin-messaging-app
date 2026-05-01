@@ -31,15 +31,11 @@ const chats = Router();
 chats.get("/inbox", c.chats.getInbox);
 chats.post("/", v.postChat, c.chats.postChat);
 
-chats.use(
-  "/:chatId",
-  v.paramId("chatId"),
-  v.access("MEMBER"),
-  v.chatType("GROUP"),
-);
-
+chats.use("/:chatId", v.paramId("chatId"));
 chats.get("/:chatId/messages", v.getMessages, c.messages.getMessages);
 chats.post("/:chatId/messages", v.postMessage, c.messages.postMessage);
+
+chats.use("/:chatId", v.access("MEMBER"), v.chatType("GROUP"));
 chats.delete("/:chatId/members/me", c.members.deleteMemberMe);
 
 chats.use("/:chatId", v.access("ADMIN"));

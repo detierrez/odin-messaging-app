@@ -1,22 +1,20 @@
 import { ApiContext } from "@contexts/index";
-import { useUser } from "@hooks/index";
+import { useId } from "@hooks/index";
 import { fetchBackend, SERVER_BASE_URL } from "@lib/client-api";
 import { useCallback } from "react";
 
-export function ApiProvider({ children }) {
-  const {
-    user: { id: userId },
-  } = useUser();
+export default function ApiProvider({ children }) {
+  const { id } = useId();
 
-  const apiFetch = useCallback(
-    (path, options) => {
+  const fetchApi = useCallback(
+    async (path, options) => {
       const separator = path.includes("?") ? "&" : "?";
-      fetchBackend(`${path}${separator}id=${userId}`, options);
+      return await fetchBackend(`${path}${separator}id=${id}`, options);
     },
-    [userId],
+    [id],
   );
 
   return (
-    <ApiContext value={{ SERVER_BASE_URL, apiFetch }}>{children}</ApiContext>
+    <ApiContext value={{ SERVER_BASE_URL, fetchApi }}>{children}</ApiContext>
   );
 }

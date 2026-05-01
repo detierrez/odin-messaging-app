@@ -8,8 +8,8 @@
 .entry {
   display: grid;
   grid-template:
-    "avatar name date"
-    "avatar text text" / max-content 1fr max-content;
+    "avatar name    date"
+    "avatar content content" / max-content 1fr max-content;
   justify-content: space-between;
   align-items: center;
   gap: 0.25em 0.5em;
@@ -23,8 +23,8 @@
   .date {
     grid-area: date;
   }
-  .text {
-    grid-area: text;
+  .content {
+    grid-area: content;
   }
 }
 

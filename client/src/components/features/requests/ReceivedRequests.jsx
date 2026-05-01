@@ -1,50 +1,59 @@
 import s from "@styles/Requests.module.css";
-import { useData, useUser } from "@hooks";
-import { fetchBackend } from "@lib";
+import { useData, useApi } from "@hooks";
+import { useUser } from "@hooks/index";
+import { DEFAULT_AVATAR, DEFAULT_USERNAME } from "@lib/defaults";
 
 export default function ReceivedRequests() {
-  const { user } = useUser();
-  const {
-    requests: { receivedFrom },
-  } = useData() ?? {};
+  const { receivedFrom = [] } = useData()?.requests ?? {};
 
   return (
-    receivedFrom.length > 0 && (
+    receivedFrom.size > 0 && (
       <ul>
         <h3>Friend requests</h3>
-        {receivedFrom?.map((otherUser) => {
-          const { id: otherUserId, username, avatarUrl } = otherUser;
+        {Array.from(receivedFrom).map((senderId) => {
           return (
-            <li className={s.entry} key={otherUserId}>
-              <img className={s.avatar} src={avatarUrl} alt="" />
-              <span className={s.name}>{username}</span>
-              <button
-                className={s.button}
-                onClick={() => {
-                  fetchBackend(
-                    `/requests/${otherUserId}/accept?id=${user.id}`,
-                    {
-                      method: "POST",
-                    },
-                  );
-                }}
-              >
-                ✓
-              </button>{" "}
-              <button
-                className={s.button}
-                onClick={() => {
-                  fetchBackend(`/requests/${otherUserId}?id=${user.id}`, {
-                    method: "DELETE",
-                  });
-                }}
-              >
-                ×
-              </button>
+            <li className={s.entry} key={senderId}>
+              <RequestEntry userId={senderId} />
             </li>
           );
         })}
       </ul>
     )
+  );
+}
+
+function RequestEntry({ userId }) {
+  const { fetchApi } = useApi();
+  const { username, avatarUrl } = useUser(userId) || {};
+
+  return (
+    <>
+      <img className={s.avatar} src={avatarUrl ?? DEFAULT_AVATAR} alt="" />
+      <span className={s.name}>{username ?? DEFAULT_USERNAME}</span>
+      <button
+        className={s.button}
+        onClick={() => {
+          fetchApi(`/friends/${userId}`, { method: "POST" })
+            .then(() =>
+              console.log(`Success posting friend request: ${userId}`),
+            )
+            .catch((e) => console.log(`Error posting friend request: ${e}`));
+        }}
+      >
+        ✓
+      </button>{" "}
+      <button
+        className={s.button}
+        onClick={() => {
+          fetchApi(`/requests/${userId}`, { method: "DELETE" })
+            .then(() =>
+              console.log(`Success deleting friend request: ${userId}`),
+            )
+            .catch((e) => console.log(`Error deleting friend request: ${e}`));
+        }}
+      >
+        ×
+      </button>
+    </>
   );
 }

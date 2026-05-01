@@ -1,8 +1,6 @@
 import { RouterProvider, createBrowserRouter } from "react-router";
-
-import HydrateFallback from "../components/common/HydrateFallback";
-import ErrorPage from "../components/layout/Pages/ErrorPage";
-
+import HydrateFallback from "@components/common/HydrateFallback";
+import ErrorPage from "@components/common/ErrorPage";
 import Controller from "../Controller";
 // import { rockAction, rockLoader, rocksLoader } from "./actions-loaders";
 

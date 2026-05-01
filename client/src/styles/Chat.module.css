@@ -1,4 +1,7 @@
 .chat {
+  --horizontal-padding: 2em;
+  --scrollbar-w: 7px;
+
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -11,68 +14,115 @@
 .history {
   flex: 1 1 auto;
   overflow-y: auto;
-  min-height: 0;
+  overflow-x: hidden;
+}
+
+/* Style the whole scrollbar */
+.history::-webkit-scrollbar {
+  width: var(--scrollbar-w);
+}
+
+.history::-webkit-scrollbar-thumb {
+  background-color: #6666;
+  border-radius: 5px;
+}
+
+.history {
+  padding: 0.25em var(--horizontal-padding);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  > :first-child {
+    margin-top: auto;
+  }
+}
+
+.message {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+
+  position: relative;
+
+  .avatar {
+    position: absolute;
+    translate: -150%;
+  }
+
+  .content {
+    background-color: #6666;
+    border-radius: 15px;
+    border-bottom-left-radius: 2px;
+  }
+
+  &.continuation .content {
+    border-top-left-radius: 2px;
+  }
+
+  &:not(.continuation) {
+    margin-top: 6px;
+  }
+
+  &.userMessage {
+    flex-direction: row-reverse;
+
+    .avatar {
+      position: absolute;
+      translate: 150%;
+    }
+
+    .content {
+      background-color: rgba(255, 0, 0, 0.296);
+      border-radius: 15px;
+      border-bottom-right-radius: 2px;
+    }
+
+    &.continuation .content {
+      border-top-right-radius: 2px;
+    }
+
+    .date {
+      text-align: right;
+    }
+  }
+}
+
+.avatar {
+  border-radius: 50%;
+  height: 16px;
+  aspect-ratio: 1;
+  align-self: flex-end;
+}
+
+.content {
+  max-width: 300px;
+  padding: 0.5em 0.75em;
+  white-space: pre-wrap; /* Preserves whitespace but allows wrapping */
+  overflow-wrap: break-word;
+}
+
+.date {
+  font-size: 0.85em;
+  opacity: 0;
+  transition: opacity 100ms ease;
+  flex-grow: 1;
+}
+
+.message {
+  &:hover .date {
+    opacity: 0.6;
+  }
 }
 
 .textBox {
-  flex: 0 0 auto;
+  padding-left: var(--horizontal-padding);
+  padding-right: calc(var(--horizontal-padding) + var(--scrollbar-w));
 }
 
 .textBox textarea {
   width: 100%;
   resize: none;
-}
-
-/* Style the whole scrollbar */
-.history::-webkit-scrollbar {
-  --girth: 7px;
-  width: var(--girth); /* vertical scrollbar width */
-  height: var(--girth); /* horizontal scrollbar height */
-}
-
-/* Style the thumb (draggable handle) */
-.history::-webkit-scrollbar-thumb {
-  background-color: #6666;
-  border-radius: 5px; /* rounded corners for the thumb */
-}
-
-.history {
-  padding: 0.25em 2em;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25em;
-}
-
-.userMessage {
-  background-color: rgba(255, 0, 0, 0.296);
-  align-self: flex-end;
-}
-
-.friendMessage {
-  background-color: #6666;
-  align-self: flex-start;
-}
-
-.userMessage,
-.friendMessage {
-  padding: 0.25em 0.5em;
-  max-width: 90%;
-  min-width: 0;
-  word-wrap: break-word;
-}
-
-.userMessage {
-  border-radius: 15px;
-  border-bottom-right-radius: 2px;
-  + .userMessage {
-    border-top-right-radius: 2px;
-  }
-}
-
-.friendMessage {
-  border-radius: 15px;
-  border-bottom-left-radius: 2px;
-  + .friendMessage {
-    border-top-left-radius: 2px;
-  }
+  border-radius: 999px;
+  padding: 0 1em;
 }

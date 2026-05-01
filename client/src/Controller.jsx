@@ -1,13 +1,13 @@
 import { useState } from "react";
+import { IdContext } from "./contexts";
 import App from "@components/App";
-import { UserContext } from "@contexts";
 
 export default function Controller() {
-  const [user, setUser] = useState({ id: 1 });
+  const [id, setId] = useState(3);
 
   return (
-    <UserContext value={{ user, setUser }}>
-      <App key={user.id} />
-    </UserContext>
+    <IdContext value={{ id, setId }}>
+      <App key={id} />
+    </IdContext>
   );
 }

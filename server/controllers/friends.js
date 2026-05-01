@@ -1,8 +1,18 @@
 const { matchedData } = require("express-validator");
 const prisma = require("../lib/prisma");
 const { httpError } = require("../middlewares");
-const { genericChatSelect, genericMessageSelect } = require("./apiSelects");
-const { notifyRequest, notifyUsers, notifyUser } = require("../socket.io");
+const {
+  genericChatSelect,
+  genericMessageSelect,
+  firstMessageChatSelect,
+} = require("./apiSelects");
+const {
+  notifyRequest,
+  notifyUsers,
+  notifyUser,
+  addToChatRoom,
+  removeFromChatRoom,
+} = require("../socket.io");
 const { formatChat, isReadable } = require("./chats");
 
 module.exports.postFriend = async (req, res) => {
@@ -36,7 +46,7 @@ module.exports.postFriend = async (req, res) => {
       select: { id: true, readAccesses: { select: { userId } } },
     });
 
-    const select = genericChatSelect;
+    const select = firstMessageChatSelect;
 
     let chat;
     if (existingChat) {
@@ -93,11 +103,8 @@ module.exports.postFriend = async (req, res) => {
 
   notifyRequest("remove_request", friendId, userId);
   for (const id of [userId, friendId]) {
-    if (isReadable(existingChat, id)) {
-      notifyUser("reactivate_chat", id, { chatId: chat.id });
-    } else {
-      notifyUser("add_chat", id, { chat: formatChat(chat, id) });
-    }
+    notifyUser("add_chat", id, { chat: formatChat(chat, id) });
+    addToChatRoom(id, chat.id);
   }
 
   res.json({ success: true });
@@ -139,6 +146,9 @@ module.exports.deleteFriend = async (req, res) => {
     return chat.id;
   });
 
-  notifyUsers("deactivate_chat", [userId, friendId], { chatId });
+  const users = [userId, friendId];
+  users.forEach((id) => removeFromChatRoom(id, chatId));
+  notifyUsers("deactivate_chat", users, { chatId });
+
   res.json({ success: true });
 };
