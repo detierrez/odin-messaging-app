@@ -1,0 +1,26 @@
+.avatar {
+  composes: avatar from "@styles/shared.css";
+  --size: 9em;
+}
+
+.name,
+.description {
+  composes: input from "@styles/shared.css";
+}
+
+.button {
+  composes: accent from "@styles/shared.css";
+}
+
+.avatar {
+  align-self: center;
+}
+
+.description {
+  flex-grow: 1;
+}
+
+.button {
+  align-self: center;
+  font-size: 1.75rem;
+}

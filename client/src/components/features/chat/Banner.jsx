@@ -1,20 +1,51 @@
-import s from "@styles/Banner.module.css";
-import { useData, useUser } from "@hooks";
-import { DEFAULT_AVATAR, DEFAULT_USERNAME } from "@lib/defaults";
+import { merge } from "@lib/index";
+import { useApi, useCurrentChat, useUser } from "@hooks";
+import { Avatar, Dropdown, Name, Surface } from "@components/common";
+import s from "./Banner.module.css";
 
-export default function Banner() {
-  const { chat } = useData();
-  const { name, avatarUrl, otherUserId } = chat;
-  const otherUser = useUser(otherUserId);
+export default function Banner({ className, onAvatarClick, onDetailsClick }) {
+  const { id: chatId } = useCurrentChat().chat;
 
   return (
-    <div className={s.banner}>
-      <img
-        src={avatarUrl ?? otherUser?.avatarUrl ?? DEFAULT_AVATAR}
-        alt=""
-        className={s.avatar}
-      />
-      <span>{name ?? otherUser?.username ?? DEFAULT_USERNAME}</span>
-    </div>
+    <Surface className={merge(className, s.banner)}>
+      <Avatar className={s.avatar} chatId={chatId} onClick={onAvatarClick} />
+      <Name className={s.name} chatId={chatId} />
+      <Options onOpenInfo={onDetailsClick} />
+    </Surface>
+  );
+}
+
+function Options({ onOpenInfo }) {
+  const { sendRequest, removeFriend, leaveGroup, closeGroup } = useApi();
+  const {
+    id: chatId,
+    isDirect,
+    isFriend,
+    isUserAdmin,
+    otherUserId,
+    isActive,
+  } = useCurrentChat().chat;
+  const { username } = useUser(otherUserId) || {};
+
+  if (!isDirect && !isActive) return;
+
+  return (
+    <Dropdown>
+      <button onClick={onOpenInfo}>Chat info.</button>
+      {isDirect ? (
+        isFriend ? (
+          <button onClick={() => removeFriend(otherUserId)}>Unfriend</button>
+        ) : (
+          <button onClick={() => sendRequest(username)}>Add friend</button>
+        )
+      ) : (
+        <>
+          <button onClick={() => leaveGroup(chatId)}>Leave</button>
+          {isUserAdmin && (
+            <button onClick={() => closeGroup(chatId)}>Close</button>
+          )}
+        </>
+      )}
+    </Dropdown>
   );
 }

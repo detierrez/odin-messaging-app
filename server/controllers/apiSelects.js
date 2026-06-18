@@ -1,6 +1,7 @@
 const genericUserSelect = {
   id: true,
   username: true,
+  alias: true,
   avatarUrl: true,
   description: true,
 };
@@ -16,6 +17,7 @@ const baseChatSelect = {
   id: true,
   name: true,
   avatarUrl: true,
+  description: true,
   type: true,
   writeAccesses: {
     select: { userId: true, role: true },

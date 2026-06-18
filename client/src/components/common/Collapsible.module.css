@@ -1,0 +1,18 @@
+.container {
+  display: grid;
+  grid-template-columns: 1fr var(--content-width);
+  overflow: hidden;
+
+  transition: --content-width 250ms ease;
+
+  .collapsible {
+    min-height: 0;
+    width: max-content;
+  }
+}
+
+@property --content-width {
+  syntax: "<length>"; /* Tells the browser to interpret this as a unit of length */
+  initial-value: 0px;
+  inherits: false;
+}

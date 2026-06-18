@@ -1,0 +1,12 @@
+.aside {
+  display: flex;
+  flex-direction: column;
+  border-right: var(--soft-border);
+}
+
+.scrollable {
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

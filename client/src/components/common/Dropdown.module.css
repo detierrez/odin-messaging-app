@@ -1,0 +1,15 @@
+.content {
+  --spacing: 4px;
+  position: absolute;
+  width: max-content;
+  padding: var(--spacing);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: var(--soft-border);
+  border-radius: var(--soft-radius);
+
+  > * {
+    border-radius: calc(var(--soft-radius) - var(--spacing));
+  }
+}

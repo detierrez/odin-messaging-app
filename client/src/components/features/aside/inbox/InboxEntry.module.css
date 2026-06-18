@@ -1,0 +1,41 @@
+.entry {
+  padding: var(--half-spacing);
+  column-gap: var(--spacing);
+  display: grid;
+  grid-template:
+    "avatar name    date"
+    "avatar content content" / max-content 1fr 75px;
+  justify-content: space-between;
+  align-items: center;
+
+  .avatar {
+    grid-area: avatar;
+
+    height: 3em;
+    width: 3em;
+
+    border-radius: 50%;
+  }
+
+  .name {
+    grid-area: name;
+  }
+
+  .date {
+    grid-area: date;
+    margin-left: auto;
+    font-size: 0.8rem;
+  }
+
+  .content {
+    grid-area: content;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: rgb(255, 255, 255, 0.6);
+
+    .prepend {
+      font-style: italic;
+    }
+  }
+}

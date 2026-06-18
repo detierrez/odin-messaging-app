@@ -1,0 +1,59 @@
+.list {
+  composes: scrollable from "../AsideStyles.module.css";
+}
+
+.button {
+  composes: accent from "@styles/shared.css";
+}
+
+.search {
+  composes: input from "@styles/shared.css";
+}
+
+.message {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.tag {
+  font-size: 0.85rem;
+}
+
+.separator {
+  border: var(--soft-border);
+}
+
+.list {
+  margin: calc(-1 * var(--half-spacing));
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+
+  .entry {
+    padding: var(--half-spacing);
+    gap: var(--spacing);
+    display: flex;
+    align-items: center;
+
+    .avatar {
+      --size: 2.5em;
+    }
+
+    .name {
+      flex-grow: 1;
+    }
+
+    .checkbox {
+      width: 1em;
+    }
+  }
+}
+
+.button {
+  font-size: 1.75rem;
+  align-self: center;
+}

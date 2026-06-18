@@ -10,7 +10,8 @@ datasource db {
 model User {
     id          Int     @id @default(autoincrement())
     username    String  @unique
-    avatarUrl   String  @default("https://static.vecteezy.com/system/resources/thumbnails/067/451/117/small/avatar-simple-flat-default-user-profile-icon-gender-neutral-person-silhouette-profile-picture-symbol-user-account-dp-sign-best-for-social-media-icons-web-and-app-design-illustration-vector.jpg")
+    alias       String?
+    avatarUrl   String?
     description String?
 
     sentMessages     Message[]     @relation("sentMessages")
@@ -53,10 +54,11 @@ model ReadAccess {
 }
 
 model Chat {
-    id        Int     @id @default(autoincrement())
-    name      String?
-    avatarUrl String?
-    type      Type    @default(DIRECT)
+    id          Int     @id @default(autoincrement())
+    name        String?
+    avatarUrl   String?
+    description String?
+    type        Type    @default(DIRECT)
 
     messages      Message[]     @relation("chatMessages")
     writeAccesses WriteAccess[] @relation("ChatsWriteAccesses")

@@ -32,7 +32,8 @@ module.exports.getInbox = async (req, res) => {
 
 module.exports.postChat = async (req, res) => {
   const { id: userId } = req.user;
-  const { memberIds, name } = matchedData(req);
+  const { name, description, memberIds } = matchedData(req);
+  const { avatarUrl } = req;
 
   const allMembers = [...new Set([...memberIds, userId])];
   const otherMembers = allMembers.filter((id) => id !== userId);
@@ -77,6 +78,8 @@ module.exports.postChat = async (req, res) => {
     data: {
       type: "GROUP",
       name,
+      description,
+      avatarUrl,
       readAccesses: {
         create: allMembers.map((memberId) => ({
           userId: memberId,
@@ -88,6 +91,7 @@ module.exports.postChat = async (req, res) => {
           role: memberId === userId ? "ADMIN" : "MEMBER",
         })),
       },
+      messages: { create: { content: "created", userId } },
     },
     select: genericChatSelect,
   });
@@ -102,7 +106,8 @@ module.exports.postChat = async (req, res) => {
 
 module.exports.patchChat = async (req, res) => {
   const { id: userId } = req.user;
-  const { chatId, isActive, name } = matchedData(req);
+  const { chatId, isActive, name, description } = matchedData(req);
+  const { avatarUrl } = req;
 
   const adminAccess = await prisma.writeAccess.findFirst({
     where: { userId, chatId, role: "ADMIN", endedAt: null },
@@ -122,22 +127,32 @@ module.exports.patchChat = async (req, res) => {
       });
     }
 
-    if (name !== undefined) {
+    if (
+      name !== undefined ||
+      description !== undefined ||
+      avatarUrl !== undefined
+    ) {
       await tx.chat.update({
         where: { id: chatId },
-        data: { name },
+        data: { name, description, avatarUrl },
       });
     }
   });
 
-  if (name !== undefined) notifyChat("update_chat", chatId, { chatId, name });
+  if (
+    name !== undefined ||
+    description !== undefined ||
+    avatarUrl !== undefined
+  )
+    notifyChat("update_chat", chatId, { chatId, name, description, avatarUrl });
   if (isActive === false) notifyChat("deactivate_chat", chatId, { chatId });
 
   res.json({ success: true });
 };
 
 function formatChat(chat, userId) {
-  const { id, name, avatarUrl, type, messages, writeAccesses } = chat;
+  const { id, name, description, avatarUrl, type, messages, writeAccesses } =
+    chat;
 
   const isActive = !!writeAccesses.find((access) => access.userId === userId);
   const otherUserId =
@@ -151,6 +166,7 @@ function formatChat(chat, userId) {
     type,
     otherUserId,
     name,
+    description,
     avatarUrl,
     isActive,
     memberships,

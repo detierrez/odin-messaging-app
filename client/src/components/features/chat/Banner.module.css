@@ -1,0 +1,15 @@
+.banner {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 1em;
+
+  .avatar {
+    height: 4em;
+    width: 4em;
+  }
+
+  .name {
+    flex-grow: 1;
+  }
+}

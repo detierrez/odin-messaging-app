@@ -1,0 +1,9 @@
+.loading {
+  composes: loading from "@styles/shared.css";
+}
+
+.name {
+  height: 1.25em;
+  width: stretch;
+  border-radius: 5px;
+}

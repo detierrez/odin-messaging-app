@@ -1,0 +1,56 @@
+.members {
+  gap: var(--spacing);
+  display: flex;
+  flex-direction: column;
+
+  .heading {
+    gap: var(--spacing);
+    display: flex;
+    align-items: center;
+
+    .title {
+      flex-grow: 1;
+      font-size: 0.85rem;
+    }
+  }
+
+  .list {
+    gap: var(--spacing);
+    display: flex;
+    flex-direction: column;
+
+    .membership {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing);
+
+      .avatar {
+        height: 2em;
+        width: 2em;
+        aspect-ratio: 1;
+        border-radius: 50%;
+      }
+
+      .verticalWrapper {
+        margin-right: auto;
+        min-width: 0;
+
+        .username {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-bottom: 2px;
+        }
+
+        .role {
+          font-size: 0.7rem;
+          opacity: 0.8;
+        }
+      }
+
+      .options {
+        flex: 0 0 1em;
+      }
+    }
+  }
+}

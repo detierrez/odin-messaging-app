@@ -1,0 +1,18 @@
+.body {
+  isolation: isolate;
+  min-width: fit-content;
+  height: 100%;
+  display: flex;
+
+  .aside {
+    z-index: 1;
+    width: 350px;
+
+    box-shadow: none;
+  }
+
+  .main {
+    flex-grow: 2;
+    min-width: 600px;
+  }
+}

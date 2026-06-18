@@ -1,15 +1,17 @@
 {
   "compilerOptions": {
     "ignoreDeprecations": "6.0",
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "paths": {
-      "@components/*": ["src/components/*"],
-      "@contexts/*": ["src/contexts/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@lib/*": ["src/lib/*"],
-      "@providers/*": ["src/providers/*"],
-      "@styles/*": ["src/styles/*"],
-      "@utils/*": ["src/utils/*"]
+      "@components/*": ["components/*"],
+      "@contexts": ["contexts/index.js"],
+      "@hooks": ["hooks/index.js"],
+      "@lib/*": ["lib/*"],
+      "@providers": ["providers/index.js"],
+      "@styles/*": ["styles/*"],
+      "@utils/*": ["utils/*"],
+      "@icons/*": ["lib/icons/*"],
+      "@images/*": ["lib/images/*"]
     }
   },
   "include": ["src/**/*"]

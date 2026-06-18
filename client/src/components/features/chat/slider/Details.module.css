@@ -1,0 +1,105 @@
+.menu {
+  composes: scrollable from "@styles/shared.css";
+}
+
+.avatar {
+  composes: avatar from "@styles/shared.css";
+  --size: 8em;
+}
+
+.loading {
+  composes: loading from "@styles/shared.css";
+}
+
+.testName,
+.testDescription {
+  composes: input from "@styles/shared.css";
+}
+
+.menu {
+  height: 100%;
+  padding: var(--spacing);
+  gap: var(--spacing);
+  display: flex;
+  flex-direction: column;
+
+  .heading {
+    gap: var(--spacing);
+    display: flex;
+    align-items: center;
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+
+  .avatar {
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  .username {
+    margin-top: calc(-1 * var(--half-spacing));
+    font-size: 0.75rem;
+    align-self: center;
+  }
+
+  .testName {
+    font-size: 1.15rem;
+  }
+
+  .subheading,
+  .statusHeading {
+    margin-bottom: calc(-1 * var(--half-spacing));
+    font-size: 0.85rem;
+    line-height: 0.8;
+  }
+
+  .nameWrapper,
+  .descriptionWrapper {
+    margin-block: calc(-1 * var(--quarter-spacing));
+    gap: var(--spacing);
+    display: flex;
+    align-items: center;
+
+    .editButton {
+      flex: 0 0 1.5em;
+    }
+
+    .testName {
+      text-align: center;
+    }
+
+    .testDescription {
+      line-height: 1.25;
+    }
+
+    .testName,
+    .testDescription {
+      padding: var(--quarter-spacing);
+      padding-inline: var(--half-spacing);
+      color: inherit;
+      background-color: transparent;
+      cursor: text;
+
+      &:not(:disabled) {
+        background-color: var(--input-bg-color);
+      }
+    }
+
+    .testDescription {
+      margin-left: calc(-1 * var(--half-spacing));
+      flex-grow: 1;
+      field-sizing: content;
+      min-height: max-content;
+    }
+  }
+
+  .tabs {
+    flex-basis: 300px;
+    flex-shrink: 0;
+  }
+}
+
+.addMembers {
+  padding: var(--spacing);
+  border-radius: var(--spacing);
+}

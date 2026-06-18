@@ -1,0 +1,40 @@
+.button {
+  composes: accent from "@styles/shared.css";
+}
+
+.container {
+  padding: var(--half-spacing);
+  gap: var(--half-spacing);
+  display: flex;
+  border-radius: 999px;
+  outline: 2px solid transparent;
+  background-color: var(--input-bg-color);
+  transition:
+    background-color var(--transition-duration),
+    outline-color var(--transition-duration);
+
+  &:has(> .input:focus) {
+    outline-color: var(--accent-color-highlighted);
+    background-color: transparent;
+  }
+
+  .input {
+    min-width: 0;
+    padding-inline: var(--half-spacing);
+    background-color: transparent;
+    border: none;
+    outline: none;
+    caret-color: var(--accent-color-highlighted);
+  }
+
+  .button {
+    padding: var(--half-spacing);
+    font-size: 0.9rem;
+    border-radius: 999px;
+    white-space: nowrap;
+
+    &:disabled {
+      background-color: transparent;
+    }
+  }
+}

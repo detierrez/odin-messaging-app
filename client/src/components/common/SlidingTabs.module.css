@@ -1,0 +1,59 @@
+.container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+
+  .tab {
+    --slide-duration: 250ms;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    animation: var(--animation);
+
+    &.prev {
+      --animation: slideOut var(--slide-duration) ease-in-out forwards;
+
+      &.forwards {
+        --end-x: -100%;
+      }
+
+      &.backwards {
+        --end-x: 100%;
+      }
+    }
+
+    &.next {
+      --animation: slideIn var(--slide-duration) ease-in-out forwards;
+
+      &.forwards {
+        --start-x: 100%;
+      }
+
+      &.backwards {
+        --start-x: -100%;
+      }
+    }
+  }
+}
+
+@keyframes slideIn {
+  from {
+    translate: var(--start-x);
+  }
+
+  to {
+    translate: 0%;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    translate: 0%;
+  }
+
+  to {
+    translate: var(--end-x);
+  }
+}

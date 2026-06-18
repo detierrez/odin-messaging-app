@@ -1,0 +1,39 @@
+.input {
+  composes: input from "@styles/shared.css";
+}
+
+.list {
+  composes: scrollable from "../AsideStyles.module.css";
+}
+
+.menu {
+  padding: var(--spacing);
+  padding-bottom: 0;
+  gap: var(--spacing);
+  display: flex;
+  flex-direction: column;
+
+  .flex {
+    gap: var(--spacing);
+    display: flex;
+    align-items: center;
+
+    .title {
+      flex-grow: 1;
+      font-size: 1.7rem;
+      line-height: 1;
+    }
+
+    .button {
+      --size: var(--double-spacing);
+      height: var(--size);
+      width: var(--size);
+    }
+  }
+
+  .list {
+    margin: calc(-1 * var(--half-spacing));
+    display: flex;
+    flex-direction: column;
+  }
+}

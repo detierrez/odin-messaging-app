@@ -1,0 +1,42 @@
+.label {
+  background:
+    linear-gradient(var(--overlay), var(--overlay)),
+    var(--img-url) center / cover no-repeat;
+  cursor: pointer;
+  overflow: hidden;
+  transition: --overlay 250ms;
+
+  &:hover:not(.disabled),
+  &.placeholderOverlaid {
+    --overlay: rgb(0 0 0 / 0.8);
+
+    .text {
+      opacity: 1;
+    }
+  }
+
+  &.disabled {
+    cursor: unset;
+  }
+
+  .text {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 0.85rem;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 250ms;
+  }
+
+  .file {
+    display: none;
+  }
+}
+
+@property --overlay {
+  syntax: "<color>";
+  initial-value: #0000;
+  inherits: false;
+}

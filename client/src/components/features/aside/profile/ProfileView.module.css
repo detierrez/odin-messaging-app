@@ -1,0 +1,70 @@
+.avatar {
+  composes: avatar from "@styles/shared.css";
+  --size: 8em;
+}
+
+.alias,
+.description {
+  composes: input from "@styles/shared.css";
+}
+
+.loading {
+  composes: loading from "@styles/shared.css";
+}
+
+.avatar {
+  align-self: center;
+}
+
+.username {
+  margin-top: calc(-1 * var(--half-spacing));
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.statusHeading {
+  margin-bottom: calc(-1 * var(--half-spacing));
+  font-size: 0.85rem;
+  line-height: 0.8;
+}
+
+.aliasWrapper,
+.descriptionWrapper {
+  margin-block: calc(-1 * var(--quarter-spacing));
+  gap: var(--spacing);
+  display: flex;
+  align-items: center;
+
+  .editButton {
+    flex: 0 0 1.5em;
+  }
+
+  .alias {
+    font-size: 1.15rem;
+    text-align: center;
+  }
+
+  .description {
+    line-height: 1.25;
+  }
+
+  .alias,
+  .description {
+    padding: var(--quarter-spacing);
+    padding-inline: var(--half-spacing);
+    color: inherit;
+    background-color: transparent;
+    cursor: text;
+
+    &:not(:disabled) {
+      background-color: var(--input-bg-color);
+    }
+  }
+
+  .description {
+    margin-left: calc(-1 * var(--half-spacing));
+    flex-grow: 1;
+    field-sizing: content;
+    min-height: max-content;
+  }
+}

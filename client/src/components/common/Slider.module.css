@@ -1,0 +1,80 @@
+:has(> .sliderContainer) {
+  position: relative;
+}
+
+.sliderContainer {
+  --slide-duration: 250ms;
+
+  height: 100%;
+  width: 100%;
+
+  position: absolute;
+  overflow: hidden;
+  background-color: #000a;
+
+  animation: fadeIn var(--slide-duration) ease-out backwards;
+
+  &.closing {
+    animation: fadeOut var(--slide-duration) ease-in forwards;
+  }
+}
+
+:where(.slider) {
+  height: 100%;
+  width: 100%;
+}
+
+.slider {
+  position: absolute;
+  top: 0;
+  right: 0;
+  animation: slideIn var(--slide-duration) ease-out backwards;
+
+  &.closing {
+    animation: slideOut var(--slide-duration) ease-in forwards;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    translate: 100%;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0%;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    translate: 0%;
+  }
+
+  to {
+    opacity: 0;
+    translate: 100%;
+  }
+}

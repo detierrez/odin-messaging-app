@@ -1,0 +1,6 @@
+.menu {
+  padding: var(--spacing);
+  gap: var(--spacing);
+  display: flex;
+  flex-direction: column;
+}

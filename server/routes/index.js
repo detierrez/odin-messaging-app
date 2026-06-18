@@ -7,7 +7,14 @@ const { validators: v } = m;
 // USERS
 const users = Router();
 users.get("/me", c.users.getMe);
-users.patch("/me", v.patchMe, c.users.patchMe);
+users.patch(
+  "/me",
+  m.parseAvatar,
+  m.uploadAvatar,
+  m.logReq,
+  v.patchMe,
+  c.users.patchMe,
+);
 users.get("/:userId", v.paramId("userId"), c.users.getUser);
 
 // FRIENDS
@@ -29,7 +36,7 @@ requests.delete(
 // CHATS
 const chats = Router();
 chats.get("/inbox", c.chats.getInbox);
-chats.post("/", v.postChat, c.chats.postChat);
+chats.post("/", m.parseAvatar, m.uploadAvatar, v.postChat, c.chats.postChat);
 
 chats.use("/:chatId", v.paramId("chatId"));
 chats.get("/:chatId/messages", v.getMessages, c.messages.getMessages);
@@ -39,7 +46,13 @@ chats.use("/:chatId", v.access("MEMBER"), v.chatType("GROUP"));
 chats.delete("/:chatId/members/me", c.members.deleteMemberMe);
 
 chats.use("/:chatId", v.access("ADMIN"));
-chats.patch("/:chatId", v.patchChat, c.chats.patchChat);
+chats.patch(
+  "/:chatId",
+  m.parseAvatar,
+  m.uploadAvatar,
+  v.patchChat,
+  c.chats.patchChat,
+);
 chats.post("/:chatId/members", v.postMember, c.members.postMember);
 
 chats.use("/:chatId/members/:memberId", v.paramId("memberId"));

@@ -1,0 +1,10 @@
+.heading {
+  display: flex;
+  align-items: center;
+  gap: 0.25em;
+}
+
+.button {
+  height: 1.15em;
+  width: 1.15em;
+}

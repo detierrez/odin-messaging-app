@@ -61,10 +61,9 @@ const memberId = required("memberId").isInt().toInt();
 const role = required("role").toUpperCase().isIn(["ADMIN", "MEMBER"]);
 
 const description = body("description")
-  .optional()
-  .isString()
   .trim()
-  .customSanitizer((description) => (description === "" ? null : description))
+  .optional()
+  .default(null)
   .isLength({ max: DESCRIPTION_MAX_LENGTH })
   .withMessage(
     `Description cannot exceed ${DESCRIPTION_MAX_LENGTH} characters`,
@@ -75,6 +74,8 @@ const username = required("username")
   .toLowerCase()
   .isAlphanumeric()
   .withMessage("username must only contain letters and numbers");
+
+const alias = body("alias").trim().optional().default(null);
 
 const content = required("content")
   .isString()
@@ -101,24 +102,25 @@ const isActive = body("isActive")
   .withMessage("isActive must be a boolean");
 
 const memberIds = [
-  body("memberIds")
-    .isArray({ min: 1 })
-    .withMessage("A list of members is required"),
+  body("memberIds").customSanitizer((value) =>
+    Array.isArray(value) ? value : [value],
+  ),
   body("memberIds.*").isInt().toInt(),
 ];
 
 const groupName = body("name")
   .trim()
-  .optional({ values: "falsy" })
+  .optional()
+  .default(null)
   .isLength({ max: GROUPNAME_MAX_LENGTH })
   .withMessage(`Group name cannot exceed ${GROUPNAME_MAX_LENGTH} characters`);
 
-const patchMe = validate(description);
+const patchMe = validate([alias, description]);
 const postRequest = validate(username);
 const getMessages = validate([cursor, limit]);
 const postMessage = validate(content);
-const postChat = validate([memberIds, groupName]);
-const patchChat = validate([isActive, groupName]);
+const postChat = validate([groupName, description, memberIds]);
+const patchChat = validate([isActive, groupName, description]);
 const postMember = validate(memberId);
 const patchMember = validate(role);
 

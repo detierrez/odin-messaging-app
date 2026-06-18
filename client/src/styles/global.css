@@ -1,0 +1,71 @@
+:root {
+  --a: 1px solid red;
+
+  --spacing: 1rem;
+  --double-spacing: calc(var(--spacing) * 2);
+  --half-spacing: calc(var(--spacing) / 2);
+  --quarter-spacing: calc(var(--spacing) / 4);
+
+  --scrollbar-w: 7px;
+  --accent-color: #351657;
+  --accent-color-highlighted: #77529e;
+  --soft-border: 1px solid #fff1;
+  --soft-radius: 10px;
+  --transition-duration: 250ms;
+
+  --font-color: rgba(255, 255, 255, 0.87);
+  --input-bg-color: #333;
+
+  background-color: var(--bg-color);
+  color: rgba(255, 255, 255, 0.87);
+}
+
+/* #root {
+  max-width: 1280px;
+}
+
+body {
+} */
+
+button {
+  text-align: left;
+  padding: 0.5em 1em;
+  border-radius: var(--soft-radius);
+  background-color: transparent;
+
+  transition: background-color 150ms;
+  &:hover,
+  &.hovered {
+    background-color: #ffffff25;
+  }
+
+  img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    /* user-drag: none; */
+  }
+}
+
+input {
+  padding: 0.5em 1em;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #6666;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar {
+  width: var(--scrollbar-w);
+}
+
+pre {
+  font-family: inherit;
+}
+
+h1 {
+  font-size: 1.25em;
+}

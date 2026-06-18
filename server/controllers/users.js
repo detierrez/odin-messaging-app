@@ -16,15 +16,17 @@ module.exports.getMe = async (req, res) => {
 
 module.exports.patchMe = async (req, res) => {
   const { id: userId } = req.user;
-  const { description } = matchedData(req);
+  const { alias, description } = matchedData(req);
+  const { avatarUrl } = req;
 
   const user = await prisma.user.update({
     where: { id: userId },
-    data: { description },
+    data: { alias, description, avatarUrl },
     select: genericUserSelect,
   });
 
   notifyUser("update_profile", userId, {
+    alias: user.alias,
     description: user.description,
     avatarUrl: user.avatarUrl,
   });

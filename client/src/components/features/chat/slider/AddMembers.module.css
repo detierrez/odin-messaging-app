@@ -1,0 +1,50 @@
+.entry {
+  display: flex;
+  align-items: center;
+  gap: var(--half-spacing);
+}
+
+.avatar {
+  height: 1.75em;
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+.name {
+  flex-grow: 1;
+}
+
+.members {
+  gap: var(--spacing);
+  display: flex;
+  flex-direction: column;
+
+  .heading {
+    gap: var(--spacing);
+    display: flex;
+    align-items: center;
+  }
+
+  .messsage {
+    text-align: center;
+  }
+
+  .list {
+    gap: var(--spacing);
+    display: flex;
+    flex-direction: column;
+
+    .entry {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing);
+
+      .avatar {
+        height: 24px;
+        width: 24px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+      }
+    }
+  }
+}

@@ -25,4 +25,15 @@ ul {
 
 button {
   user-select: none;
+  cursor: pointer;
+  border: none;
+}
+
+input {
+  min-width: 0;
+  width: stretch;
+}
+
+textarea {
+  resize: none;
 }

@@ -1488,6 +1488,7 @@ export namespace Prisma {
   export type UserMinAggregateOutputType = {
     id: number | null
     username: string | null
+    alias: string | null
     avatarUrl: string | null
     description: string | null
   }
@@ -1495,6 +1496,7 @@ export namespace Prisma {
   export type UserMaxAggregateOutputType = {
     id: number | null
     username: string | null
+    alias: string | null
     avatarUrl: string | null
     description: string | null
   }
@@ -1502,6 +1504,7 @@ export namespace Prisma {
   export type UserCountAggregateOutputType = {
     id: number
     username: number
+    alias: number
     avatarUrl: number
     description: number
     _all: number
@@ -1519,6 +1522,7 @@ export namespace Prisma {
   export type UserMinAggregateInputType = {
     id?: true
     username?: true
+    alias?: true
     avatarUrl?: true
     description?: true
   }
@@ -1526,6 +1530,7 @@ export namespace Prisma {
   export type UserMaxAggregateInputType = {
     id?: true
     username?: true
+    alias?: true
     avatarUrl?: true
     description?: true
   }
@@ -1533,6 +1538,7 @@ export namespace Prisma {
   export type UserCountAggregateInputType = {
     id?: true
     username?: true
+    alias?: true
     avatarUrl?: true
     description?: true
     _all?: true
@@ -1627,7 +1633,8 @@ export namespace Prisma {
   export type UserGroupByOutputType = {
     id: number
     username: string
-    avatarUrl: string
+    alias: string | null
+    avatarUrl: string | null
     description: string | null
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
@@ -1653,6 +1660,7 @@ export namespace Prisma {
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     username?: boolean
+    alias?: boolean
     avatarUrl?: boolean
     description?: boolean
     sentMessages?: boolean | User$sentMessagesArgs<ExtArgs>
@@ -1666,6 +1674,7 @@ export namespace Prisma {
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     username?: boolean
+    alias?: boolean
     avatarUrl?: boolean
     description?: boolean
   }, ExtArgs["result"]["user"]>
@@ -1673,6 +1682,7 @@ export namespace Prisma {
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     username?: boolean
+    alias?: boolean
     avatarUrl?: boolean
     description?: boolean
   }, ExtArgs["result"]["user"]>
@@ -1680,11 +1690,12 @@ export namespace Prisma {
   export type UserSelectScalar = {
     id?: boolean
     username?: boolean
+    alias?: boolean
     avatarUrl?: boolean
     description?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "avatarUrl" | "description", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "alias" | "avatarUrl" | "description", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sentMessages?: boolean | User$sentMessagesArgs<ExtArgs>
     sentRequests?: boolean | User$sentRequestsArgs<ExtArgs>
@@ -1708,7 +1719,8 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       username: string
-      avatarUrl: string
+      alias: string | null
+      avatarUrl: string | null
       description: string | null
     }, ExtArgs["result"]["user"]>
     composites: {}
@@ -2140,6 +2152,7 @@ export namespace Prisma {
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'Int'>
     readonly username: FieldRef<"User", 'String'>
+    readonly alias: FieldRef<"User", 'String'>
     readonly avatarUrl: FieldRef<"User", 'String'>
     readonly description: FieldRef<"User", 'String'>
   }
@@ -5963,6 +5976,7 @@ export namespace Prisma {
     id: number | null
     name: string | null
     avatarUrl: string | null
+    description: string | null
     type: $Enums.Type | null
   }
 
@@ -5970,6 +5984,7 @@ export namespace Prisma {
     id: number | null
     name: string | null
     avatarUrl: string | null
+    description: string | null
     type: $Enums.Type | null
   }
 
@@ -5977,6 +5992,7 @@ export namespace Prisma {
     id: number
     name: number
     avatarUrl: number
+    description: number
     type: number
     _all: number
   }
@@ -5994,6 +6010,7 @@ export namespace Prisma {
     id?: true
     name?: true
     avatarUrl?: true
+    description?: true
     type?: true
   }
 
@@ -6001,6 +6018,7 @@ export namespace Prisma {
     id?: true
     name?: true
     avatarUrl?: true
+    description?: true
     type?: true
   }
 
@@ -6008,6 +6026,7 @@ export namespace Prisma {
     id?: true
     name?: true
     avatarUrl?: true
+    description?: true
     type?: true
     _all?: true
   }
@@ -6102,6 +6121,7 @@ export namespace Prisma {
     id: number
     name: string | null
     avatarUrl: string | null
+    description: string | null
     type: $Enums.Type
     _count: ChatCountAggregateOutputType | null
     _avg: ChatAvgAggregateOutputType | null
@@ -6128,6 +6148,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     avatarUrl?: boolean
+    description?: boolean
     type?: boolean
     messages?: boolean | Chat$messagesArgs<ExtArgs>
     writeAccesses?: boolean | Chat$writeAccessesArgs<ExtArgs>
@@ -6139,6 +6160,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     avatarUrl?: boolean
+    description?: boolean
     type?: boolean
   }, ExtArgs["result"]["chat"]>
 
@@ -6146,6 +6168,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     avatarUrl?: boolean
+    description?: boolean
     type?: boolean
   }, ExtArgs["result"]["chat"]>
 
@@ -6153,10 +6176,11 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     avatarUrl?: boolean
+    description?: boolean
     type?: boolean
   }
 
-  export type ChatOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "avatarUrl" | "type", ExtArgs["result"]["chat"]>
+  export type ChatOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "avatarUrl" | "description" | "type", ExtArgs["result"]["chat"]>
   export type ChatInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     messages?: boolean | Chat$messagesArgs<ExtArgs>
     writeAccesses?: boolean | Chat$writeAccessesArgs<ExtArgs>
@@ -6177,6 +6201,7 @@ export namespace Prisma {
       id: number
       name: string | null
       avatarUrl: string | null
+      description: string | null
       type: $Enums.Type
     }, ExtArgs["result"]["chat"]>
     composites: {}
@@ -6607,6 +6632,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Chat", 'Int'>
     readonly name: FieldRef<"Chat", 'String'>
     readonly avatarUrl: FieldRef<"Chat", 'String'>
+    readonly description: FieldRef<"Chat", 'String'>
     readonly type: FieldRef<"Chat", 'Type'>
   }
     
@@ -8221,6 +8247,7 @@ export namespace Prisma {
   export const UserScalarFieldEnum: {
     id: 'id',
     username: 'username',
+    alias: 'alias',
     avatarUrl: 'avatarUrl',
     description: 'description'
   };
@@ -8260,6 +8287,7 @@ export namespace Prisma {
     id: 'id',
     name: 'name',
     avatarUrl: 'avatarUrl',
+    description: 'description',
     type: 'type'
   };
 
@@ -8399,7 +8427,8 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     id?: IntFilter<"User"> | number
     username?: StringFilter<"User"> | string
-    avatarUrl?: StringFilter<"User"> | string
+    alias?: StringNullableFilter<"User"> | string | null
+    avatarUrl?: StringNullableFilter<"User"> | string | null
     description?: StringNullableFilter<"User"> | string | null
     sentMessages?: MessageListRelationFilter
     sentRequests?: RequestListRelationFilter
@@ -8411,7 +8440,8 @@ export namespace Prisma {
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
     username?: SortOrder
-    avatarUrl?: SortOrder
+    alias?: SortOrderInput | SortOrder
+    avatarUrl?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     sentMessages?: MessageOrderByRelationAggregateInput
     sentRequests?: RequestOrderByRelationAggregateInput
@@ -8426,7 +8456,8 @@ export namespace Prisma {
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
-    avatarUrl?: StringFilter<"User"> | string
+    alias?: StringNullableFilter<"User"> | string | null
+    avatarUrl?: StringNullableFilter<"User"> | string | null
     description?: StringNullableFilter<"User"> | string | null
     sentMessages?: MessageListRelationFilter
     sentRequests?: RequestListRelationFilter
@@ -8438,7 +8469,8 @@ export namespace Prisma {
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
     username?: SortOrder
-    avatarUrl?: SortOrder
+    alias?: SortOrderInput | SortOrder
+    avatarUrl?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
@@ -8453,7 +8485,8 @@ export namespace Prisma {
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"User"> | number
     username?: StringWithAggregatesFilter<"User"> | string
-    avatarUrl?: StringWithAggregatesFilter<"User"> | string
+    alias?: StringNullableWithAggregatesFilter<"User"> | string | null
+    avatarUrl?: StringNullableWithAggregatesFilter<"User"> | string | null
     description?: StringNullableWithAggregatesFilter<"User"> | string | null
   }
 
@@ -8621,6 +8654,7 @@ export namespace Prisma {
     id?: IntFilter<"Chat"> | number
     name?: StringNullableFilter<"Chat"> | string | null
     avatarUrl?: StringNullableFilter<"Chat"> | string | null
+    description?: StringNullableFilter<"Chat"> | string | null
     type?: EnumTypeFilter<"Chat"> | $Enums.Type
     messages?: MessageListRelationFilter
     writeAccesses?: WriteAccessListRelationFilter
@@ -8631,6 +8665,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrderInput | SortOrder
     avatarUrl?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
     type?: SortOrder
     messages?: MessageOrderByRelationAggregateInput
     writeAccesses?: WriteAccessOrderByRelationAggregateInput
@@ -8644,6 +8679,7 @@ export namespace Prisma {
     NOT?: ChatWhereInput | ChatWhereInput[]
     name?: StringNullableFilter<"Chat"> | string | null
     avatarUrl?: StringNullableFilter<"Chat"> | string | null
+    description?: StringNullableFilter<"Chat"> | string | null
     type?: EnumTypeFilter<"Chat"> | $Enums.Type
     messages?: MessageListRelationFilter
     writeAccesses?: WriteAccessListRelationFilter
@@ -8654,6 +8690,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrderInput | SortOrder
     avatarUrl?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
     type?: SortOrder
     _count?: ChatCountOrderByAggregateInput
     _avg?: ChatAvgOrderByAggregateInput
@@ -8669,6 +8706,7 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"Chat"> | number
     name?: StringNullableWithAggregatesFilter<"Chat"> | string | null
     avatarUrl?: StringNullableWithAggregatesFilter<"Chat"> | string | null
+    description?: StringNullableWithAggregatesFilter<"Chat"> | string | null
     type?: EnumTypeWithAggregatesFilter<"Chat"> | $Enums.Type
   }
 
@@ -8734,7 +8772,8 @@ export namespace Prisma {
 
   export type UserCreateInput = {
     username: string
-    avatarUrl?: string
+    alias?: string | null
+    avatarUrl?: string | null
     description?: string | null
     sentMessages?: MessageCreateNestedManyWithoutUserInput
     sentRequests?: RequestCreateNestedManyWithoutSenderInput
@@ -8746,7 +8785,8 @@ export namespace Prisma {
   export type UserUncheckedCreateInput = {
     id?: number
     username: string
-    avatarUrl?: string
+    alias?: string | null
+    avatarUrl?: string | null
     description?: string | null
     sentMessages?: MessageUncheckedCreateNestedManyWithoutUserInput
     sentRequests?: RequestUncheckedCreateNestedManyWithoutSenderInput
@@ -8757,7 +8797,8 @@ export namespace Prisma {
 
   export type UserUpdateInput = {
     username?: StringFieldUpdateOperationsInput | string
-    avatarUrl?: StringFieldUpdateOperationsInput | string
+    alias?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sentMessages?: MessageUpdateManyWithoutUserNestedInput
     sentRequests?: RequestUpdateManyWithoutSenderNestedInput
@@ -8769,7 +8810,8 @@ export namespace Prisma {
   export type UserUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
-    avatarUrl?: StringFieldUpdateOperationsInput | string
+    alias?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sentMessages?: MessageUncheckedUpdateManyWithoutUserNestedInput
     sentRequests?: RequestUncheckedUpdateManyWithoutSenderNestedInput
@@ -8781,20 +8823,23 @@ export namespace Prisma {
   export type UserCreateManyInput = {
     id?: number
     username: string
-    avatarUrl?: string
+    alias?: string | null
+    avatarUrl?: string | null
     description?: string | null
   }
 
   export type UserUpdateManyMutationInput = {
     username?: StringFieldUpdateOperationsInput | string
-    avatarUrl?: StringFieldUpdateOperationsInput | string
+    alias?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
-    avatarUrl?: StringFieldUpdateOperationsInput | string
+    alias?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -8927,6 +8972,7 @@ export namespace Prisma {
   export type ChatCreateInput = {
     name?: string | null
     avatarUrl?: string | null
+    description?: string | null
     type?: $Enums.Type
     messages?: MessageCreateNestedManyWithoutChatInput
     writeAccesses?: WriteAccessCreateNestedManyWithoutChatInput
@@ -8937,6 +8983,7 @@ export namespace Prisma {
     id?: number
     name?: string | null
     avatarUrl?: string | null
+    description?: string | null
     type?: $Enums.Type
     messages?: MessageUncheckedCreateNestedManyWithoutChatInput
     writeAccesses?: WriteAccessUncheckedCreateNestedManyWithoutChatInput
@@ -8946,6 +8993,7 @@ export namespace Prisma {
   export type ChatUpdateInput = {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     messages?: MessageUpdateManyWithoutChatNestedInput
     writeAccesses?: WriteAccessUpdateManyWithoutChatNestedInput
@@ -8956,6 +9004,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     messages?: MessageUncheckedUpdateManyWithoutChatNestedInput
     writeAccesses?: WriteAccessUncheckedUpdateManyWithoutChatNestedInput
@@ -8966,12 +9015,14 @@ export namespace Prisma {
     id?: number
     name?: string | null
     avatarUrl?: string | null
+    description?: string | null
     type?: $Enums.Type
   }
 
   export type ChatUpdateManyMutationInput = {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
   }
 
@@ -8979,6 +9030,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
   }
 
@@ -9122,6 +9174,7 @@ export namespace Prisma {
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     username?: SortOrder
+    alias?: SortOrder
     avatarUrl?: SortOrder
     description?: SortOrder
   }
@@ -9133,6 +9186,7 @@ export namespace Prisma {
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
     username?: SortOrder
+    alias?: SortOrder
     avatarUrl?: SortOrder
     description?: SortOrder
   }
@@ -9140,6 +9194,7 @@ export namespace Prisma {
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
     username?: SortOrder
+    alias?: SortOrder
     avatarUrl?: SortOrder
     description?: SortOrder
   }
@@ -9387,6 +9442,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     avatarUrl?: SortOrder
+    description?: SortOrder
     type?: SortOrder
   }
 
@@ -9398,6 +9454,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     avatarUrl?: SortOrder
+    description?: SortOrder
     type?: SortOrder
   }
 
@@ -9405,6 +9462,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     avatarUrl?: SortOrder
+    description?: SortOrder
     type?: SortOrder
   }
 
@@ -10356,7 +10414,8 @@ export namespace Prisma {
 
   export type UserCreateWithoutSentRequestsInput = {
     username: string
-    avatarUrl?: string
+    alias?: string | null
+    avatarUrl?: string | null
     description?: string | null
     sentMessages?: MessageCreateNestedManyWithoutUserInput
     receivedRequests?: RequestCreateNestedManyWithoutReceiverInput
@@ -10367,7 +10426,8 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutSentRequestsInput = {
     id?: number
     username: string
-    avatarUrl?: string
+    alias?: string | null
+    avatarUrl?: string | null
     description?: string | null
     sentMessages?: MessageUncheckedCreateNestedManyWithoutUserInput
     receivedRequests?: RequestUncheckedCreateNestedManyWithoutReceiverInput
@@ -10382,7 +10442,8 @@ export namespace Prisma {
 
   export type UserCreateWithoutReceivedRequestsInput = {
     username: string
-    avatarUrl?: string
+    alias?: string | null
+    avatarUrl?: string | null
     description?: string | null
     sentMessages?: MessageCreateNestedManyWithoutUserInput
     sentRequests?: RequestCreateNestedManyWithoutSenderInput
@@ -10393,7 +10454,8 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutReceivedRequestsInput = {
     id?: number
     username: string
-    avatarUrl?: string
+    alias?: string | null
+    avatarUrl?: string | null
     description?: string | null
     sentMessages?: MessageUncheckedCreateNestedManyWithoutUserInput
     sentRequests?: RequestUncheckedCreateNestedManyWithoutSenderInput
@@ -10419,7 +10481,8 @@ export namespace Prisma {
 
   export type UserUpdateWithoutSentRequestsInput = {
     username?: StringFieldUpdateOperationsInput | string
-    avatarUrl?: StringFieldUpdateOperationsInput | string
+    alias?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sentMessages?: MessageUpdateManyWithoutUserNestedInput
     receivedRequests?: RequestUpdateManyWithoutReceiverNestedInput
@@ -10430,7 +10493,8 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutSentRequestsInput = {
     id?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
-    avatarUrl?: StringFieldUpdateOperationsInput | string
+    alias?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sentMessages?: MessageUncheckedUpdateManyWithoutUserNestedInput
     receivedRequests?: RequestUncheckedUpdateManyWithoutReceiverNestedInput
@@ -10451,7 +10515,8 @@ export namespace Prisma {
 
   export type UserUpdateWithoutReceivedRequestsInput = {
     username?: StringFieldUpdateOperationsInput | string
-    avatarUrl?: StringFieldUpdateOperationsInput | string
+    alias?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sentMessages?: MessageUpdateManyWithoutUserNestedInput
     sentRequests?: RequestUpdateManyWithoutSenderNestedInput
@@ -10462,7 +10527,8 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutReceivedRequestsInput = {
     id?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
-    avatarUrl?: StringFieldUpdateOperationsInput | string
+    alias?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sentMessages?: MessageUncheckedUpdateManyWithoutUserNestedInput
     sentRequests?: RequestUncheckedUpdateManyWithoutSenderNestedInput
@@ -10472,7 +10538,8 @@ export namespace Prisma {
 
   export type UserCreateWithoutWriteAccessesInput = {
     username: string
-    avatarUrl?: string
+    alias?: string | null
+    avatarUrl?: string | null
     description?: string | null
     sentMessages?: MessageCreateNestedManyWithoutUserInput
     sentRequests?: RequestCreateNestedManyWithoutSenderInput
@@ -10483,7 +10550,8 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutWriteAccessesInput = {
     id?: number
     username: string
-    avatarUrl?: string
+    alias?: string | null
+    avatarUrl?: string | null
     description?: string | null
     sentMessages?: MessageUncheckedCreateNestedManyWithoutUserInput
     sentRequests?: RequestUncheckedCreateNestedManyWithoutSenderInput
@@ -10499,6 +10567,7 @@ export namespace Prisma {
   export type ChatCreateWithoutWriteAccessesInput = {
     name?: string | null
     avatarUrl?: string | null
+    description?: string | null
     type?: $Enums.Type
     messages?: MessageCreateNestedManyWithoutChatInput
     readAccesses?: ReadAccessCreateNestedManyWithoutChatInput
@@ -10508,6 +10577,7 @@ export namespace Prisma {
     id?: number
     name?: string | null
     avatarUrl?: string | null
+    description?: string | null
     type?: $Enums.Type
     messages?: MessageUncheckedCreateNestedManyWithoutChatInput
     readAccesses?: ReadAccessUncheckedCreateNestedManyWithoutChatInput
@@ -10531,7 +10601,8 @@ export namespace Prisma {
 
   export type UserUpdateWithoutWriteAccessesInput = {
     username?: StringFieldUpdateOperationsInput | string
-    avatarUrl?: StringFieldUpdateOperationsInput | string
+    alias?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sentMessages?: MessageUpdateManyWithoutUserNestedInput
     sentRequests?: RequestUpdateManyWithoutSenderNestedInput
@@ -10542,7 +10613,8 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutWriteAccessesInput = {
     id?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
-    avatarUrl?: StringFieldUpdateOperationsInput | string
+    alias?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sentMessages?: MessageUncheckedUpdateManyWithoutUserNestedInput
     sentRequests?: RequestUncheckedUpdateManyWithoutSenderNestedInput
@@ -10564,6 +10636,7 @@ export namespace Prisma {
   export type ChatUpdateWithoutWriteAccessesInput = {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     messages?: MessageUpdateManyWithoutChatNestedInput
     readAccesses?: ReadAccessUpdateManyWithoutChatNestedInput
@@ -10573,6 +10646,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     messages?: MessageUncheckedUpdateManyWithoutChatNestedInput
     readAccesses?: ReadAccessUncheckedUpdateManyWithoutChatNestedInput
@@ -10580,7 +10654,8 @@ export namespace Prisma {
 
   export type UserCreateWithoutReadAccessesInput = {
     username: string
-    avatarUrl?: string
+    alias?: string | null
+    avatarUrl?: string | null
     description?: string | null
     sentMessages?: MessageCreateNestedManyWithoutUserInput
     sentRequests?: RequestCreateNestedManyWithoutSenderInput
@@ -10591,7 +10666,8 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutReadAccessesInput = {
     id?: number
     username: string
-    avatarUrl?: string
+    alias?: string | null
+    avatarUrl?: string | null
     description?: string | null
     sentMessages?: MessageUncheckedCreateNestedManyWithoutUserInput
     sentRequests?: RequestUncheckedCreateNestedManyWithoutSenderInput
@@ -10607,6 +10683,7 @@ export namespace Prisma {
   export type ChatCreateWithoutReadAccessesInput = {
     name?: string | null
     avatarUrl?: string | null
+    description?: string | null
     type?: $Enums.Type
     messages?: MessageCreateNestedManyWithoutChatInput
     writeAccesses?: WriteAccessCreateNestedManyWithoutChatInput
@@ -10616,6 +10693,7 @@ export namespace Prisma {
     id?: number
     name?: string | null
     avatarUrl?: string | null
+    description?: string | null
     type?: $Enums.Type
     messages?: MessageUncheckedCreateNestedManyWithoutChatInput
     writeAccesses?: WriteAccessUncheckedCreateNestedManyWithoutChatInput
@@ -10639,7 +10717,8 @@ export namespace Prisma {
 
   export type UserUpdateWithoutReadAccessesInput = {
     username?: StringFieldUpdateOperationsInput | string
-    avatarUrl?: StringFieldUpdateOperationsInput | string
+    alias?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sentMessages?: MessageUpdateManyWithoutUserNestedInput
     sentRequests?: RequestUpdateManyWithoutSenderNestedInput
@@ -10650,7 +10729,8 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutReadAccessesInput = {
     id?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
-    avatarUrl?: StringFieldUpdateOperationsInput | string
+    alias?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sentMessages?: MessageUncheckedUpdateManyWithoutUserNestedInput
     sentRequests?: RequestUncheckedUpdateManyWithoutSenderNestedInput
@@ -10672,6 +10752,7 @@ export namespace Prisma {
   export type ChatUpdateWithoutReadAccessesInput = {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     messages?: MessageUpdateManyWithoutChatNestedInput
     writeAccesses?: WriteAccessUpdateManyWithoutChatNestedInput
@@ -10681,6 +10762,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     messages?: MessageUncheckedUpdateManyWithoutChatNestedInput
     writeAccesses?: WriteAccessUncheckedUpdateManyWithoutChatNestedInput
@@ -10802,7 +10884,8 @@ export namespace Prisma {
 
   export type UserCreateWithoutSentMessagesInput = {
     username: string
-    avatarUrl?: string
+    alias?: string | null
+    avatarUrl?: string | null
     description?: string | null
     sentRequests?: RequestCreateNestedManyWithoutSenderInput
     receivedRequests?: RequestCreateNestedManyWithoutReceiverInput
@@ -10813,7 +10896,8 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutSentMessagesInput = {
     id?: number
     username: string
-    avatarUrl?: string
+    alias?: string | null
+    avatarUrl?: string | null
     description?: string | null
     sentRequests?: RequestUncheckedCreateNestedManyWithoutSenderInput
     receivedRequests?: RequestUncheckedCreateNestedManyWithoutReceiverInput
@@ -10829,6 +10913,7 @@ export namespace Prisma {
   export type ChatCreateWithoutMessagesInput = {
     name?: string | null
     avatarUrl?: string | null
+    description?: string | null
     type?: $Enums.Type
     writeAccesses?: WriteAccessCreateNestedManyWithoutChatInput
     readAccesses?: ReadAccessCreateNestedManyWithoutChatInput
@@ -10838,6 +10923,7 @@ export namespace Prisma {
     id?: number
     name?: string | null
     avatarUrl?: string | null
+    description?: string | null
     type?: $Enums.Type
     writeAccesses?: WriteAccessUncheckedCreateNestedManyWithoutChatInput
     readAccesses?: ReadAccessUncheckedCreateNestedManyWithoutChatInput
@@ -10861,7 +10947,8 @@ export namespace Prisma {
 
   export type UserUpdateWithoutSentMessagesInput = {
     username?: StringFieldUpdateOperationsInput | string
-    avatarUrl?: StringFieldUpdateOperationsInput | string
+    alias?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sentRequests?: RequestUpdateManyWithoutSenderNestedInput
     receivedRequests?: RequestUpdateManyWithoutReceiverNestedInput
@@ -10872,7 +10959,8 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutSentMessagesInput = {
     id?: IntFieldUpdateOperationsInput | number
     username?: StringFieldUpdateOperationsInput | string
-    avatarUrl?: StringFieldUpdateOperationsInput | string
+    alias?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     sentRequests?: RequestUncheckedUpdateManyWithoutSenderNestedInput
     receivedRequests?: RequestUncheckedUpdateManyWithoutReceiverNestedInput
@@ -10894,6 +10982,7 @@ export namespace Prisma {
   export type ChatUpdateWithoutMessagesInput = {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     writeAccesses?: WriteAccessUpdateManyWithoutChatNestedInput
     readAccesses?: ReadAccessUpdateManyWithoutChatNestedInput
@@ -10903,6 +10992,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     name?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
     writeAccesses?: WriteAccessUncheckedUpdateManyWithoutChatNestedInput
     readAccesses?: ReadAccessUncheckedUpdateManyWithoutChatNestedInput

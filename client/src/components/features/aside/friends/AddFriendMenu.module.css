@@ -1,0 +1,29 @@
+.requests {
+  composes: scrollable from "../AsideStyles.module.css";
+  gap: var(--spacing);
+  display: flex;
+  flex-direction: column;
+
+  .requestCount {
+    padding-bottom: var(--spacing);
+    border-bottom: var(--soft-border);
+    font-size: 0.85rem;
+  }
+
+  .list {
+    gap: var(--spacing);
+    display: flex;
+    flex-direction: column;
+
+    .entry {
+      gap: var(--spacing);
+      display: flex;
+      align-items: center;
+
+      .avatar {
+        height: 2.5em;
+        width: 2.5em;
+      }
+    }
+  }
+}
