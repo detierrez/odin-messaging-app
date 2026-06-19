@@ -1,7 +1,6 @@
+import { useRef, useEffect, useState } from "react";
 import { merge } from "@lib/index";
 import s from "./Modal.module.css";
-
-import { useRef, useEffect, useState } from "react";
 
 export default function Modal({ isOpen, onClose, children }) {
   const dialogRef = useRef(null);
@@ -9,7 +8,6 @@ export default function Modal({ isOpen, onClose, children }) {
 
   useEffect(() => {
     const dialog = dialogRef.current;
-
     if (!dialog) return;
 
     if (isOpen) {
@@ -18,19 +16,26 @@ export default function Modal({ isOpen, onClose, children }) {
       document.addEventListener("keydown", close);
 
       return () => {
-        document.removeEventListener("keydown", close);
         document.removeEventListener("click", close);
+        document.removeEventListener("keydown", close);
       };
-    } else {
-      setIsClosing(false);
-      dialog.close();
+
+      function close({ type, key, target }) {
+        if (
+          (type === "keydown" && key === "Escape") ||
+          (type === "click" && !dialog.contains(target))
+        ) {
+          onClose();
+        }
+      }
+    } else if (dialog.open) {
+      setIsClosing(true);
     }
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   return (
     <dialog
       className={merge(s.dialog, isClosing ? s.closing : null)}
-      closedby="none"
       onAnimationEnd={handleAnimationEnd}
       ref={dialogRef}
     >
@@ -38,15 +43,10 @@ export default function Modal({ isOpen, onClose, children }) {
     </dialog>
   );
 
-  function close(event) {
-    if (event.key === "Escape" || event.target !== dialogRef.current) {
-      setIsClosing(true);
-    }
-  }
-
   function handleAnimationEnd() {
     if (isClosing) {
-      onClose();
+      setIsClosing(false);
+      dialogRef.current.close();
     }
   }
 }

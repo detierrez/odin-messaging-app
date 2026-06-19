@@ -11,8 +11,8 @@
   composes: loading from "@styles/shared.css";
 }
 
-.testName,
-.testDescription {
+.name,
+.description {
   composes: input from "@styles/shared.css";
 }
 
@@ -37,18 +37,18 @@
   }
 
   .username {
-    margin-top: calc(-1 * var(--half-spacing));
+    margin-top: var(--neg-half-spacing);
     font-size: 0.75rem;
     align-self: center;
   }
 
-  .testName {
+  .name {
     font-size: 1.15rem;
   }
 
   .subheading,
   .statusHeading {
-    margin-bottom: calc(-1 * var(--half-spacing));
+    margin-bottom: var(--neg-half-spacing);
     font-size: 0.85rem;
     line-height: 0.8;
   }
@@ -64,17 +64,18 @@
       flex: 0 0 1.5em;
     }
 
-    .testName {
+    .name {
       text-align: center;
     }
 
-    .testDescription {
+    .description {
       line-height: 1.25;
+      border-radius: var(--half-spacing);
     }
 
-    .testName,
-    .testDescription {
-      padding: var(--quarter-spacing);
+    .name,
+    .description {
+      padding-block: var(--quarter-spacing);
       padding-inline: var(--half-spacing);
       color: inherit;
       background-color: transparent;
@@ -85,8 +86,8 @@
       }
     }
 
-    .testDescription {
-      margin-left: calc(-1 * var(--half-spacing));
+    .description {
+      margin-left: var(--neg-half-spacing);
       flex-grow: 1;
       field-sizing: content;
       min-height: max-content;
@@ -100,6 +101,7 @@
 }
 
 .addMembers {
+  height: 90vh;
   padding: var(--spacing);
   border-radius: var(--spacing);
 }

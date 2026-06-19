@@ -6,7 +6,7 @@ import Menu from "../shared/Menu";
 import { useApi, useId, useUser } from "@hooks";
 import { DEFAULT_USER_AVATAR } from "@lib/images";
 import { EditableField, Name, SelectableImage } from "@components/common";
-import Test from "@components/common/Test";
+import ControlLabel from "@components/common/Test";
 
 export default function ProfileView({ onCloseClick, ...props }) {
   const { updateProfile } = useApi();
@@ -34,7 +34,7 @@ export default function ProfileView({ onCloseClick, ...props }) {
 
       <div className={s.aliasWrapper}>
         <div className={s.editButton}></div>
-        <Test
+        <ControlLabel
           className={s.editButton}
           defaultValue={alias}
           onSubmit={handleSubmit("alias")}
@@ -52,7 +52,7 @@ export default function ProfileView({ onCloseClick, ...props }) {
 
       <div className={s.statusHeading}>Status</div>
       <div className={s.descriptionWrapper}>
-        <Test
+        <ControlLabel
           defaultValue={description}
           onSubmit={handleSubmit("description")}
           renderInput={(value, disabled, onChange, onKeyDown, ref) => (

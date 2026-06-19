@@ -1,14 +1,18 @@
+import { useState } from "react";
 import { cross } from "@lib/icons";
 import { merge } from "@lib/index";
-import { useApi, useProfileData, useCurrentChat } from "@hooks";
-import { IconButton, SelectableImage, Surface } from "@components/common";
-import s from "./Details.module.css";
-import MemberList from "./Members";
 import { DEFAULT_GROUP_AVATAR, DEFAULT_USER_AVATAR } from "@lib/images";
-import Test from "@components/common/Test";
-import Modal from "@components/common/Modal";
-import { useState } from "react";
+import { useApi, useProfileData, useCurrentChat } from "@hooks";
+import {
+  ControlLabel,
+  IconButton,
+  Modal,
+  SelectableImage,
+  Surface,
+} from "@components/common";
+import MemberList from "./Members";
 import AddMembers from "./AddMembers";
+import s from "./Details.module.css";
 
 export default function Details({ className, onCloseClick }) {
   const { updateGroup } = useApi();
@@ -42,14 +46,14 @@ export default function Details({ className, onCloseClick }) {
 
       <div className={s.nameWrapper}>
         {isUserAdmin && <div className={s.editButton}></div>}
-        <Test
+        <ControlLabel
           className={s.editButton}
           defaultValue={name}
           disabled={!isUserAdmin}
           onSubmit={handleSubmit("name")}
           renderInput={(value, disabled, onChange, onKeyDown, ref) => (
             <input
-              className={s.testName}
+              className={s.name}
               placeholder={"Add a subject"}
               {...{ value, disabled, onChange, onKeyDown, ref }}
             />
@@ -65,13 +69,13 @@ export default function Details({ className, onCloseClick }) {
             {username ? "Status" : "Description"}
           </div>
           <div className={s.descriptionWrapper}>
-            <Test
+            <ControlLabel
               defaultValue={description}
               disabled={!isUserAdmin}
               onSubmit={handleSubmit("description")}
               renderInput={(value, disabled, onChange, onKeyDown, ref) => (
                 <textarea
-                  className={s.testDescription}
+                  className={s.description}
                   placeholder={"Add a description"}
                   {...{ value, disabled, onChange, onKeyDown, ref }}
                 />
@@ -84,9 +88,10 @@ export default function Details({ className, onCloseClick }) {
       {!isDirect && <MemberList onMoreClick={handleMoreMembersClick} />}
       {!isDirect && (
         <Modal isOpen={isModal} onClose={handleModalClose}>
-          <Surface className={s.addMembers}>
-            <AddMembers />
-          </Surface>
+          <AddMembers
+            className={s.addMembers}
+            onCancelClick={handleModalClose}
+          />
         </Modal>
       )}
     </Surface>

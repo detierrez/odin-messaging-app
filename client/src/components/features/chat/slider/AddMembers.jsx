@@ -1,14 +1,10 @@
-import { arrowLeft, plus } from "@lib/icons";
+import { cross, plus, search } from "@lib/icons";
 import { merge } from "@lib/index";
 import { useApi, useCurrentChat, useFriends } from "@hooks";
-import { Avatar, Heading, IconButton, Name } from "@components/common";
+import { Avatar, Heading, IconButton, Name, Surface } from "@components/common";
 import s from "./AddMembers.module.css";
 
-export default function AddMembers({
-  className: propsClass,
-  onGoBackClick,
-  ...props
-}) {
+export default function AddMembers({ className, onCancelClick, ...props }) {
   const { chat } = useCurrentChat();
   const friends = useFriends();
 
@@ -16,24 +12,53 @@ export default function AddMembers({
   const nonMembers = friends.filter(({ friendId }) => !memberships[friendId]);
 
   return (
-    <div className={merge(propsClass, s.members)} {...{ ...props }}>
+    <Surface className={merge(className, s.menu)} {...{ ...props }}>
       <div className={s.heading}>
-        <IconButton src={arrowLeft} alt="back" onClick={onGoBackClick} />
-        <Heading>Add Members</Heading>
+        <IconButton src={cross} alt="back" onClick={onCancelClick} />
+        <span>Add Members</span>
       </div>
 
-      {nonMembers.length > 0 ? (
-        <div className={s.list}>
-          {nonMembers.map(({ friendId }) => (
+      <div className={s.searchWrapper}>
+        <img className={s.icon} src={search} alt="" />
+        <input
+          type="text"
+          className={s.search}
+          placeholder="Search for a name"
+        />
+      </div>
+
+      <div className={s.subHeading}>Friends</div>
+      <div className={s.list}>
+        {nonMembers.length > 0 ? (
+          nonMembers.map(({ friendId }) => (
             <InvitationEntry {...{ chatId, friendId }} key={friendId} />
-          ))}
-        </div>
-      ) : (
-        <p className={s.messsage}>
-          No friends to invite. Add more friends and invite them to this group!
-        </p>
-      )}
-    </div>
+          ))
+        ) : (
+          <p className={s.placeholderText}>No friends found</p>
+        )}
+        {nonMembers.length > 0 ? (
+          nonMembers.map(({ friendId }) => (
+            <InvitationEntry {...{ chatId, friendId }} key={friendId} />
+          ))
+        ) : (
+          <p className={s.placeholderText}>No friends found</p>
+        )}
+        {nonMembers.length > 0 ? (
+          nonMembers.map(({ friendId }) => (
+            <InvitationEntry {...{ chatId, friendId }} key={friendId} />
+          ))
+        ) : (
+          <p className={s.placeholderText}>No friends found</p>
+        )}
+        {nonMembers.length > 0 ? (
+          nonMembers.map(({ friendId }) => (
+            <InvitationEntry {...{ chatId, friendId }} key={friendId} />
+          ))
+        ) : (
+          <p className={s.placeholderText}>No friends found</p>
+        )}
+      </div>
+    </Surface>
   );
 }
 
@@ -41,14 +66,14 @@ function InvitationEntry({ chatId, friendId }) {
   const { addMember } = useApi();
 
   return (
-    <div className={s.entry}>
+    <button className={s.entry} onClick={handleClick}>
       <Avatar className={s.avatar} userId={friendId} />
       <Name clasName={s.name} userId={friendId} />
-      <IconButton
-        src={plus}
-        alt="add member"
-        onClick={() => addMember(chatId, friendId)}
-      />
-    </div>
+      <img className={s.addIcon} src={plus} alt="add" />
+    </button>
   );
+
+  function handleClick() {
+    addMember(chatId, friendId);
+  }
 }

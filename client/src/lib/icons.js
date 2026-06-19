@@ -9,6 +9,7 @@ import minus from "../assets/icons/minus.svg";
 import moreVertical from "../assets/icons/more-vertical.svg";
 import pen from "../assets/icons/pen.svg";
 import plus from "../assets/icons/plus.svg";
+import search from "../assets/icons/search.svg";
 import send from "../assets/icons/send.svg";
 
 export {
@@ -23,5 +24,6 @@ export {
   plus,
   moreVertical,
   minus,
+  search,
   send,
 };

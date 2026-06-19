@@ -17,13 +17,13 @@
 }
 
 .username {
-  margin-top: calc(-1 * var(--half-spacing));
+  margin-top: var(--neg-half-spacing);
   font-size: 0.85rem;
   text-align: center;
 }
 
 .statusHeading {
-  margin-bottom: calc(-1 * var(--half-spacing));
+  margin-bottom: var(--neg-half-spacing);
   font-size: 0.85rem;
   line-height: 0.8;
 }
@@ -62,7 +62,7 @@
   }
 
   .description {
-    margin-left: calc(-1 * var(--half-spacing));
+    margin-left: var(--neg-half-spacing);
     flex-grow: 1;
     field-sizing: content;
     min-height: max-content;

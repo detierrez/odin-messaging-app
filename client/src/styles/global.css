@@ -1,10 +1,11 @@
 :root {
-  --a: 1px solid red;
-
   --spacing: 1rem;
   --double-spacing: calc(var(--spacing) * 2);
   --half-spacing: calc(var(--spacing) / 2);
   --quarter-spacing: calc(var(--spacing) / 4);
+
+  --neg-spacing: calc(-1 * var(--spacing));
+  --neg-half-spacing: calc(-1 * var(--half-spacing));
 
   --scrollbar-w: 7px;
   --accent-color: #351657;
@@ -14,6 +15,7 @@
   --transition-duration: 250ms;
 
   --font-color: rgba(255, 255, 255, 0.87);
+  --font-color-muted: rgba(255, 255, 255, 0.5);
   --input-bg-color: #333;
 
   background-color: var(--bg-color);

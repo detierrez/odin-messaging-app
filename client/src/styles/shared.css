@@ -7,6 +7,7 @@
 }
 
 .accent {
+  margin: 0;
   background-color: var(--accent-color);
   transition:
     color 250ms,
@@ -50,6 +51,33 @@
   color: transparent;
   background-color: rgba(255, 255, 255, 0.2);
   animation: loading 750ms ease-in-out infinite alternate;
+}
+
+.composedInput {
+  padding: var(--half-spacing);
+  gap: var(--half-spacing);
+  display: flex;
+  border-radius: 999px;
+  outline: 2px solid transparent;
+  background-color: var(--input-bg-color);
+  transition:
+    background-color var(--transition-duration),
+    outline-color var(--transition-duration);
+
+  &:has(> .input:focus) {
+    outline-color: var(--accent-color-highlighted);
+    background-color: transparent;
+  }
+
+  .input {
+    min-width: 0;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    border-radius: 0;
+    caret-color: var(--accent-color-highlighted);
+  }
 }
 
 :where(.loading) {

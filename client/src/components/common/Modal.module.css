@@ -1,4 +1,6 @@
 .dialog {
+  height: fit-content;
+  overflow: hidden;
   border: none;
   background-color: transparent;
   translate: calc(50vw - 50%) calc(50vh - 50%);

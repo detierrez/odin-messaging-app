@@ -2,7 +2,7 @@ import { check, pen } from "@lib/icons";
 import { IconButton } from "@components/common";
 import { useEffect, useRef, useState } from "react";
 
-export default function Test({
+export default function ControlLabel({
   className,
   defaultValue,
   disabled,

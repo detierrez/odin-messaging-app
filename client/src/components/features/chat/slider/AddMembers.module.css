@@ -1,20 +1,26 @@
-.entry {
-  display: flex;
-  align-items: center;
-  gap: var(--half-spacing);
+.addButton {
+  composes: accent from "@styles/shared.css";
 }
 
 .avatar {
-  height: 1.75em;
-  aspect-ratio: 1;
-  border-radius: 50%;
+  composes: avatar from "@styles/shared.css";
+  --size: 2.5em;
 }
 
-.name {
-  flex-grow: 1;
+.searchWrapper {
+  composes: composedInput from "@styles/shared.css";
 }
 
-.members {
+.search {
+  composes: input from "@styles/shared.css";
+}
+
+.list {
+  composes: scrollable from "@styles/shared.css";
+}
+
+.menu {
+  min-height: 0;
   gap: var(--spacing);
   display: flex;
   flex-direction: column;
@@ -25,25 +31,53 @@
     align-items: center;
   }
 
-  .messsage {
+  .placeholderText {
     text-align: center;
+    translate: 0 var(--spacing);
+  }
+
+  .subHeading {
+    font-size: 0.85rem;
+    color: var(--font-color-muted);
+  }
+
+  .searchWrapper {
+    padding-inline: var(--spacing);
+    .icon {
+      height: 1.15em;
+      user-select: none;
+      filter: brightness(0.5);
+    }
+
+    .search {
+      height: 1.15em;
+    }
   }
 
   .list {
-    gap: var(--spacing);
-    display: flex;
-    flex-direction: column;
+    margin: var(--neg-half-spacing) var(--neg-half-spacing) var(--neg-spacing);
+    padding: 0 var(--half-spacing) var(--half-spacing);
+    min-height: 0;
+    max-height: 100%;
 
     .entry {
+      width: stretch;
+      margin-inline: var(--neg-half-spacing);
+      padding-inline: var(--half-spacing);
+      gap: var(--spacing);
       display: flex;
       align-items: center;
-      gap: var(--spacing);
 
-      .avatar {
-        height: 24px;
-        width: 24px;
-        aspect-ratio: 1;
+      .name {
+        flex-grow: 1;
+      }
+
+      .addIcon {
+        box-sizing: content-box;
+        padding: 0.15em;
+        height: 1.15em;
         border-radius: 50%;
+        background-color: var(--accent-color);
       }
     }
   }

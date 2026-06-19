@@ -10,17 +10,20 @@ import FormOverride from "./FormOverride";
 import Heading from "./Heading";
 import HydrateFallback from "./HydrateFallback";
 import IconButton from "./IconButton";
+import Modal from "./Modal";
 import Name from "./Name";
 import SelectableImage from "./SelectableImage";
 import Slider from "./Slider";
 import SlidingTabs from "./SlidingTabs";
 import Surface from "./Surface";
+import ControlLabel from "./Test";
 
 export {
   Avatar,
   ButtonHeading,
   ClickableImage,
   Collapsible,
+  ControlLabel,
   Dropdown,
   EditableField,
   Error,
@@ -30,6 +33,7 @@ export {
   HydrateFallback,
   IconButton,
   Name,
+  Modal,
   SelectableImage,
   Slider,
   SlidingTabs,
