@@ -36,27 +36,6 @@ export default function AddMembers({ className, onCancelClick, ...props }) {
         ) : (
           <p className={s.placeholderText}>No friends found</p>
         )}
-        {nonMembers.length > 0 ? (
-          nonMembers.map(({ friendId }) => (
-            <InvitationEntry {...{ chatId, friendId }} key={friendId} />
-          ))
-        ) : (
-          <p className={s.placeholderText}>No friends found</p>
-        )}
-        {nonMembers.length > 0 ? (
-          nonMembers.map(({ friendId }) => (
-            <InvitationEntry {...{ chatId, friendId }} key={friendId} />
-          ))
-        ) : (
-          <p className={s.placeholderText}>No friends found</p>
-        )}
-        {nonMembers.length > 0 ? (
-          nonMembers.map(({ friendId }) => (
-            <InvitationEntry {...{ chatId, friendId }} key={friendId} />
-          ))
-        ) : (
-          <p className={s.placeholderText}>No friends found</p>
-        )}
       </div>
     </Surface>
   );
