@@ -5,52 +5,115 @@
 .box {
   --textbox-spacing: var(--half-spacing);
   --button-size: 40px;
+  --box-border-radius: calc(var(--button-size) / 2 + var(--textbox-spacing));
 
   padding: var(--textbox-spacing);
-  gap: var(--textbox-spacing);
-  display: flex;
-  align-items: flex-end;
-  border-radius: calc(var(--button-size) / 2 + var(--textbox-spacing) / 2);
+  border-radius: var(--box-border-radius);
   background-color: #3b3b3b;
 
-  .input {
-    flex-grow: 1;
-    align-self: center;
-    border: none;
-    outline: none;
-    resize: none;
-    background-color: transparent;
-    box-sizing: border-box;
-    overflow-y: auto;
-    line-height: 1.5;
-    padding: 0;
+  .topRow {
+    margin-bottom: var(--textbox-spacing);
 
-    &::-webkit-scrollbar {
-      width: 8px;
-    }
+    .previewContainer {
+      position: relative;
+      height: 150px;
+      width: 150px;
+      border-radius: var(--box-border-radius);
+      border: var(--soft-border);
+      overflow: hidden;
 
-    &::-webkit-scrollbar-track {
-      background-color: transparent;
-    }
+      .preview {
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
+      }
 
-    &::-webkit-scrollbar-thumb {
-      background-color: #666666;
-      border-radius: 4px;
+      .removeAttachment {
+        position: absolute;
+        top: var(--spacing);
+        right: var(--spacing);
+        font-size: 1.15rem;
+        background-color: rgb(0 0 0 / 0.5);
+
+        &:hover {
+          background-color: rgb(0 0 0 / 0.25);
+        }
+      }
     }
   }
 
-  .button {
-    height: var(--button-size);
-    width: var(--button-size);
-    font-size: 1.25rem;
+  .botRow {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--textbox-spacing);
 
-    &.send {
+    .attachment,
+    .send {
+      flex: 0 0 var(--button-size);
+      height: var(--button-size);
+      width: var(--button-size);
+      font-size: 1.25rem;
+    }
+
+    .attachment {
+      grid-area: attach;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      transition: background-color 250ms ease;
+
+      &:hover {
+        background-color: rgb(255 255 255 / 0.2);
+      }
+
+      .attachmentIcon {
+        height: 1.15em;
+        width: 1.15em;
+      }
+
+      .attachmentInput {
+        display: none;
+      }
+    }
+
+    .input {
+      --line-height: 1.2;
+
+      align-self: center;
+      flex-grow: 1;
+      min-width: 0;
+      max-height: calc(6 * var(--line-height) * 1em);
+      height: auto;
+      line-height: var(--line-height);
+      overflow-y: auto;
+      border: none;
+      outline: none;
+      resize: none;
+      background-color: transparent;
+
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background-color: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: #666666;
+        border-radius: 4px;
+      }
+    }
+
+    .send {
       img {
         filter: invert(1);
       }
 
-      &.active {
-        margin: calc(-1 * 0.25em);
+      &:not(.active) {
+        margin: 0;
       }
     }
   }

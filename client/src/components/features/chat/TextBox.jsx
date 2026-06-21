@@ -1,55 +1,84 @@
-import s from "./TextBox.module.css";
-import { useState } from "react";
-import { attach, send } from "@lib/icons";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { attach, cross, send } from "@lib/icons";
 import { merge } from "@lib/index";
 import { useApi, useCurrentChat } from "@hooks";
-import { IconButton, Surface } from "@components/common";
-import Modal from "@components/common/Modal";
+import { IconButton } from "@components/common";
+import s from "./TextBox.module.css";
 
 export default function TextBox({ className }) {
+  const { postMessage } = useApi();
   const { id: chatId, isActive } = useCurrentChat().chat;
   const [drafts, setDrafts] = useState({});
-  const { postMessage } = useApi();
+  const [attachment, setAttachment] = useState(null);
+  const attachmentRef = useRef(null);
+  const textareaRef = useRef(null);
 
   const content = drafts[chatId] || "";
 
-  const lineCount = (content.match(/\n/g) || []).length + 1;
+  const previewUrl = useMemo(
+    () => attachment && URL.createObjectURL(attachment),
+    [attachment],
+  );
 
-  const updateActiveDraft = (text) => {
-    setDrafts((prev) => ({ ...prev, [chatId]: text }));
-  };
+  useEffect(
+    () => () => previewUrl && URL.revokeObjectURL(previewUrl),
+    [previewUrl],
+  );
+
+  useEffect(() => {
+    textareaRef.current.style.height = "auto";
+    textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+  }, [content]);
 
   if (!isActive) return;
 
   return (
     <div className={merge(className, s.box)}>
-      <IconButton
-        className={`${s.button}`}
-        src={attach}
-        alt="attach"
-        onClick={handleAttachClick}
-      />
-      <textarea
-        className={s.input}
-        type="text"
-        name="text"
-        id="text"
-        placeholder={"Write a message"}
-        value={content}
-        onChange={(e) => updateActiveDraft(e.target.value)}
-        onKeyDown={handleKeyDown}
-        rows={Math.min(7, lineCount)}
-      />
-      <IconButton
-        className={merge(
-          s.button,
-          s.send,
-          content.length > 0 ? s.active : null,
-        )}
-        src={send}
-        alt="send"
-        onClick={handleSendClick}
-      />
+      {attachment && (
+        <div className={s.topRow}>
+          <div className={s.previewContainer}>
+            <img className={s.preview} src={previewUrl} alt="attached file" />
+            <IconButton
+              className={s.removeAttachment}
+              src={cross}
+              alt="remove attachment"
+              onClick={handleRemoveAttachment}
+            />
+          </div>
+        </div>
+      )}
+      <div className={s.botRow}>
+        <label className={s.attachment} htmlFor="attachment">
+          <img className={`${s.attachmentIcon}`} src={attach} alt="attach" />
+          <input
+            type="file"
+            accept="image/*"
+            id="attachment"
+            className={s.attachmentInput}
+            onChange={handleAttachmentChange}
+            ref={attachmentRef}
+          />
+        </label>
+        <textarea
+          className={s.input}
+          type="text"
+          name="text"
+          id="text"
+          rows={1}
+          placeholder={"Write a message"}
+          value={content}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+          ref={textareaRef}
+        />
+        <IconButton
+          className={merge(s.send, s.active)}
+          src={send}
+          alt="send"
+          disabled={content.length === 0}
+          onClick={handleSendClick}
+        />
+      </div>
     </div>
   );
 
@@ -60,15 +89,35 @@ export default function TextBox({ className }) {
     sendMessage();
   }
 
+  function updateActiveDraft(text) {
+    setDrafts((prev) => ({ ...prev, [chatId]: text }));
+  }
+
+  function handleInputChange(e) {
+    updateActiveDraft(e.target.value);
+  }
+
   function handleSendClick() {
     sendMessage();
   }
 
-  function handleAttachClick() {}
+  function handleAttachmentChange(e) {
+    const attachment = e.target.files[0];
+    if (attachment) {
+      setAttachment(attachment);
+    }
+  }
+
+  function handleRemoveAttachment() {
+    setAttachment(null);
+    if (attachmentRef.current) {
+      attachmentRef.current.value = "";
+    }
+  }
 
   async function sendMessage() {
     if (content.length) {
-      await postMessage(chatId, content);
+      await postMessage(chatId, content, attachment);
       updateActiveDraft("");
     }
   }

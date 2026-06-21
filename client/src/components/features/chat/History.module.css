@@ -1,12 +1,9 @@
 .history {
+  gap: 2px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-
-  /* NOTE check this later */
   overflow: auto;
   scrollbar-gutter: stable;
-  width: 100%;
 
   .message {
     --content-radius: 15px;

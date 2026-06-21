@@ -1,7 +1,7 @@
 import { cross, plus, search } from "@lib/icons";
 import { merge } from "@lib/index";
 import { useApi, useCurrentChat, useFriends } from "@hooks";
-import { Avatar, Heading, IconButton, Name, Surface } from "@components/common";
+import { Avatar, IconButton, Name, Surface } from "@components/common";
 import s from "./AddMembers.module.css";
 
 export default function AddMembers({ className, onCancelClick, ...props }) {
@@ -28,15 +28,16 @@ export default function AddMembers({ className, onCancelClick, ...props }) {
       </div>
 
       <div className={s.subHeading}>Friends</div>
-      <div className={s.list}>
-        {nonMembers.length > 0 ? (
-          nonMembers.map(({ friendId }) => (
+
+      {nonMembers.length === 0 ? (
+        <p className={s.placeholderText}>No friends found</p>
+      ) : (
+        <div className={s.list}>
+          {nonMembers.map(({ friendId }) => (
             <InvitationEntry {...{ chatId, friendId }} key={friendId} />
-          ))
-        ) : (
-          <p className={s.placeholderText}>No friends found</p>
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </Surface>
   );
 }

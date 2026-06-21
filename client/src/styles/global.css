@@ -35,10 +35,14 @@ button {
   border-radius: var(--soft-radius);
   background-color: transparent;
 
-  transition: background-color 150ms;
-  &:hover,
-  &.hovered {
+  transition: background-color 250ms;
+
+  &:hover {
     background-color: #ffffff25;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
   }
 
   img {
