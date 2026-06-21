@@ -25,8 +25,8 @@ export default function App() {
                   <Aside className={s.aside} />
                   <ChatView className={s.main} />
                 </Surface>
-                {/* <ProfileSwitcher /> */}
-                {/* <Debugger /> */}
+                <ProfileSwitcher />
+                <Debugger />
               </HeadingLevelProvider>
             </ApiProvider>
           </CurrentChatProvider>

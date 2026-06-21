@@ -33,11 +33,11 @@
       margin-top: 6px;
     }
 
-    @media (hover: hover) {
+    /* @media (hover: hover) {
       &:hover {
         --date-opacity: 0.6;
       }
-    }
+    } */
 
     position: relative;
     width: 100%;
@@ -56,12 +56,11 @@
       translate: var(--avatar-translation, -150%);
     }
 
-    .content {
+    .messageBox {
+      --box-spacing: 0.5em;
       min-width: 0;
-      max-width: 200px;
-      padding: 0.5em 0.75em;
-      white-space: pre-wrap; /* Preserves whitespace but allows wrapping */
-      overflow-wrap: break-word;
+      max-width: 275px;
+      padding: var(--box-spacing) var(--box-spacing) 0.125em;
 
       background-color: var(--content-bg-color, #6666);
       border-radius: var(--content-radius);
@@ -69,14 +68,27 @@
       border-top-right-radius: var(--tr-radius, var(--content-radius));
       border-bottom-left-radius: var(--bl-radius, 2px);
       border-bottom-right-radius: var(--br-radius, 16px);
-    }
 
-    .date {
-      flex-grow: 1;
-      font-size: 0.85em;
-      text-align: var(--date-align);
-      opacity: var(--date-opacity, 0);
-      transition: opacity 100ms ease;
+      .attachment {
+        margin-bottom: 0.25em;
+        display: block;
+        height: 100%;
+        width: 100%;
+        border-radius: var(--content-radius);
+      }
+
+      .content {
+        margin-bottom: 0.125em;
+        white-space: pre-wrap; /* Preserves whitespace but allows wrapping */
+        overflow-wrap: break-word;
+      }
+
+      .date {
+        flex-grow: 1;
+        color: rgb(255 255 255 / 0.5);
+        font-size: 0.75em;
+        text-align: var(--date-align, left);
+      }
     }
   }
 }

@@ -1,7 +1,7 @@
 // const { strictAuthenticate, looseAuthenticate } = require("./passport");
 const validators = require("./validators");
-const { parseAvatar } = require("./multer");
-const { uploadAvatar } = require("./cloudinary");
+const { parseAvatar, parseAttachment } = require("./multer");
+const { uploadAvatar, uploadAttachment } = require("./cloudinary");
 const {
   httpError,
   throw404,
@@ -42,4 +42,6 @@ module.exports = {
   validators,
   parseAvatar,
   uploadAvatar,
+  parseAttachment,
+  uploadAttachment,
 };

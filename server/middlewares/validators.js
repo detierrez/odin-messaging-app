@@ -1,10 +1,11 @@
 const {
+  oneOf,
+  check,
   param,
   query,
   body,
-  validationResult,
-  oneOf,
   matchedData,
+  validationResult,
 } = require("express-validator");
 const prisma = require("../lib/prisma");
 const { httpError } = require("./errorHandlers");
@@ -77,8 +78,15 @@ const username = required("username")
 
 const alias = body("alias").trim().optional().default(null);
 
-const content = required("content")
-  .isString()
+const contentOrAttachment = oneOf([
+  check().custom((_, { req }) => req.attachmentUrl),
+  body("content").trim().exists({ values: "falsy" }),
+]);
+
+const content = body("content")
+  .optional()
+  .trim()
+  .default(null)
   .isLength({ max: CONTENT_MAX_LENGTH })
   .withMessage(
     `Message content cannot exceed ${CONTENT_MAX_LENGTH} characters`,
@@ -118,7 +126,7 @@ const groupName = body("name")
 const patchMe = validate([alias, description]);
 const postRequest = validate(username);
 const getMessages = validate([cursor, limit]);
-const postMessage = validate(content);
+const postMessage = validate([contentOrAttachment, content]);
 const postChat = validate([groupName, description, memberIds]);
 const patchChat = validate([isActive, groupName, description]);
 const postMember = validate(memberId);

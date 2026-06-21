@@ -26,8 +26,11 @@ export default function TextBox({ className }) {
   );
 
   useEffect(() => {
-    textareaRef.current.style.height = "auto";
-    textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
   }, [content]);
 
   if (!isActive) return;
@@ -75,7 +78,7 @@ export default function TextBox({ className }) {
           className={merge(s.send, s.active)}
           src={send}
           alt="send"
-          disabled={content.length === 0}
+          disabled={content.length === 0 && !attachment}
           onClick={handleSendClick}
         />
       </div>
@@ -108,17 +111,22 @@ export default function TextBox({ className }) {
     }
   }
 
-  function handleRemoveAttachment() {
+  function removeAttachment() {
     setAttachment(null);
     if (attachmentRef.current) {
       attachmentRef.current.value = "";
     }
   }
 
+  function handleRemoveAttachment() {
+    removeAttachment();
+  }
+
   async function sendMessage() {
-    if (content.length) {
-      await postMessage(chatId, content, attachment);
+    if (content.length > 0 || attachment) {
       updateActiveDraft("");
+      removeAttachment();
+      await postMessage(chatId, content, attachment);
     }
   }
 }

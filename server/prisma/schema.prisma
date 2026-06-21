@@ -66,11 +66,12 @@ model Chat {
 }
 
 model Message {
-    id      Int      @id @default(autoincrement())
-    userId  Int
-    chatId  Int
-    content String
-    sentAt  DateTime @default(now())
+    id            Int      @id @default(autoincrement())
+    userId        Int
+    chatId        Int
+    content       String?
+    sentAt        DateTime @default(now())
+    attachmentUrl String?
 
     user User @relation("sentMessages", fields: [userId], references: [id])
     chat Chat @relation("chatMessages", fields: [chatId], references: [id], onDelete: Cascade)

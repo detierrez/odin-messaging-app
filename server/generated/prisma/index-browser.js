@@ -160,7 +160,8 @@ exports.Prisma.MessageScalarFieldEnum = {
   userId: 'userId',
   chatId: 'chatId',
   content: 'content',
-  sentAt: 'sentAt'
+  sentAt: 'sentAt',
+  attachmentUrl: 'attachmentUrl'
 };
 
 exports.Prisma.SortOrder = {

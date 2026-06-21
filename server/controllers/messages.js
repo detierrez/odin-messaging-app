@@ -30,9 +30,10 @@ module.exports.getMessages = async (req, res) => {
 module.exports.postMessage = async (req, res) => {
   const { id: userId } = req.user;
   const { chatId, content } = matchedData(req);
+  const { attachmentUrl } = req;
 
   const message = await prisma.message.create({
-    data: { userId, chatId, content },
+    data: { userId, chatId, content, attachmentUrl },
     select: genericMessageSelect,
   });
 

@@ -40,7 +40,13 @@ chats.post("/", m.parseAvatar, m.uploadAvatar, v.postChat, c.chats.postChat);
 
 chats.use("/:chatId", v.paramId("chatId"));
 chats.get("/:chatId/messages", v.getMessages, c.messages.getMessages);
-chats.post("/:chatId/messages", v.postMessage, c.messages.postMessage);
+chats.post(
+  "/:chatId/messages",
+  m.parseAttachment,
+  m.uploadAttachment,
+  v.postMessage,
+  c.messages.postMessage,
+);
 
 chats.use("/:chatId", v.access("MEMBER"), v.chatType("GROUP"));
 chats.delete("/:chatId/members/me", c.members.deleteMemberMe);

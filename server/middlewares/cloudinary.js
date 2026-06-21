@@ -12,7 +12,7 @@ const uploadAvatar = async (req, res, next) => {
     const b64 = Buffer.from(req.file.buffer).toString("base64");
     const dataURI = `data:${req.file.mimetype};base64,${b64}`;
     const result = await cloudinary.uploader.upload(dataURI, {
-      folder: "odinbox",
+      folder: "odinbox/avatars",
     });
     req.avatarUrl = result.secure_url;
   }
@@ -20,4 +20,17 @@ const uploadAvatar = async (req, res, next) => {
   next();
 };
 
-module.exports = { uploadAvatar };
+const uploadAttachment = async (req, res, next) => {
+  if (req.file) {
+    const b64 = Buffer.from(req.file.buffer).toString("base64");
+    const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+    const result = await cloudinary.uploader.upload(dataURI, {
+      folder: "odinbox/attachments",
+    });
+    req.attachmentUrl = result.secure_url;
+  }
+
+  next();
+};
+
+module.exports = { uploadAvatar, uploadAttachment };

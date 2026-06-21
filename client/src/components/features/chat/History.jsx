@@ -94,27 +94,37 @@ export default function History({ className }) {
 function MessagesStrip({ messages }) {
   const { id: userId } = useId();
 
-  return messages.map(({ id, userId: authorId, sentAt, content }, index) => {
-    const previousMessage = messages[index - 1];
-    const nextMessage = messages[index + 1];
-    const isContinuation = previousMessage?.userId === authorId;
-    const hasContinuation = nextMessage?.userId === authorId;
+  return messages.map(
+    ({ id, userId: authorId, sentAt, content, attachmentUrl }, index) => {
+      const previousMessage = messages[index - 1];
+      const nextMessage = messages[index + 1];
+      const isContinuation = previousMessage?.userId === authorId;
+      const hasContinuation = nextMessage?.userId === authorId;
 
-    return (
-      <li
-        className={merge(
-          s.message,
-          authorId === userId ? s.userMessage : null,
-          isContinuation ? s.continuation : null,
-        )}
-        key={id}
-      >
-        {!hasContinuation && <Avatar className={s.avatar} userId={authorId} />}
-        <pre className={s.content}>{content}</pre>
-        <div className={s.date}>{formatTime(sentAt)}</div>
-      </li>
-    );
-  });
+      return (
+        <li
+          className={merge(
+            s.message,
+            authorId === userId ? s.userMessage : null,
+            isContinuation ? s.continuation : null,
+          )}
+          key={id}
+        >
+          {!hasContinuation && (
+            <Avatar className={s.avatar} userId={authorId} />
+          )}
+
+          <div className={s.messageBox}>
+            {attachmentUrl && (
+              <img className={s.attachment} src={attachmentUrl} alt="" />
+            )}
+            <pre className={s.content}>{content}</pre>
+            <div className={s.date}>{formatTime(sentAt)}</div>
+          </div>
+        </li>
+      );
+    },
+  );
 }
 
 function formatTime(date) {
