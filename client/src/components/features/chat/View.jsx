@@ -31,8 +31,7 @@ export default function View({ className }) {
           <HeadingLevelProvider>
             <Banner
               className={s.banner}
-              onAvatarClick={() => setIsOpen((t) => !t)}
-              onDetailsClick={() => setIsOpen(true)}
+              onInfoClick={() => setIsOpen((t) => !t)}
             />
             <History className={s.history} />
             <TextBox className={s.textBox} />

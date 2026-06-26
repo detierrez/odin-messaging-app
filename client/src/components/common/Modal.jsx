@@ -21,9 +21,10 @@ export default function Modal({ isOpen, onClose, children }) {
       };
 
       function close({ type, key, target }) {
+        console.log(!dialog.contains(target));
         if (
           (type === "keydown" && key === "Escape") ||
-          (type === "click" && !dialog.contains(target))
+          (type === "click" && target.isConnected && !dialog.contains(target))
         ) {
           onClose();
         }

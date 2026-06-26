@@ -31,11 +31,13 @@ export default function AddFriendMenu({ onGoBackClick, ...props }) {
                   <Avatar className={s.avatar} userId={receiverId} />
                   <Name userId={receiverId} />
                   <IconButton
+                    variant="cancelPadding"
                     src={check}
                     alt="cancel"
                     onClick={() => acceptRequest(receiverId)}
                   />
                   <IconButton
+                    variant="cancelPadding"
                     src={cross}
                     alt="cancel"
                     onClick={() => deleteRequest(receiverId)}
@@ -55,6 +57,7 @@ export default function AddFriendMenu({ onGoBackClick, ...props }) {
                   <Avatar className={s.avatar} userId={senderId} />
                   <Name userId={senderId} />
                   <IconButton
+                    variant="cancelPadding"
                     src={cross}
                     alt="cancel"
                     onClick={() => deleteRequest(senderId)}

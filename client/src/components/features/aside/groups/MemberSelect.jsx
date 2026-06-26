@@ -1,9 +1,10 @@
 import { merge } from "@lib/index";
-import { arrowRight, cross } from "@lib/icons";
-import { Avatar, IconButton, Name } from "@components/common";
+import { arrowRight, cross, search } from "@lib/icons";
+import { Avatar, IconButton, Input, Name } from "@components/common";
 import MenuTitle from "../shared/MenuTitle";
 import Menu from "../shared/Menu";
 import s from "./MemberSelect.module.css";
+import { useState } from "react";
 
 export default function MemberSelect({
   friends,
@@ -14,22 +15,28 @@ export default function MemberSelect({
   onNextClick,
   ...props
 }) {
+  const [searchText, setSearchText] = useState("");
+
   return (
     <Menu {...{ ...props }}>
       <MenuTitle src={cross} alt="cancel" onClick={onCancelClick}>
         Select Members
       </MenuTitle>
+      <Input
+        className={s.search}
+        icon={search}
+        value={searchText}
+        onChange={handleSearchChange}
+        onCancelClick={handleSearchCancel}
+        placeholder="Search for a name"
+      />
       {!friends ? (
-        <p className={s.message}>Loading</p>
+        <p className={s.placeholderText}>Loading</p>
       ) : friends.length === 0 ? (
-        <p className={s.message}>
-          No friends to select!
-          <br />
-          Add friends to create a group
-        </p>
+        <p className={s.placeholderText}>No friends found</p>
       ) : (
         <>
-          <input className={s.search} placeholder="Search for a name" />
+          <div className={s.subheading}>Friends - {friends.length}</div>
           <div className={s.list}>
             {friends.map(({ friendId }) => (
               <button
@@ -53,12 +60,21 @@ export default function MemberSelect({
         </>
       )}
       <IconButton
-        className={merge(s.button, isButtonDisabled ? s.disabled : null)}
+        className={merge(s.button)}
+        variant="accent"
         src={arrowRight}
         alt="next"
+        isAccent={true}
         onClick={onNextClick}
         disabled={isButtonDisabled}
       />
     </Menu>
   );
+
+  function handleSearchChange(e) {
+    setSearchText(e.target.value);
+  }
+  function handleSearchCancel() {
+    setSearchText("");
+  }
 }

@@ -3,19 +3,19 @@ import { useApi, useCurrentChat, useUser } from "@hooks";
 import { Avatar, Dropdown, Name, Surface } from "@components/common";
 import s from "./Banner.module.css";
 
-export default function Banner({ className, onAvatarClick, onDetailsClick }) {
+export default function Banner({ className, onInfoClick }) {
   const { id: chatId } = useCurrentChat().chat;
 
   return (
     <Surface className={merge(className, s.banner)}>
-      <Avatar className={s.avatar} chatId={chatId} onClick={onAvatarClick} />
-      <Name className={s.name} chatId={chatId} />
-      <Options onOpenInfo={onDetailsClick} />
+      <Avatar className={s.avatar} chatId={chatId} onClick={onInfoClick} />
+      <Name className={s.name} chatId={chatId} onClick={onInfoClick} />
+      <Options onInfoClick={onInfoClick} />
     </Surface>
   );
 }
 
-function Options({ onOpenInfo }) {
+function Options({ onInfoClick }) {
   const { sendRequest, removeFriend, leaveGroup, closeGroup } = useApi();
   const {
     id: chatId,
@@ -31,7 +31,7 @@ function Options({ onOpenInfo }) {
 
   return (
     <Dropdown>
-      <button onClick={onOpenInfo}>Chat info.</button>
+      <button onClick={onInfoClick}>Chat info.</button>
       {isDirect ? (
         isFriend ? (
           <button onClick={() => removeFriend(otherUserId)}>Unfriend</button>

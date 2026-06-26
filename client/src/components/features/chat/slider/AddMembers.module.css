@@ -11,10 +11,6 @@
   composes: composedInput from "@styles/shared.css";
 }
 
-.search {
-  composes: input from "@styles/shared.css";
-}
-
 .list {
   composes: scrollable from "@styles/shared.css";
 }

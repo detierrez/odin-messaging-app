@@ -47,8 +47,10 @@ export default function DetailsInput({
       />
       <IconButton
         className={merge(s.button, isButtonDisabled ? s.disabled : null)}
+        variant="accent"
         src={check}
         alt="next"
+        isAccent={true}
         onClick={onCreateGroup}
         disabled={isButtonDisabled}
       />

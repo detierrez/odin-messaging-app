@@ -22,7 +22,7 @@
 
 .details {
   min-height: 0;
-  width: 225px;
+  width: 250px;
   border-left: var(--soft-border);
   box-shadow: none;
 }

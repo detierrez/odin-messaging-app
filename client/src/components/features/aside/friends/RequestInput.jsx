@@ -8,7 +8,7 @@ export default function RequestInput() {
   const isValidUsername = !!username.trim();
 
   return (
-    <div className={[s.container].join(" ")}>
+    <div className={s.container}>
       <input
         type="text"
         className={s.input}

@@ -23,9 +23,9 @@
 }
 
 .statusHeading {
-  margin-bottom: var(--neg-half-spacing);
+  margin-block: var(--half-spacing) var(--neg-half-spacing);
   font-size: 0.85rem;
-  line-height: 0.8;
+  color: var(--font-color-muted);
 }
 
 .aliasWrapper,

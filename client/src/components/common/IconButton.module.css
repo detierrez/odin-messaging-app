@@ -1,16 +1,27 @@
+.accent {
+  composes: accent from "@styles/shared.css";
+}
+
+.loading {
+  composes: loading from "@styles/shared.css";
+}
+
 .button {
-  margin: calc(-1 * 0.25em);
   padding: 0.25em;
-  width: fit-content;
-  height: fit-content;
-  aspect-ratio: 1;
+
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 50%;
 
+  &.cancelPadding {
+    margin: calc(-1 * 0.25em);
+  }
+
   .img {
-    width: 1.15em;
     height: 1.15em;
+    width: 1.15em;
+    min-width: 0;
+    min-height: 0;
   }
 }

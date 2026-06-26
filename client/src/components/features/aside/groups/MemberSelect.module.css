@@ -2,15 +2,13 @@
   composes: scrollable from "../AsideStyles.module.css";
 }
 
-.button {
-  composes: accent from "@styles/shared.css";
+.subheading {
+  margin-block: var(--half-spacing);
+  font-size: 0.85rem;
+  color: var(--font-color-muted);
 }
 
-.search {
-  composes: input from "@styles/shared.css";
-}
-
-.message {
+.placeholderText {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -54,6 +52,6 @@
 }
 
 .button {
-  font-size: 1.75rem;
+  font-size: 2rem;
   align-self: center;
 }

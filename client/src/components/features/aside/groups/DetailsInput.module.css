@@ -8,10 +8,6 @@
   composes: input from "@styles/shared.css";
 }
 
-.button {
-  composes: accent from "@styles/shared.css";
-}
-
 .avatar {
   align-self: center;
 }
@@ -22,5 +18,5 @@
 
 .button {
   align-self: center;
-  font-size: 1.75rem;
+  font-size: 2rem;
 }

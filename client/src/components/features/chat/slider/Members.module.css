@@ -4,10 +4,12 @@
   flex-direction: column;
 
   .heading {
+    margin-top: var(--half-spacing);
     gap: var(--spacing);
     display: flex;
     align-items: center;
     font-size: 0.85rem;
+    color: var(--font-color-muted);
 
     .title {
       flex-grow: 1;

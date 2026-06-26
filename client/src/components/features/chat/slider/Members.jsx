@@ -27,7 +27,8 @@ export default function MemberList({ className, onMoreClick, ...props }) {
         <p className={s.title}>Members - {Object.keys(memberships).length}</p>
         {isUserAdmin && (
           <IconButton
-            className={s.button}
+            variant="cancelPadding"
+            className={s.addMembers}
             src={plus}
             alt="back"
             onClick={onMoreClick}

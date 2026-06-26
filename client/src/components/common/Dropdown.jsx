@@ -42,6 +42,7 @@ export default function Dropdown({ className, children }) {
   return (
     <>
       <IconButton
+        variant="cancelPadding"
         className={merge(className, s.button)}
         src={moreVertical}
         alt="more"

@@ -46,11 +46,10 @@
     font-size: 1.15rem;
   }
 
-  .subheading,
   .statusHeading {
-    margin-bottom: var(--neg-half-spacing);
+    margin-block: var(--half-spacing) var(--neg-half-spacing);
     font-size: 0.85rem;
-    line-height: 0.8;
+    color: var(--font-color-muted);
   }
 
   .nameWrapper,
@@ -61,7 +60,7 @@
     align-items: center;
 
     .editButton {
-      flex: 0 0 1.5em;
+      flex: 0 0 1.15em;
     }
 
     .name {
@@ -102,6 +101,7 @@
 
 .addMembers {
   height: 90vh;
+  max-width: 400px;
   padding: var(--spacing);
   border-radius: var(--spacing);
 }

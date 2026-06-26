@@ -5,7 +5,7 @@ import { cross } from "@lib/icons";
 import Menu from "../shared/Menu";
 import { useApi, useId, useUser } from "@hooks";
 import { DEFAULT_USER_AVATAR } from "@lib/images";
-import { EditableField, Name, SelectableImage } from "@components/common";
+import { Name, SelectableImage } from "@components/common";
 import ControlLabel from "@components/common/Test";
 
 export default function ProfileView({ onCloseClick, ...props }) {

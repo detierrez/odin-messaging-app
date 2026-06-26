@@ -38,7 +38,7 @@ export default function useUser(userId) {
     }
   }, [user, userId, fetchApi, setUsers]);
 
-  const isLoading = !user;
+  const isLoading = userId && !user;
   const error = user instanceof Error ? user : null;
-  return [user, isLoading, error];
+  return [user ?? { avatarUrl: null, username: null }, isLoading, error];
 }

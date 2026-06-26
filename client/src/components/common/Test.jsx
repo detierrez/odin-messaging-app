@@ -24,6 +24,7 @@ export default function ControlLabel({
       {renderInput(value, !isEditing, handleChange, handleKeyDown, inputRef)}
       {!disabled && (
         <IconButton
+          variant="cancelPadding"
           className={className}
           src={isEditing ? check : pen}
           alt="edit"

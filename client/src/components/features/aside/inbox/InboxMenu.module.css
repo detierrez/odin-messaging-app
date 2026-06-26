@@ -1,7 +1,3 @@
-.input {
-  composes: input from "@styles/shared.css";
-}
-
 .list {
   composes: scrollable from "../AsideStyles.module.css";
 }
@@ -20,14 +16,8 @@
 
     .title {
       flex-grow: 1;
-      font-size: 1.7rem;
+      font-size: 1.5rem;
       line-height: 1;
-    }
-
-    .button {
-      --size: var(--double-spacing);
-      height: var(--size);
-      width: var(--size);
     }
   }
 

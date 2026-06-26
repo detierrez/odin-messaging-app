@@ -1,0 +1,47 @@
+.container {
+  min-width: 0;
+  padding-block: var(--half-spacing);
+  padding-inline: var(--spacing);
+  gap: var(--spacing);
+  display: flex;
+  align-items: center;
+  border-radius: 999px;
+  outline: 2px solid transparent;
+  background-color: var(--input-bg-color);
+  transition:
+    background-color var(--transition-duration),
+    outline-color var(--transition-duration);
+
+  &:has(> .input:focus) {
+    outline-color: var(--accent-color-highlighted);
+    background-color: transparent;
+  }
+
+  .icon {
+    height: 1.15em;
+    user-select: none;
+    filter: brightness(0.5);
+  }
+
+  .input {
+    flex-grow: 1;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    border-radius: 0;
+    caret-color: var(--accent-color-highlighted);
+  }
+
+  .button {
+    box-sizing: border-box;
+    padding: 0.1em;
+
+    opacity: 0;
+    transition: opacity 100ms;
+
+    &.opaque {
+      opacity: 1;
+    }
+  }
+}

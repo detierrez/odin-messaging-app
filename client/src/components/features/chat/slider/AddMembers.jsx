@@ -1,12 +1,14 @@
 import { cross, plus, search } from "@lib/icons";
 import { merge } from "@lib/index";
 import { useApi, useCurrentChat, useFriends } from "@hooks";
-import { Avatar, IconButton, Name, Surface } from "@components/common";
+import { Avatar, IconButton, Input, Name, Surface } from "@components/common";
 import s from "./AddMembers.module.css";
+import { useState } from "react";
 
 export default function AddMembers({ className, onCancelClick, ...props }) {
   const { chat } = useCurrentChat();
   const friends = useFriends();
+  const [searchText, setSearchText] = useState("");
 
   const { id: chatId, memberships } = chat;
   const nonMembers = friends.filter(({ friendId }) => !memberships[friendId]);
@@ -18,14 +20,14 @@ export default function AddMembers({ className, onCancelClick, ...props }) {
         <span>Add Members</span>
       </div>
 
-      <div className={s.searchWrapper}>
-        <img className={s.icon} src={search} alt="" />
-        <input
-          type="text"
-          className={s.search}
-          placeholder="Search for a name"
-        />
-      </div>
+      <Input
+        className={s.search}
+        icon={search}
+        placeholder="Search for a name"
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+        onCancelClick={() => setSearchText("")}
+      />
 
       <div className={s.subHeading}>Friends</div>
 
@@ -48,7 +50,7 @@ function InvitationEntry({ chatId, friendId }) {
   return (
     <button className={s.entry} onClick={handleClick}>
       <Avatar className={s.avatar} userId={friendId} />
-      <Name clasName={s.name} userId={friendId} />
+      <Name className={s.name} userId={friendId} />
       <img className={s.addIcon} src={plus} alt="add" />
     </button>
   );

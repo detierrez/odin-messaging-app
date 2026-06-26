@@ -27,6 +27,7 @@ export default function Details({ className, onCloseClick }) {
     <Surface className={merge(className, s.menu)}>
       <div className={s.heading}>
         <IconButton
+          variant="cancelPadding"
           className={s.button}
           src={cross}
           alt="back"

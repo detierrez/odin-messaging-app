@@ -1,13 +1,18 @@
 .requests {
-  composes: scrollable from "../AsideStyles.module.css";
+  composes: scrollable from "@styles/shared.css";
+}
+
+.requests {
+  margin: 0 var(--neg-spacing) var(--neg-spacing);
+  padding: 0 var(--spacing) var(--spacing);
   gap: var(--spacing);
   display: flex;
   flex-direction: column;
 
   .requestCount {
-    padding-bottom: var(--spacing);
-    border-bottom: var(--soft-border);
+    margin-top: var(--half-spacing);
     font-size: 0.85rem;
+    color: var(--font-color-muted);
   }
 
   .list {

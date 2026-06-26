@@ -3,7 +3,6 @@ import ButtonHeading from "./ButtonHeading";
 import ClickableImage from "./ClickableImage";
 import Collapsible from "./Collapsible";
 import Dropdown from "./Dropdown";
-import EditableField from "./EditableField";
 import Error from "./Error";
 import Example from "./Example";
 import FormOverride from "./FormOverride";
@@ -12,6 +11,7 @@ import HydrateFallback from "./HydrateFallback";
 import IconButton from "./IconButton";
 import Modal from "./Modal";
 import Name from "./Name";
+import Input from "./Input";
 import SelectableImage from "./SelectableImage";
 import Slider from "./Slider";
 import SlidingTabs from "./SlidingTabs";
@@ -25,13 +25,13 @@ export {
   Collapsible,
   ControlLabel,
   Dropdown,
-  EditableField,
   Error,
   Example,
   FormOverride,
   Heading,
   HydrateFallback,
   IconButton,
+  Input,
   Name,
   Modal,
   SelectableImage,
