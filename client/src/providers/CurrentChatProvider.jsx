@@ -9,9 +9,9 @@ export default function CurrentChatProvider({ children }) {
 
   const { memberships, type, otherUserId, isActive } = currentChat;
 
-  const isUserAdmin = memberships?.[id] === "ADMIN";
+  const isUserAdmin = isActive && memberships?.[id] === "ADMIN";
+  const isFriend = isActive && otherUserId;
   const isDirect = type === "DIRECT";
-  const isFriend = otherUserId && isActive;
 
   return (
     <CurrentChatContext

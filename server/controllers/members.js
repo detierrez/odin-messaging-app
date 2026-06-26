@@ -1,7 +1,7 @@
 const { matchedData } = require("express-validator");
 const prisma = require("../lib/prisma");
 const { httpError } = require("../middlewares");
-const { firstMessageChatSelect } = require("./apiSelects");
+const { firstMessageChatSelect, genericChatSelect } = require("./apiSelects");
 const {
   notifyUser,
   notifyUsers,
@@ -131,7 +131,12 @@ module.exports.deleteMember = async (req, res) => {
 
   removeFromChatRoom(memberId, chatId);
   notifyChat("remove_membership", chatId, { chatId, memberId });
-  notifyUser("deactivate_chat", memberId, { chatId });
+
+  const chat = await prisma.chat.findUnique({
+    where: { id: chatId },
+    select: genericChatSelect,
+  });
+  notifyUser("add_chat", memberId, { chat: formatChat(chat, memberId) });
 
   res.json({ success: true });
 };
@@ -185,7 +190,12 @@ module.exports.deleteMemberMe = async (req, res) => {
       membership: promotedMembership,
     });
   }
-  notifyUser("deactivate_chat", userId, { chatId });
+
+  const chat = await prisma.chat.findUnique({
+    where: { id: chatId },
+    select: genericChatSelect,
+  });
+  notifyUser("add_chat", userId, { chat: formatChat(chat, userId) });
 
   res.json({ success: true });
 };
