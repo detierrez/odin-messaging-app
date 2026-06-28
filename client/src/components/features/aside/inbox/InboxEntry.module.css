@@ -3,8 +3,8 @@
   column-gap: var(--spacing);
   display: grid;
   grid-template:
-    "avatar name    date"
-    "avatar content content" / max-content 1fr 75px;
+    "avatar name date"
+    "avatar text text" / max-content 1fr 75px;
   justify-content: space-between;
   align-items: center;
 
@@ -27,13 +27,14 @@
     font-size: 0.8rem;
   }
 
-  .content {
-    grid-area: content;
+  .text {
+    grid-area: text;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     color: rgb(255, 255, 255, 0.6);
 
+    &.system,
     .prepend {
       font-style: italic;
     }

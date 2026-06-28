@@ -157,16 +157,23 @@ exports.Prisma.ChatScalarFieldEnum = {
 
 exports.Prisma.MessageScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
   chatId: 'chatId',
-  content: 'content',
   sentAt: 'sentAt',
-  attachmentUrl: 'attachmentUrl'
+  type: 'type',
+  userId: 'userId',
+  content: 'content',
+  attachmentUrl: 'attachmentUrl',
+  metadata: 'metadata'
 };
 
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -178,6 +185,12 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
 exports.Role = exports.$Enums.Role = {
   MEMBER: 'MEMBER',
   ADMIN: 'ADMIN'
@@ -186,6 +199,16 @@ exports.Role = exports.$Enums.Role = {
 exports.Type = exports.$Enums.Type = {
   DIRECT: 'DIRECT',
   GROUP: 'GROUP'
+};
+
+exports.MessageType = exports.$Enums.MessageType = {
+  USER_MESSAGE: 'USER_MESSAGE',
+  OPEN: 'OPEN',
+  CLOSE: 'CLOSE',
+  JOIN: 'JOIN',
+  LEAVE: 'LEAVE',
+  ROLE_UPDATE: 'ROLE_UPDATE',
+  PROFILE_UPDATE: 'PROFILE_UPDATE'
 };
 
 exports.Prisma.ModelName = {

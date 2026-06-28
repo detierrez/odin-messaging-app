@@ -49,7 +49,7 @@ export default function Details({ className, onCloseClick }) {
         {isUserAdmin && <div className={s.editButton}></div>}
         <ControlLabel
           className={s.editButton}
-          defaultValue={name}
+          defaultValue={name ?? ""}
           disabled={!isUserAdmin}
           onSubmit={handleSubmit("name")}
           renderInput={(value, disabled, onChange, onKeyDown, ref) => (
@@ -71,7 +71,7 @@ export default function Details({ className, onCloseClick }) {
           </div>
           <div className={s.descriptionWrapper}>
             <ControlLabel
-              defaultValue={description}
+              defaultValue={description ?? ""}
               disabled={!isUserAdmin}
               onSubmit={handleSubmit("description")}
               renderInput={(value, disabled, onChange, onKeyDown, ref) => (

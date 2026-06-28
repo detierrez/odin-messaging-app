@@ -1,7 +1,13 @@
 import { useCallback, useLayoutEffect, useRef } from "react";
 import { differenceInDays, differenceInYears, format } from "date-fns";
 import { merge } from "@lib/index";
-import { useApi, useChats, useCurrentChat, useId } from "@hooks";
+import {
+  useApi,
+  useChats,
+  useCurrentChat,
+  useId,
+  useSystemMessage,
+} from "@hooks";
 import { Avatar } from "@components/common";
 import s from "./History.module.css";
 
@@ -94,36 +100,58 @@ export default function History({ className }) {
 function MessagesStrip({ messages }) {
   const { id: userId } = useId();
 
-  return messages.map(
-    ({ id, userId: authorId, sentAt, content, attachmentUrl }, index) => {
-      const previousMessage = messages[index - 1];
-      const nextMessage = messages[index + 1];
-      const isContinuation = previousMessage?.userId === authorId;
-      const hasContinuation = nextMessage?.userId === authorId;
+  return messages.map((message, index) => {
+    const { type, userId: authorId } = message;
+    const previousMessage = messages[index - 1];
+    const nextMessage = messages[index + 1];
 
-      return (
-        <li
-          className={merge(
-            s.message,
-            authorId === userId ? s.userMessage : null,
-            isContinuation ? s.continuation : null,
-          )}
-          key={id}
-        >
-          {!hasContinuation && (
-            <Avatar className={s.avatar} userId={authorId} />
-          )}
+    return type === "USER_MESSAGE" ? (
+      <UserMessage
+        {...{
+          ...message,
+          isUserAuthor: userId === authorId,
+          isContinuation:
+            previousMessage?.type === "USER_MESSAGE" &&
+            previousMessage?.userId === authorId,
+          hasContinuation:
+            nextMessage?.type === "USER_MESSAGE" &&
+            nextMessage?.userId === authorId,
+        }}
+        key={message.id}
+      />
+    ) : (
+      <SystemMessage {...message} key={message.id} />
+    );
+  });
+}
 
-          <div className={s.messageBox}>
-            {attachmentUrl && (
-              <img className={s.attachment} src={attachmentUrl} alt="" />
-            )}
-            <pre className={s.content}>{content}</pre>
-            <div className={s.date}>{formatTime(sentAt)}</div>
-          </div>
-        </li>
-      );
-    },
+function UserMessage({
+  userId,
+  attachmentUrl,
+  content,
+  sentAt,
+  isUserAuthor,
+  isContinuation,
+  hasContinuation,
+}) {
+  return (
+    <li
+      className={merge(
+        s.message,
+        isUserAuthor ? s.userMessage : null,
+        isContinuation ? s.continuation : null,
+      )}
+    >
+      {!hasContinuation && <Avatar className={s.avatar} userId={userId} />}
+
+      <div className={s.messageBox}>
+        {attachmentUrl && (
+          <img className={s.attachment} src={attachmentUrl} alt="" />
+        )}
+        <pre className={s.content}>{content}</pre>
+        <div className={s.date}>{formatTime(sentAt)}</div>
+      </div>
+    </li>
   );
 }
 
@@ -133,4 +161,9 @@ function formatTime(date) {
     : differenceInYears(new Date(), date) <= 1
       ? format(date, "H:mm d-MM")
       : format(date, "H:mm d-MM-Y");
+}
+
+function SystemMessage(message) {
+  const text = useSystemMessage(message);
+  return <li className={s.systemMessage}>{text}</li>;
 }

@@ -12,6 +12,7 @@ const {
   notifyUser,
   addToChatRoom,
   removeFromChatRoom,
+  notifyChat,
 } = require("../socket.io");
 const { formatChat, isReadable } = require("./chats");
 
@@ -93,6 +94,13 @@ module.exports.postFriend = async (req, res) => {
           writeAccesses: {
             create: [{ userId }, { userId: friendId }],
           },
+          messages: {
+            create: {
+              type: "OPEN",
+              userId,
+              metadata: { targetUserId: friendId },
+            },
+          },
         },
         select,
       });
@@ -118,7 +126,7 @@ module.exports.deleteFriend = async (req, res) => {
     throw new httpError(400, [{ reason: "You cannot unfriend yourself" }]);
   }
 
-  const chatId = await prisma.$transaction(async (tx) => {
+  const { chatId, message } = await prisma.$transaction(async (tx) => {
     const chat = await tx.chat.findFirst({
       where: {
         type: "DIRECT",
@@ -134,17 +142,31 @@ module.exports.deleteFriend = async (req, res) => {
       throw new httpError(404, [{ reason: "Chat not found" }]);
     }
 
+    const chatId = chat.id;
+
     await tx.writeAccess.updateMany({
       where: {
         userId: { in: [userId, friendId] },
-        chatId: chat.id,
+        chatId,
         endedAt: null,
       },
       data: { endedAt: new Date() },
     });
 
-    return chat.id;
+    const message = await tx.message.create({
+      data: {
+        chatId,
+        type: "CLOSE",
+        userId,
+        metadata: { targetUserId: friendId },
+      },
+      select: genericMessageSelect,
+    });
+
+    return { chatId, message };
   });
+
+  notifyChat("add_message", chatId, { chatId, message });
 
   const users = [userId, friendId];
   users.forEach((id) => removeFromChatRoom(id, chatId));

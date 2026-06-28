@@ -8,7 +8,7 @@ export default function ProfileSwitcher() {
       <ProfileButton userId={3} />
       <ProfileButton userId={4} />
       <ProfileButton userId={5} />
-      <ProfileButton userId={7} />
+      <ProfileButton userId={6} />
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { cross } from "@lib/icons";
 import Menu from "../shared/Menu";
 import { useApi, useId, useUser } from "@hooks";
 import { DEFAULT_USER_AVATAR } from "@lib/images";
-import { Name, SelectableImage } from "@components/common";
+import { SelectableImage } from "@components/common";
 import ControlLabel from "@components/common/Test";
 
 export default function ProfileView({ onCloseClick, ...props }) {
@@ -36,7 +36,7 @@ export default function ProfileView({ onCloseClick, ...props }) {
         <div className={s.editButton}></div>
         <ControlLabel
           className={s.editButton}
-          defaultValue={alias}
+          defaultValue={alias ?? ""}
           onSubmit={handleSubmit("alias")}
           renderInput={(value, disabled, onChange, onKeyDown, ref) => (
             <input
@@ -53,7 +53,7 @@ export default function ProfileView({ onCloseClick, ...props }) {
       <div className={s.statusHeading}>Status</div>
       <div className={s.descriptionWrapper}>
         <ControlLabel
-          defaultValue={description}
+          defaultValue={description ?? ""}
           onSubmit={handleSubmit("description")}
           renderInput={(value, disabled, onChange, onKeyDown, ref) => (
             <textarea

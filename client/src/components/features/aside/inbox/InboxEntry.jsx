@@ -1,22 +1,42 @@
-import { useId, useCurrentChat } from "@hooks";
+import { useId, useSystemMessage, useTimeTag } from "@hooks";
 import { Avatar, Name } from "@components/common";
-import TimeTag from "./TimeTag";
 import s from "./InboxEntry.module.css";
+import { merge } from "@lib/index";
 
-export default function InboxEntry({ chatId, lastMessage }) {
-  const { id: userId } = useId();
-  const { setCurrentChat } = useCurrentChat();
-  const { sentAt, content, userId: authorId } = lastMessage;
+export default function InboxEntry({ message, ...props }) {
+  const { type, chatId, sentAt } = message;
+  const timeTag = useTimeTag(sentAt);
+  const isSystemMessage = type !== "USER_MESSAGE";
 
   return (
-    <button className={s.entry} onClick={() => setCurrentChat(chatId)}>
+    <button className={s.entry} {...props}>
       <Avatar className={s.avatar} chatId={chatId} />
       <Name className={s.name} chatId={chatId} />
-      <TimeTag className={s.date} date={sentAt} />
-      <div className={s.content}>
-        <span className={s.prepend}>{authorId === userId ? "You: " : ""}</span>
-        {content}
+      <span className={s.date}>{timeTag}</span>
+      <div className={merge(s.text, isSystemMessage && s.system)}>
+        {isSystemMessage ? (
+          <SystemText {...message} />
+        ) : (
+          <UserText {...message} />
+        )}
       </div>
     </button>
+  );
+}
+
+function SystemText(message) {
+  const text = useSystemMessage(message);
+
+  return text;
+}
+
+function UserText({ userId: authorId, content }) {
+  const { id: userId } = useId();
+
+  return (
+    <>
+      {authorId === userId && <span className={s.prepend}>You: </span>}
+      {content}
+    </>
   );
 }

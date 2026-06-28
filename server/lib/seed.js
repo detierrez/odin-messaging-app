@@ -3,18 +3,48 @@ const prisma = require("./prisma");
 (async function main() {
   await prisma.chat.deleteMany();
   await prisma.request.deleteMany();
+  await prisma.user.deleteMany();
 
-  // await prisma.user.deleteMany();
-
-  // await prisma.user.createMany({
-  //   data: [
-  //     { username: "pulp" },
-  //     { username: "fiction" },
-  //     { username: "vincent" },
-  //     { username: "jules" },
-  //     { username: "mia" },
-  //   ],
-  // });
+  await prisma.user.createMany({
+    data: [
+      {
+        id: 1,
+        username: "pulp",
+        alias: "Purp is blurp",
+        description: "Ipsum lorem",
+        avatarUrl:
+          "https://res.cloudinary.com/dg8iatkag/image/upload/v1772991601/samples/shoe.jpg",
+      },
+      {
+        id: 2,
+        username: "fiction",
+      },
+      {
+        id: 3,
+        username: "vincent",
+        alias: "Zen",
+        avatarUrl:
+          "https://res.cloudinary.com/dg8iatkag/image/upload/v1781901972/odinbox/fgp4nrwfmv1y7n1arjdo.jpg",
+      },
+      {
+        id: 4,
+        username: "jules",
+        avatarUrl: "https://cdn-icons-png.flaticon.com/256/11112/11112578.png",
+      },
+      {
+        id: 5,
+        username: "mia",
+        avatarUrl:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdylxLhRufslAQAarJ-Hwy_8b3gmBuIk8PAQ&s",
+      },
+      {
+        id: 6,
+        username: "allen",
+        avatarUrl:
+          "https://pbs.twimg.com/profile_images/378800000154826980/fc64e8495f56253ca7402a06f895f85a_400x400.jpeg",
+      },
+    ],
+  });
 
   const friendships = [
     { userAId: 1, userBId: 2 },
@@ -101,15 +131,24 @@ const prisma = require("./prisma");
       data: {
         readAccesses: { create: [{ userId: userAId }, { userId: userBId }] },
         writeAccesses: { create: [{ userId: userAId }, { userId: userBId }] },
-        messages: { create: chatMessages },
+        messages: {
+          create: [
+            {
+              type: "OPEN",
+              userId: userAId,
+              metadata: { targetUserId: userBId },
+            },
+            ...chatMessages,
+          ],
+        },
       },
     });
   }
 
   await prisma.request.createMany({
     data: [
-      { senderId: 3, receiverId: 7 },
-      { senderId: 7, receiverId: 5 },
+      { senderId: 3, receiverId: 6 },
+      { senderId: 6, receiverId: 5 },
     ],
   });
 
@@ -127,6 +166,7 @@ const prisma = require("./prisma");
       },
       messages: {
         create: [
+          { type: "OPEN", userId: 3 },
           { userId: 1, content: "Did you guys see the new trailer?" },
           { userId: 1, content: "It looks absolutely insane." },
           { userId: 1, content: "I've watched it like five times already." },

@@ -8,10 +8,12 @@ const genericUserSelect = {
 
 const genericMessageSelect = {
   id: true,
-  userId: true,
+  type: true,
   sentAt: true,
+  userId: true,
   content: true,
   attachmentUrl: true,
+  metadata: true,
 };
 
 const baseChatSelect = {

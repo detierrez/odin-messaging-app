@@ -4,13 +4,13 @@ import { useApi, useUsers } from "./useContext";
 const awaitedUsers = new Set();
 
 export default function useUser(userId) {
-  const { users, setUsers } = useUsers();
   const { fetchApi } = useApi();
+  const { users, setUsers } = useUsers();
 
-  const user = users?.[userId];
+  const cachedUser = users[userId];
 
   useEffect(() => {
-    if (userId && !user && !awaitedUsers.has(userId)) {
+    if (userId && !cachedUser && !awaitedUsers.has(userId)) {
       const controller = new AbortController();
       const { signal } = controller;
       const abortError = new Error("Abort Error");
@@ -36,9 +36,10 @@ export default function useUser(userId) {
         }
       }
     }
-  }, [user, userId, fetchApi, setUsers]);
+  }, [cachedUser, userId, fetchApi, setUsers]);
 
-  const isLoading = userId && !user;
-  const error = user instanceof Error ? user : null;
-  return [user ?? { avatarUrl: null, username: null }, isLoading, error];
+  const user = cachedUser ?? { avatarUrl: null, username: null };
+  const isLoading = userId && !cachedUser;
+  const error = cachedUser instanceof Error ? cachedUser : null;
+  return [user, isLoading, error];
 }

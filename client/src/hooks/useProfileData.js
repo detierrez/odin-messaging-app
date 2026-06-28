@@ -8,6 +8,10 @@ export default function useProfileData({ chatId, userId }) {
   const chat = useChats().chats[chatId];
   const [user, isUserLoading, error] = useUser(userId || chat?.otherUserId);
 
+  if (!chatId && !userId) {
+    return { isLoading: false, data: null };
+  }
+
   const isUserData = userId || chat?.type === "DIRECT";
 
   if (isUserData && isUserLoading) {

@@ -66,15 +66,17 @@ model Chat {
 }
 
 model Message {
-  id            Int      @id @default(autoincrement())
-  userId        Int
+  id            Int         @id @default(autoincrement())
   chatId        Int
+  sentAt        DateTime    @default(now())
+  type          MessageType @default(USER_MESSAGE)
+  userId        Int?
   content       String?
-  sentAt        DateTime @default(now())
   attachmentUrl String?
+  metadata      Json?
 
-  user User @relation("sentMessages", fields: [userId], references: [id])
-  chat Chat @relation("chatMessages", fields: [chatId], references: [id], onDelete: Cascade)
+  chat Chat  @relation("chatMessages", fields: [chatId], references: [id], onDelete: Cascade)
+  user User? @relation("sentMessages", fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum Type {
@@ -85,4 +87,14 @@ enum Type {
 enum Role {
   MEMBER
   ADMIN
+}
+
+enum MessageType {
+  USER_MESSAGE
+  OPEN
+  CLOSE
+  JOIN
+  LEAVE
+  ROLE_UPDATE
+  PROFILE_UPDATE
 }

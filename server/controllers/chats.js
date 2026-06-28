@@ -91,7 +91,7 @@ module.exports.postChat = async (req, res) => {
           role: memberId === userId ? "ADMIN" : "MEMBER",
         })),
       },
-      messages: { create: { content: "created", userId } },
+      messages: { create: { type: "OPEN", userId } },
     },
     select: genericChatSelect,
   });
@@ -119,33 +119,60 @@ module.exports.patchChat = async (req, res) => {
     ]);
   }
 
-  await prisma.$transaction(async (tx) => {
-    if (isActive === false) {
-      await tx.writeAccess.updateMany({
-        where: { chatId, endedAt: null },
-        data: { endedAt: new Date() },
-      });
-    }
+  const { updateMessage, closeMessage } = await prisma.$transaction(
+    async (tx) => {
+      let updateMessage;
+      if (
+        name !== undefined ||
+        description !== undefined ||
+        avatarUrl !== undefined
+      ) {
+        await tx.chat.update({
+          where: { id: chatId },
+          data: { name, description, avatarUrl },
+        });
 
-    if (
-      name !== undefined ||
-      description !== undefined ||
-      avatarUrl !== undefined
-    ) {
-      await tx.chat.update({
-        where: { id: chatId },
-        data: { name, description, avatarUrl },
-      });
-    }
-  });
+        updateMessage = await tx.message.create({
+          data: {
+            chatId,
+            type: "PROFILE_UPDATE",
+            userId,
+            metadata: { updatedFields: { name, description, avatarUrl } },
+          },
+          select: genericMessageSelect,
+        });
+      }
+
+      let closeMessage;
+      if (isActive === false) {
+        await tx.writeAccess.updateMany({
+          where: { chatId, endedAt: null },
+          data: { endedAt: new Date() },
+        });
+
+        closeMessage = await tx.message.create({
+          data: { chatId, type: "CLOSE", userId },
+          select: genericMessageSelect,
+        });
+      }
+
+      return { updateMessage, closeMessage };
+    },
+  );
 
   if (
     name !== undefined ||
     description !== undefined ||
     avatarUrl !== undefined
-  )
+  ) {
+    notifyChat("add_message", chatId, { chatId, message: updateMessage });
     notifyChat("update_chat", chatId, { chatId, name, description, avatarUrl });
-  if (isActive === false) notifyChat("deactivate_chat", chatId, { chatId });
+  }
+
+  if (isActive === false) {
+    notifyChat("add_message", chatId, { chatId, message: closeMessage });
+    notifyChat("deactivate_chat", chatId, { chatId });
+  }
 
   res.json({ success: true });
 };

@@ -7,10 +7,10 @@ import {
 import { millisecondsInHour, millisecondsInMinute } from "date-fns/constants";
 import { useEffect, useReducer } from "react";
 
-export default function TimeTag({ className, date }) {
+export default function useTimeTag(date) {
   const [tick, forceUpdate] = useReducer((x) => x + 1, 0);
 
-  const [tag, refreshTime] = calculateTimeTag(date);
+  const [tag, refreshTime] = calculateTagAndRefresh(date);
 
   useEffect(() => {
     if (refreshTime) {
@@ -19,10 +19,10 @@ export default function TimeTag({ className, date }) {
     }
   }, [refreshTime, tick]);
 
-  return <span className={className}>{tag}</span>;
+  return tag;
 }
 
-function calculateTimeTag(sentAt) {
+function calculateTagAndRefresh(sentAt) {
   const now = new Date();
   const diffInHours = differenceInHours(now, sentAt);
 

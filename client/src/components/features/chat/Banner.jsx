@@ -25,7 +25,7 @@ function Options({ onInfoClick }) {
     otherUserId,
     isActive,
   } = useCurrentChat().chat;
-  const { username } = useUser(otherUserId) || {};
+  const [user, isLoading, error] = useUser(otherUserId);
 
   if (!isDirect && !isActive) return;
 
@@ -36,7 +36,7 @@ function Options({ onInfoClick }) {
         isFriend ? (
           <button onClick={() => removeFriend(otherUserId)}>Unfriend</button>
         ) : (
-          <button onClick={() => sendRequest(username)}>Add friend</button>
+          <button onClick={handleSendRequest}>Add friend</button>
         )
       ) : (
         <>
@@ -48,4 +48,10 @@ function Options({ onInfoClick }) {
       )}
     </Dropdown>
   );
+
+  function handleSendRequest() {
+    if (isLoading || error || !user) return;
+    console.log(user);
+    sendRequest(user.username);
+  }
 }

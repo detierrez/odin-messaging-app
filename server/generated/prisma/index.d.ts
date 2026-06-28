@@ -63,6 +63,19 @@ export const Role: {
 
 export type Role = (typeof Role)[keyof typeof Role]
 
+
+export const MessageType: {
+  USER_MESSAGE: 'USER_MESSAGE',
+  OPEN: 'OPEN',
+  CLOSE: 'CLOSE',
+  JOIN: 'JOIN',
+  LEAVE: 'LEAVE',
+  ROLE_UPDATE: 'ROLE_UPDATE',
+  PROFILE_UPDATE: 'PROFILE_UPDATE'
+};
+
+export type MessageType = (typeof MessageType)[keyof typeof MessageType]
+
 }
 
 export type Type = $Enums.Type
@@ -72,6 +85,10 @@ export const Type: typeof $Enums.Type
 export type Role = $Enums.Role
 
 export const Role: typeof $Enums.Role
+
+export type MessageType = $Enums.MessageType
+
+export const MessageType: typeof $Enums.MessageType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -7131,82 +7148,90 @@ export namespace Prisma {
 
   export type MessageAvgAggregateOutputType = {
     id: number | null
-    userId: number | null
     chatId: number | null
+    userId: number | null
   }
 
   export type MessageSumAggregateOutputType = {
     id: number | null
-    userId: number | null
     chatId: number | null
+    userId: number | null
   }
 
   export type MessageMinAggregateOutputType = {
     id: number | null
-    userId: number | null
     chatId: number | null
-    content: string | null
     sentAt: Date | null
+    type: $Enums.MessageType | null
+    userId: number | null
+    content: string | null
     attachmentUrl: string | null
   }
 
   export type MessageMaxAggregateOutputType = {
     id: number | null
-    userId: number | null
     chatId: number | null
-    content: string | null
     sentAt: Date | null
+    type: $Enums.MessageType | null
+    userId: number | null
+    content: string | null
     attachmentUrl: string | null
   }
 
   export type MessageCountAggregateOutputType = {
     id: number
-    userId: number
     chatId: number
-    content: number
     sentAt: number
+    type: number
+    userId: number
+    content: number
     attachmentUrl: number
+    metadata: number
     _all: number
   }
 
 
   export type MessageAvgAggregateInputType = {
     id?: true
-    userId?: true
     chatId?: true
+    userId?: true
   }
 
   export type MessageSumAggregateInputType = {
     id?: true
-    userId?: true
     chatId?: true
+    userId?: true
   }
 
   export type MessageMinAggregateInputType = {
     id?: true
-    userId?: true
     chatId?: true
-    content?: true
     sentAt?: true
+    type?: true
+    userId?: true
+    content?: true
     attachmentUrl?: true
   }
 
   export type MessageMaxAggregateInputType = {
     id?: true
-    userId?: true
     chatId?: true
-    content?: true
     sentAt?: true
+    type?: true
+    userId?: true
+    content?: true
     attachmentUrl?: true
   }
 
   export type MessageCountAggregateInputType = {
     id?: true
-    userId?: true
     chatId?: true
-    content?: true
     sentAt?: true
+    type?: true
+    userId?: true
+    content?: true
     attachmentUrl?: true
+    metadata?: true
     _all?: true
   }
 
@@ -7298,11 +7323,13 @@ export namespace Prisma {
 
   export type MessageGroupByOutputType = {
     id: number
-    userId: number
     chatId: number
-    content: string | null
     sentAt: Date
+    type: $Enums.MessageType
+    userId: number | null
+    content: string | null
     attachmentUrl: string | null
+    metadata: JsonValue | null
     _count: MessageCountAggregateOutputType | null
     _avg: MessageAvgAggregateOutputType | null
     _sum: MessageSumAggregateOutputType | null
@@ -7326,73 +7353,83 @@ export namespace Prisma {
 
   export type MessageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
     chatId?: boolean
-    content?: boolean
     sentAt?: boolean
+    type?: boolean
+    userId?: boolean
+    content?: boolean
     attachmentUrl?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    metadata?: boolean
     chat?: boolean | ChatDefaultArgs<ExtArgs>
+    user?: boolean | Message$userArgs<ExtArgs>
   }, ExtArgs["result"]["message"]>
 
   export type MessageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
     chatId?: boolean
-    content?: boolean
     sentAt?: boolean
+    type?: boolean
+    userId?: boolean
+    content?: boolean
     attachmentUrl?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    metadata?: boolean
     chat?: boolean | ChatDefaultArgs<ExtArgs>
+    user?: boolean | Message$userArgs<ExtArgs>
   }, ExtArgs["result"]["message"]>
 
   export type MessageSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
     chatId?: boolean
-    content?: boolean
     sentAt?: boolean
+    type?: boolean
+    userId?: boolean
+    content?: boolean
     attachmentUrl?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    metadata?: boolean
     chat?: boolean | ChatDefaultArgs<ExtArgs>
+    user?: boolean | Message$userArgs<ExtArgs>
   }, ExtArgs["result"]["message"]>
 
   export type MessageSelectScalar = {
     id?: boolean
-    userId?: boolean
     chatId?: boolean
-    content?: boolean
     sentAt?: boolean
+    type?: boolean
+    userId?: boolean
+    content?: boolean
     attachmentUrl?: boolean
+    metadata?: boolean
   }
 
-  export type MessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "chatId" | "content" | "sentAt" | "attachmentUrl", ExtArgs["result"]["message"]>
+  export type MessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "chatId" | "sentAt" | "type" | "userId" | "content" | "attachmentUrl" | "metadata", ExtArgs["result"]["message"]>
   export type MessageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     chat?: boolean | ChatDefaultArgs<ExtArgs>
+    user?: boolean | Message$userArgs<ExtArgs>
   }
   export type MessageIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     chat?: boolean | ChatDefaultArgs<ExtArgs>
+    user?: boolean | Message$userArgs<ExtArgs>
   }
   export type MessageIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     chat?: boolean | ChatDefaultArgs<ExtArgs>
+    user?: boolean | Message$userArgs<ExtArgs>
   }
 
   export type $MessagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Message"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
       chat: Prisma.$ChatPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
-      userId: number
       chatId: number
-      content: string | null
       sentAt: Date
+      type: $Enums.MessageType
+      userId: number | null
+      content: string | null
       attachmentUrl: string | null
+      metadata: Prisma.JsonValue | null
     }, ExtArgs["result"]["message"]>
     composites: {}
   }
@@ -7787,8 +7824,8 @@ export namespace Prisma {
    */
   export interface Prisma__MessageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     chat<T extends ChatDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ChatDefaultArgs<ExtArgs>>): Prisma__ChatClient<$Result.GetResult<Prisma.$ChatPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends Message$userArgs<ExtArgs> = {}>(args?: Subset<T, Message$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7819,11 +7856,13 @@ export namespace Prisma {
    */
   interface MessageFieldRefs {
     readonly id: FieldRef<"Message", 'Int'>
-    readonly userId: FieldRef<"Message", 'Int'>
     readonly chatId: FieldRef<"Message", 'Int'>
-    readonly content: FieldRef<"Message", 'String'>
     readonly sentAt: FieldRef<"Message", 'DateTime'>
+    readonly type: FieldRef<"Message", 'MessageType'>
+    readonly userId: FieldRef<"Message", 'Int'>
+    readonly content: FieldRef<"Message", 'String'>
     readonly attachmentUrl: FieldRef<"Message", 'String'>
+    readonly metadata: FieldRef<"Message", 'Json'>
   }
     
 
@@ -8225,6 +8264,25 @@ export namespace Prisma {
   }
 
   /**
+   * Message.user
+   */
+  export type Message$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
    * Message without action
    */
   export type MessageDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8309,11 +8367,13 @@ export namespace Prisma {
 
   export const MessageScalarFieldEnum: {
     id: 'id',
-    userId: 'userId',
     chatId: 'chatId',
-    content: 'content',
     sentAt: 'sentAt',
-    attachmentUrl: 'attachmentUrl'
+    type: 'type',
+    userId: 'userId',
+    content: 'content',
+    attachmentUrl: 'attachmentUrl',
+    metadata: 'metadata'
   };
 
   export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
@@ -8325,6 +8385,14 @@ export namespace Prisma {
   };
 
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
   export const QueryMode: {
@@ -8341,6 +8409,15 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -8415,6 +8492,34 @@ export namespace Prisma {
    * Reference to a field of type 'Type[]'
    */
   export type ListEnumTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Type[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'MessageType'
+   */
+  export type EnumMessageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageType'>
+    
+
+
+  /**
+   * Reference to a field of type 'MessageType[]'
+   */
+  export type ListEnumMessageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -8729,24 +8834,28 @@ export namespace Prisma {
     OR?: MessageWhereInput[]
     NOT?: MessageWhereInput | MessageWhereInput[]
     id?: IntFilter<"Message"> | number
-    userId?: IntFilter<"Message"> | number
     chatId?: IntFilter<"Message"> | number
-    content?: StringNullableFilter<"Message"> | string | null
     sentAt?: DateTimeFilter<"Message"> | Date | string
+    type?: EnumMessageTypeFilter<"Message"> | $Enums.MessageType
+    userId?: IntNullableFilter<"Message"> | number | null
+    content?: StringNullableFilter<"Message"> | string | null
     attachmentUrl?: StringNullableFilter<"Message"> | string | null
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    metadata?: JsonNullableFilter<"Message">
     chat?: XOR<ChatScalarRelationFilter, ChatWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type MessageOrderByWithRelationInput = {
     id?: SortOrder
-    userId?: SortOrder
     chatId?: SortOrder
-    content?: SortOrderInput | SortOrder
     sentAt?: SortOrder
+    type?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    content?: SortOrderInput | SortOrder
     attachmentUrl?: SortOrderInput | SortOrder
-    user?: UserOrderByWithRelationInput
+    metadata?: SortOrderInput | SortOrder
     chat?: ChatOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
   }
 
   export type MessageWhereUniqueInput = Prisma.AtLeast<{
@@ -8754,22 +8863,26 @@ export namespace Prisma {
     AND?: MessageWhereInput | MessageWhereInput[]
     OR?: MessageWhereInput[]
     NOT?: MessageWhereInput | MessageWhereInput[]
-    userId?: IntFilter<"Message"> | number
     chatId?: IntFilter<"Message"> | number
-    content?: StringNullableFilter<"Message"> | string | null
     sentAt?: DateTimeFilter<"Message"> | Date | string
+    type?: EnumMessageTypeFilter<"Message"> | $Enums.MessageType
+    userId?: IntNullableFilter<"Message"> | number | null
+    content?: StringNullableFilter<"Message"> | string | null
     attachmentUrl?: StringNullableFilter<"Message"> | string | null
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    metadata?: JsonNullableFilter<"Message">
     chat?: XOR<ChatScalarRelationFilter, ChatWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type MessageOrderByWithAggregationInput = {
     id?: SortOrder
-    userId?: SortOrder
     chatId?: SortOrder
-    content?: SortOrderInput | SortOrder
     sentAt?: SortOrder
+    type?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    content?: SortOrderInput | SortOrder
     attachmentUrl?: SortOrderInput | SortOrder
+    metadata?: SortOrderInput | SortOrder
     _count?: MessageCountOrderByAggregateInput
     _avg?: MessageAvgOrderByAggregateInput
     _max?: MessageMaxOrderByAggregateInput
@@ -8782,11 +8895,13 @@ export namespace Prisma {
     OR?: MessageScalarWhereWithAggregatesInput[]
     NOT?: MessageScalarWhereWithAggregatesInput | MessageScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Message"> | number
-    userId?: IntWithAggregatesFilter<"Message"> | number
     chatId?: IntWithAggregatesFilter<"Message"> | number
-    content?: StringNullableWithAggregatesFilter<"Message"> | string | null
     sentAt?: DateTimeWithAggregatesFilter<"Message"> | Date | string
+    type?: EnumMessageTypeWithAggregatesFilter<"Message"> | $Enums.MessageType
+    userId?: IntNullableWithAggregatesFilter<"Message"> | number | null
+    content?: StringNullableWithAggregatesFilter<"Message"> | string | null
     attachmentUrl?: StringNullableWithAggregatesFilter<"Message"> | string | null
+    metadata?: JsonNullableWithAggregatesFilter<"Message">
   }
 
   export type UserCreateInput = {
@@ -9054,61 +9169,75 @@ export namespace Prisma {
   }
 
   export type MessageCreateInput = {
-    content?: string | null
     sentAt?: Date | string
+    type?: $Enums.MessageType
+    content?: string | null
     attachmentUrl?: string | null
-    user: UserCreateNestedOneWithoutSentMessagesInput
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     chat: ChatCreateNestedOneWithoutMessagesInput
+    user?: UserCreateNestedOneWithoutSentMessagesInput
   }
 
   export type MessageUncheckedCreateInput = {
     id?: number
-    userId: number
     chatId: number
-    content?: string | null
     sentAt?: Date | string
+    type?: $Enums.MessageType
+    userId?: number | null
+    content?: string | null
     attachmentUrl?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type MessageUpdateInput = {
-    content?: NullableStringFieldUpdateOperationsInput | string | null
     sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
+    content?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    user?: UserUpdateOneRequiredWithoutSentMessagesNestedInput
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     chat?: ChatUpdateOneRequiredWithoutMessagesNestedInput
+    user?: UserUpdateOneWithoutSentMessagesNestedInput
   }
 
   export type MessageUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
-    userId?: IntFieldUpdateOperationsInput | number
     chatId?: IntFieldUpdateOperationsInput | number
-    content?: NullableStringFieldUpdateOperationsInput | string | null
     sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
+    userId?: NullableIntFieldUpdateOperationsInput | number | null
+    content?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type MessageCreateManyInput = {
     id?: number
-    userId: number
     chatId: number
-    content?: string | null
     sentAt?: Date | string
+    type?: $Enums.MessageType
+    userId?: number | null
+    content?: string | null
     attachmentUrl?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type MessageUpdateManyMutationInput = {
-    content?: NullableStringFieldUpdateOperationsInput | string | null
     sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
+    content?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type MessageUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
-    userId?: IntFieldUpdateOperationsInput | number
     chatId?: IntFieldUpdateOperationsInput | number
-    content?: NullableStringFieldUpdateOperationsInput | string | null
     sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
+    userId?: NullableIntFieldUpdateOperationsInput | number | null
+    content?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -9506,43 +9635,145 @@ export namespace Prisma {
     _max?: NestedEnumTypeFilter<$PrismaModel>
   }
 
+  export type EnumMessageTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.MessageType | EnumMessageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMessageTypeFilter<$PrismaModel> | $Enums.MessageType
+  }
+
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
   export type MessageCountOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
     chatId?: SortOrder
-    content?: SortOrder
     sentAt?: SortOrder
+    type?: SortOrder
+    userId?: SortOrder
+    content?: SortOrder
     attachmentUrl?: SortOrder
+    metadata?: SortOrder
   }
 
   export type MessageAvgOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
     chatId?: SortOrder
+    userId?: SortOrder
   }
 
   export type MessageMaxOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
     chatId?: SortOrder
-    content?: SortOrder
     sentAt?: SortOrder
+    type?: SortOrder
+    userId?: SortOrder
+    content?: SortOrder
     attachmentUrl?: SortOrder
   }
 
   export type MessageMinOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
     chatId?: SortOrder
-    content?: SortOrder
     sentAt?: SortOrder
+    type?: SortOrder
+    userId?: SortOrder
+    content?: SortOrder
     attachmentUrl?: SortOrder
   }
 
   export type MessageSumOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
     chatId?: SortOrder
+    userId?: SortOrder
+  }
+
+  export type EnumMessageTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MessageType | EnumMessageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMessageTypeWithAggregatesFilter<$PrismaModel> | $Enums.MessageType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMessageTypeFilter<$PrismaModel>
+    _max?: NestedEnumMessageTypeFilter<$PrismaModel>
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
   export type MessageCreateNestedManyWithoutUserInput = {
@@ -9997,24 +10228,20 @@ export namespace Prisma {
     deleteMany?: ReadAccessScalarWhereInput | ReadAccessScalarWhereInput[]
   }
 
-  export type UserCreateNestedOneWithoutSentMessagesInput = {
-    create?: XOR<UserCreateWithoutSentMessagesInput, UserUncheckedCreateWithoutSentMessagesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutSentMessagesInput
-    connect?: UserWhereUniqueInput
-  }
-
   export type ChatCreateNestedOneWithoutMessagesInput = {
     create?: XOR<ChatCreateWithoutMessagesInput, ChatUncheckedCreateWithoutMessagesInput>
     connectOrCreate?: ChatCreateOrConnectWithoutMessagesInput
     connect?: ChatWhereUniqueInput
   }
 
-  export type UserUpdateOneRequiredWithoutSentMessagesNestedInput = {
+  export type UserCreateNestedOneWithoutSentMessagesInput = {
     create?: XOR<UserCreateWithoutSentMessagesInput, UserUncheckedCreateWithoutSentMessagesInput>
     connectOrCreate?: UserCreateOrConnectWithoutSentMessagesInput
-    upsert?: UserUpsertWithoutSentMessagesInput
     connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSentMessagesInput, UserUpdateWithoutSentMessagesInput>, UserUncheckedUpdateWithoutSentMessagesInput>
+  }
+
+  export type EnumMessageTypeFieldUpdateOperationsInput = {
+    set?: $Enums.MessageType
   }
 
   export type ChatUpdateOneRequiredWithoutMessagesNestedInput = {
@@ -10023,6 +10250,24 @@ export namespace Prisma {
     upsert?: ChatUpsertWithoutMessagesInput
     connect?: ChatWhereUniqueInput
     update?: XOR<XOR<ChatUpdateToOneWithWhereWithoutMessagesInput, ChatUpdateWithoutMessagesInput>, ChatUncheckedUpdateWithoutMessagesInput>
+  }
+
+  export type UserUpdateOneWithoutSentMessagesNestedInput = {
+    create?: XOR<UserCreateWithoutSentMessagesInput, UserUncheckedCreateWithoutSentMessagesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSentMessagesInput
+    upsert?: UserUpsertWithoutSentMessagesInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSentMessagesInput, UserUpdateWithoutSentMessagesInput>, UserUncheckedUpdateWithoutSentMessagesInput>
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -10220,19 +10465,90 @@ export namespace Prisma {
     _max?: NestedEnumTypeFilter<$PrismaModel>
   }
 
+  export type NestedEnumMessageTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.MessageType | EnumMessageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMessageTypeFilter<$PrismaModel> | $Enums.MessageType
+  }
+
+  export type NestedEnumMessageTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MessageType | EnumMessageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMessageTypeWithAggregatesFilter<$PrismaModel> | $Enums.MessageType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMessageTypeFilter<$PrismaModel>
+    _max?: NestedEnumMessageTypeFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
   export type MessageCreateWithoutUserInput = {
-    content?: string | null
     sentAt?: Date | string
+    type?: $Enums.MessageType
+    content?: string | null
     attachmentUrl?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     chat: ChatCreateNestedOneWithoutMessagesInput
   }
 
   export type MessageUncheckedCreateWithoutUserInput = {
     id?: number
     chatId: number
-    content?: string | null
     sentAt?: Date | string
+    type?: $Enums.MessageType
+    content?: string | null
     attachmentUrl?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type MessageCreateOrConnectWithoutUserInput = {
@@ -10345,11 +10661,13 @@ export namespace Prisma {
     OR?: MessageScalarWhereInput[]
     NOT?: MessageScalarWhereInput | MessageScalarWhereInput[]
     id?: IntFilter<"Message"> | number
-    userId?: IntFilter<"Message"> | number
     chatId?: IntFilter<"Message"> | number
-    content?: StringNullableFilter<"Message"> | string | null
     sentAt?: DateTimeFilter<"Message"> | Date | string
+    type?: EnumMessageTypeFilter<"Message"> | $Enums.MessageType
+    userId?: IntNullableFilter<"Message"> | number | null
+    content?: StringNullableFilter<"Message"> | string | null
     attachmentUrl?: StringNullableFilter<"Message"> | string | null
+    metadata?: JsonNullableFilter<"Message">
   }
 
   export type RequestUpsertWithWhereUniqueWithoutSenderInput = {
@@ -10801,18 +11119,22 @@ export namespace Prisma {
   }
 
   export type MessageCreateWithoutChatInput = {
-    content?: string | null
     sentAt?: Date | string
+    type?: $Enums.MessageType
+    content?: string | null
     attachmentUrl?: string | null
-    user: UserCreateNestedOneWithoutSentMessagesInput
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    user?: UserCreateNestedOneWithoutSentMessagesInput
   }
 
   export type MessageUncheckedCreateWithoutChatInput = {
     id?: number
-    userId: number
-    content?: string | null
     sentAt?: Date | string
+    type?: $Enums.MessageType
+    userId?: number | null
+    content?: string | null
     attachmentUrl?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type MessageCreateOrConnectWithoutChatInput = {
@@ -10916,6 +11238,30 @@ export namespace Prisma {
     data: XOR<ReadAccessUpdateManyMutationInput, ReadAccessUncheckedUpdateManyWithoutChatInput>
   }
 
+  export type ChatCreateWithoutMessagesInput = {
+    name?: string | null
+    avatarUrl?: string | null
+    description?: string | null
+    type?: $Enums.Type
+    writeAccesses?: WriteAccessCreateNestedManyWithoutChatInput
+    readAccesses?: ReadAccessCreateNestedManyWithoutChatInput
+  }
+
+  export type ChatUncheckedCreateWithoutMessagesInput = {
+    id?: number
+    name?: string | null
+    avatarUrl?: string | null
+    description?: string | null
+    type?: $Enums.Type
+    writeAccesses?: WriteAccessUncheckedCreateNestedManyWithoutChatInput
+    readAccesses?: ReadAccessUncheckedCreateNestedManyWithoutChatInput
+  }
+
+  export type ChatCreateOrConnectWithoutMessagesInput = {
+    where: ChatWhereUniqueInput
+    create: XOR<ChatCreateWithoutMessagesInput, ChatUncheckedCreateWithoutMessagesInput>
+  }
+
   export type UserCreateWithoutSentMessagesInput = {
     username: string
     alias?: string | null
@@ -10944,28 +11290,34 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutSentMessagesInput, UserUncheckedCreateWithoutSentMessagesInput>
   }
 
-  export type ChatCreateWithoutMessagesInput = {
-    name?: string | null
-    avatarUrl?: string | null
-    description?: string | null
-    type?: $Enums.Type
-    writeAccesses?: WriteAccessCreateNestedManyWithoutChatInput
-    readAccesses?: ReadAccessCreateNestedManyWithoutChatInput
-  }
-
-  export type ChatUncheckedCreateWithoutMessagesInput = {
-    id?: number
-    name?: string | null
-    avatarUrl?: string | null
-    description?: string | null
-    type?: $Enums.Type
-    writeAccesses?: WriteAccessUncheckedCreateNestedManyWithoutChatInput
-    readAccesses?: ReadAccessUncheckedCreateNestedManyWithoutChatInput
-  }
-
-  export type ChatCreateOrConnectWithoutMessagesInput = {
-    where: ChatWhereUniqueInput
+  export type ChatUpsertWithoutMessagesInput = {
+    update: XOR<ChatUpdateWithoutMessagesInput, ChatUncheckedUpdateWithoutMessagesInput>
     create: XOR<ChatCreateWithoutMessagesInput, ChatUncheckedCreateWithoutMessagesInput>
+    where?: ChatWhereInput
+  }
+
+  export type ChatUpdateToOneWithWhereWithoutMessagesInput = {
+    where?: ChatWhereInput
+    data: XOR<ChatUpdateWithoutMessagesInput, ChatUncheckedUpdateWithoutMessagesInput>
+  }
+
+  export type ChatUpdateWithoutMessagesInput = {
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
+    writeAccesses?: WriteAccessUpdateManyWithoutChatNestedInput
+    readAccesses?: ReadAccessUpdateManyWithoutChatNestedInput
+  }
+
+  export type ChatUncheckedUpdateWithoutMessagesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
+    writeAccesses?: WriteAccessUncheckedUpdateManyWithoutChatNestedInput
+    readAccesses?: ReadAccessUncheckedUpdateManyWithoutChatNestedInput
   }
 
   export type UserUpsertWithoutSentMessagesInput = {
@@ -11002,42 +11354,14 @@ export namespace Prisma {
     readAccesses?: ReadAccessUncheckedUpdateManyWithoutUserNestedInput
   }
 
-  export type ChatUpsertWithoutMessagesInput = {
-    update: XOR<ChatUpdateWithoutMessagesInput, ChatUncheckedUpdateWithoutMessagesInput>
-    create: XOR<ChatCreateWithoutMessagesInput, ChatUncheckedCreateWithoutMessagesInput>
-    where?: ChatWhereInput
-  }
-
-  export type ChatUpdateToOneWithWhereWithoutMessagesInput = {
-    where?: ChatWhereInput
-    data: XOR<ChatUpdateWithoutMessagesInput, ChatUncheckedUpdateWithoutMessagesInput>
-  }
-
-  export type ChatUpdateWithoutMessagesInput = {
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
-    writeAccesses?: WriteAccessUpdateManyWithoutChatNestedInput
-    readAccesses?: ReadAccessUpdateManyWithoutChatNestedInput
-  }
-
-  export type ChatUncheckedUpdateWithoutMessagesInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumTypeFieldUpdateOperationsInput | $Enums.Type
-    writeAccesses?: WriteAccessUncheckedUpdateManyWithoutChatNestedInput
-    readAccesses?: ReadAccessUncheckedUpdateManyWithoutChatNestedInput
-  }
-
   export type MessageCreateManyUserInput = {
     id?: number
     chatId: number
-    content?: string | null
     sentAt?: Date | string
+    type?: $Enums.MessageType
+    content?: string | null
     attachmentUrl?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type RequestCreateManySenderInput = {
@@ -11061,26 +11385,32 @@ export namespace Prisma {
   }
 
   export type MessageUpdateWithoutUserInput = {
-    content?: NullableStringFieldUpdateOperationsInput | string | null
     sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
+    content?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
     chat?: ChatUpdateOneRequiredWithoutMessagesNestedInput
   }
 
   export type MessageUncheckedUpdateWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
     chatId?: IntFieldUpdateOperationsInput | number
-    content?: NullableStringFieldUpdateOperationsInput | string | null
     sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
+    content?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type MessageUncheckedUpdateManyWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
     chatId?: IntFieldUpdateOperationsInput | number
-    content?: NullableStringFieldUpdateOperationsInput | string | null
     sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
+    content?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type RequestUpdateWithoutSenderInput = {
@@ -11144,10 +11474,12 @@ export namespace Prisma {
 
   export type MessageCreateManyChatInput = {
     id?: number
-    userId: number
-    content?: string | null
     sentAt?: Date | string
+    type?: $Enums.MessageType
+    userId?: number | null
+    content?: string | null
     attachmentUrl?: string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type WriteAccessCreateManyChatInput = {
@@ -11163,26 +11495,32 @@ export namespace Prisma {
   }
 
   export type MessageUpdateWithoutChatInput = {
-    content?: NullableStringFieldUpdateOperationsInput | string | null
     sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
+    content?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    user?: UserUpdateOneRequiredWithoutSentMessagesNestedInput
+    metadata?: NullableJsonNullValueInput | InputJsonValue
+    user?: UserUpdateOneWithoutSentMessagesNestedInput
   }
 
   export type MessageUncheckedUpdateWithoutChatInput = {
     id?: IntFieldUpdateOperationsInput | number
-    userId?: IntFieldUpdateOperationsInput | number
-    content?: NullableStringFieldUpdateOperationsInput | string | null
     sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
+    userId?: NullableIntFieldUpdateOperationsInput | number | null
+    content?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type MessageUncheckedUpdateManyWithoutChatInput = {
     id?: IntFieldUpdateOperationsInput | number
-    userId?: IntFieldUpdateOperationsInput | number
-    content?: NullableStringFieldUpdateOperationsInput | string | null
     sentAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
+    userId?: NullableIntFieldUpdateOperationsInput | number | null
+    content?: NullableStringFieldUpdateOperationsInput | string | null
     attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    metadata?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type WriteAccessUpdateWithoutChatInput = {

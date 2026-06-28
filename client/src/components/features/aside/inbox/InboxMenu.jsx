@@ -1,6 +1,6 @@
 import { filter, search } from "@lib/icons";
 import { merge } from "@lib/index";
-import { useInbox } from "@hooks";
+import { useCurrentChat, useInbox } from "@hooks";
 import { Dropdown, Heading, IconButton, Input } from "@components/common";
 import InboxEntry from "./InboxEntry";
 import s from "./InboxMenu.module.css";
@@ -13,6 +13,7 @@ export default function InboxMenu({
   ...props
 }) {
   const inbox = useInbox();
+  const { setCurrentChat } = useCurrentChat();
   const [searchText, setSearchText] = useState("");
 
   return (
@@ -42,8 +43,11 @@ export default function InboxMenu({
         />
       </div>
       <div className={s.list}>
-        {inbox?.map(({ chatId, lastMessage }) => (
-          <InboxEntry {...{ chatId, lastMessage }} key={chatId} />
+        {inbox.map((message) => (
+          <InboxEntry
+            {...{ message, onClick: handleEntryClick(message.chatId) }}
+            key={message.chatId}
+          />
         ))}
       </div>
     </div>
@@ -55,5 +59,9 @@ export default function InboxMenu({
 
   function handleClearSearch() {
     setSearchText("");
+  }
+
+  function handleEntryClick(id) {
+    return () => setCurrentChat(id);
   }
 }

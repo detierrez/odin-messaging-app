@@ -1,9 +1,20 @@
 .history {
-  gap: 2px;
+  --messages-gap: 12px;
+  gap: var(--messages-gap);
   display: flex;
   flex-direction: column;
   overflow: auto;
   scrollbar-gutter: stable;
+
+  :first-child {
+    margin-top: auto;
+  }
+
+  .systemMessage {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--font-color-muted);
+  }
 
   .message {
     --content-radius: 15px;
@@ -22,22 +33,9 @@
     }
 
     &.continuation {
+      margin-top: calc(-1 * (var(--messages-gap) - 1px));
       --tl-radius: 2px;
     }
-
-    &:first-child {
-      margin-top: auto;
-    }
-
-    &:not(.continuation, :first-child) {
-      margin-top: 6px;
-    }
-
-    /* @media (hover: hover) {
-      &:hover {
-        --date-opacity: 0.6;
-      }
-    } */
 
     position: relative;
     width: 100%;
