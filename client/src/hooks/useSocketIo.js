@@ -1,50 +1,75 @@
 import { io } from "socket.io-client";
 import { useEffect } from "react";
-import { useChats, useId, useRequests, useUsers } from "./useContext";
+import { SERVER_BASE_URL } from "@lib/api";
+import useCache from "./useCacheFetch";
 
-export default function useSocketIo(SERVER_BASE_URL) {
-  const { id } = useId();
-  const { dispatchChats } = useChats();
-  const { dispatchRequests } = useRequests();
-  const { setUsers } = useUsers();
+export default function useSocketIo() {
+  const cache = useCache;
 
   useEffect(() => {
-    const socket = io(SERVER_BASE_URL, {
-      auth: { token: id },
-    });
+    const socket = io(SERVER_BASE_URL);
 
-    socket.on("update_profile", ({ alias, description, avatarUrl }) =>
-      setUsers((prev) => {
-        const prevProfile = prev[id];
-        return {
-          ...prev,
-          [id]: { ...prevProfile, alias, description, avatarUrl },
-        };
-      }),
+    socket.on("update_user", ({ user: { id: userId, ...newData } }) =>
+      cache.set(`users:${userId}`, (user) => ({ ...user, ...newData })),
     );
 
-    const eventDispatchers = [
-      { event: "add_request", dispatch: dispatchRequests },
-      { event: "remove_request", dispatch: dispatchRequests },
-      { event: "add_chat", dispatch: dispatchChats },
-      { event: "update_chat", dispatch: dispatchChats },
-      { event: "deactivate_chat", dispatch: dispatchChats },
-      { event: "reactivate_chat", dispatch: dispatchChats },
-      { event: "add_message", dispatch: dispatchChats },
-      { event: "add_membership", dispatch: dispatchChats },
-      { event: "update_membership", dispatch: dispatchChats },
-      { event: "remove_membership", dispatch: dispatchChats },
-    ];
+    socket.on("add_request", ({ request }) =>
+      cache.set("requests", (requests) => [...requests, request]),
+    );
 
-    eventDispatchers.forEach(({ event, dispatch }) =>
-      socket.on(event, (payload) => {
-        dispatch({ ...payload, type: event });
-      }),
+    socket.on("remove_request", ({ requestId }) =>
+      cache.set("requests", (requests) =>
+        requests.filter((r) => r.id !== requestId),
+      ),
+    );
+
+    socket.on("add_friendship", ({ friendId }) =>
+      cache.set("requests", (friends) => friends.add(friendId)),
+    );
+
+    socket.on("remove_friendship", ({ friendId }) =>
+      cache.set("requests", (friends) => friends.remove(friendId)),
+    );
+
+    socket.on("update_group", ({ group: { id, ...newData } }) =>
+      cache.set(`group:${id}`, (group) => ({ ...group, ...newData })),
+    );
+
+    socket.on("add_membership", ({ membership }) =>
+      cache.set(`group:${membership.groupId}`, (group) => ({
+        ...group,
+        memberships: [...group.memberships, membership],
+      })),
+    );
+
+    socket.on(
+      "update_membership",
+      ({ membership: { groupId, userId, ...newData } }) =>
+        cache.set(`group:${groupId}`, (group) => ({
+          ...group,
+          memberships: group.memberships.map((m) =>
+            m.userId === userId ? { ...m, ...newData } : m,
+          ),
+        })),
+    );
+
+    socket.on("remove_membership", ({ membership: { groupId, userId } }) =>
+      cache.set(`group:${groupId}`, (group) => ({
+        ...group,
+        memberships: group.memberships.filter((m) => m.userId !== userId),
+      })),
+    );
+
+    socket.on("add_message", ({ message }) =>
+      cache.set(`chats`, (chats) => ({
+        ...chats,
+        [message.chatId]: { message },
+      })),
     );
 
     return () => {
       socket.removeAllListeners();
       socket.disconnect();
     };
-  }, [id, SERVER_BASE_URL, dispatchChats, dispatchRequests, setUsers]);
+  }, [cache]);
 }

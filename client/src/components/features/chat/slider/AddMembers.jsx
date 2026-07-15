@@ -22,11 +22,12 @@ export default function AddMembers({ className, onCancelClick, ...props }) {
 
       <Input
         className={s.search}
-        icon={search}
         placeholder="Search for a name"
+        icon={search}
         value={searchText}
+        buttonIcon={cross}
         onChange={(e) => setSearchText(e.target.value)}
-        onCancelClick={() => setSearchText("")}
+        onIconClick={() => setSearchText("")}
       />
 
       <div className={s.subHeading}>Friends</div>

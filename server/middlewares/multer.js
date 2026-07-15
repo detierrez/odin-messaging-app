@@ -1,8 +1,6 @@
 const multer = require("multer");
 
 const storage = multer.memoryStorage();
+const parseFile = (fieldName) => multer({ storage }).single(fieldName);
 
-const parseAvatar = multer({ storage }).single("avatar");
-const parseAttachment = multer({ storage }).single("attachment");
-
-module.exports = { parseAvatar, parseAttachment };
+module.exports = { parseFile };

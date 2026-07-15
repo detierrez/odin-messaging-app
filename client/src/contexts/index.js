@@ -1,6 +1,7 @@
 import { createContext } from "react";
 
-export const IdContext = createContext(null);
+export const AppContext = createContext(null);
+export const ProfileContext = createContext(null);
 export const UsersContext = createContext(null);
 export const ChatsContext = createContext(null);
 export const RequestsContext = createContext(null);

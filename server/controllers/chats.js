@@ -1,209 +1,28 @@
-const { matchedData } = require("express-validator");
 const prisma = require("../lib/prisma");
-const { httpError } = require("../middlewares");
-const { addToChatRoom, notifyUser, notifyChat } = require("../socket.io");
-const {
-  baseChatSelect,
-  genericMessageSelect,
-  genericChatSelect,
-  firstMessageChatSelect,
-} = require("./apiSelects");
+const apiSelectors = require("./api-selectors");
 
-module.exports.getInbox = async (req, res) => {
+module.exports.getChats = async (req, res) => {
   const { id: userId } = req.user;
 
   const chats = await prisma.chat.findMany({
     where: {
-      readAccesses: { some: { userId } },
-    },
-    select: firstMessageChatSelect,
-  });
-
-  chats.sort((a, b) => {
-    const aDate = a.messages[0]?.sentAt || 0;
-    const bDate = b.messages[0]?.sentAt || 0;
-    return bDate - aDate;
-  });
-
-  const formattedChats = chats.map((chat) => formatChat(chat, userId));
-
-  res.json({ chats: formattedChats });
-};
-
-module.exports.postChat = async (req, res) => {
-  const { id: userId } = req.user;
-  const { name, description, memberIds } = matchedData(req);
-  const { avatarUrl } = req;
-
-  const allMembers = [...new Set([...memberIds, userId])];
-  const otherMembers = allMembers.filter((id) => id !== userId);
-
-  if (otherMembers.length === 0) {
-    throw new httpError(400, [
-      { reason: "You must add at least one other member" },
-    ]);
-  }
-
-  const activeDirects = await prisma.chat.findMany({
-    where: {
-      type: "DIRECT",
-      AND: [
-        { writeAccesses: { some: { userId, endedAt: null } } },
-        {
-          writeAccesses: {
-            some: { userId: { in: otherMembers }, endedAt: null },
-          },
-        },
+      OR: [
+        { group: { participations: { some: { userId } } } },
+        { OR: [{ friendAId: userId }, { friendBId: userId }] },
       ],
     },
     select: {
-      writeAccesses: { select: { userId: true } },
+      id: true,
+      groupId: true,
+      friendAId: true,
+      friendBId: true,
+      messages: {
+        select: apiSelectors.message,
+        orderBy: { id: "desc" },
+        take: 1,
+      },
     },
   });
 
-  const friendIds = new Set(
-    activeDirects.flatMap((chat) => chat.writeAccesses.map((wa) => wa.userId)),
-  );
-  const unfoundMembers = otherMembers.filter((id) => !friendIds.has(id));
-
-  if (unfoundMembers.length > 0) {
-    throw new httpError(400, [
-      {
-        reason: `These members are not in your friend list: ${unfoundMembers.join(", ")}`,
-      },
-    ]);
-  }
-
-  const chat = await prisma.chat.create({
-    data: {
-      type: "GROUP",
-      name,
-      description,
-      avatarUrl,
-      readAccesses: {
-        create: allMembers.map((memberId) => ({
-          userId: memberId,
-        })),
-      },
-      writeAccesses: {
-        create: allMembers.map((memberId) => ({
-          userId: memberId,
-          role: memberId === userId ? "ADMIN" : "MEMBER",
-        })),
-      },
-      messages: { create: { type: "OPEN", userId } },
-    },
-    select: genericChatSelect,
-  });
-
-  for (const memberId of allMembers) {
-    addToChatRoom(memberId, chat.id);
-    notifyUser("add_chat", memberId, { chat: formatChat(chat, memberId) });
-  }
-
-  res.json({ success: true });
+  res.json({ chats });
 };
-
-module.exports.patchChat = async (req, res) => {
-  const { id: userId } = req.user;
-  const { chatId, isActive, name, description } = matchedData(req);
-  const { avatarUrl } = req;
-
-  const adminAccess = await prisma.writeAccess.findFirst({
-    where: { userId, chatId, role: "ADMIN", endedAt: null },
-  });
-
-  if (!adminAccess) {
-    throw new httpError(403, [
-      { reason: "You do not administrate or participate in this chat" },
-    ]);
-  }
-
-  const { updateMessage, closeMessage } = await prisma.$transaction(
-    async (tx) => {
-      let updateMessage;
-      if (
-        name !== undefined ||
-        description !== undefined ||
-        avatarUrl !== undefined
-      ) {
-        await tx.chat.update({
-          where: { id: chatId },
-          data: { name, description, avatarUrl },
-        });
-
-        updateMessage = await tx.message.create({
-          data: {
-            chatId,
-            type: "PROFILE_UPDATE",
-            userId,
-            metadata: { updatedFields: { name, description, avatarUrl } },
-          },
-          select: genericMessageSelect,
-        });
-      }
-
-      let closeMessage;
-      if (isActive === false) {
-        await tx.writeAccess.updateMany({
-          where: { chatId, endedAt: null },
-          data: { endedAt: new Date() },
-        });
-
-        closeMessage = await tx.message.create({
-          data: { chatId, type: "CLOSE", userId },
-          select: genericMessageSelect,
-        });
-      }
-
-      return { updateMessage, closeMessage };
-    },
-  );
-
-  if (
-    name !== undefined ||
-    description !== undefined ||
-    avatarUrl !== undefined
-  ) {
-    notifyChat("add_message", chatId, { chatId, message: updateMessage });
-    notifyChat("update_chat", chatId, { chatId, name, description, avatarUrl });
-  }
-
-  if (isActive === false) {
-    notifyChat("add_message", chatId, { chatId, message: closeMessage });
-    notifyChat("deactivate_chat", chatId, { chatId });
-  }
-
-  res.json({ success: true });
-};
-
-function formatChat(chat, userId) {
-  const { id, name, description, avatarUrl, type, messages, writeAccesses } =
-    chat;
-
-  const isActive = !!writeAccesses.find((access) => access.userId === userId);
-  const otherUserId =
-    type === "DIRECT"
-      ? writeAccesses.find((access) => access.userId !== userId)?.userId
-      : null;
-  const memberships = type === "DIRECT" ? null : writeAccesses;
-
-  return {
-    id,
-    type,
-    otherUserId,
-    name,
-    description,
-    avatarUrl,
-    isActive,
-    memberships,
-    messages,
-  };
-}
-
-function isReadable(chat, userId) {
-  return !!chat?.readAccesses.find((access) => access.userId === userId);
-}
-
-module.exports.formatChat = formatChat;
-module.exports.isReadable = isReadable;

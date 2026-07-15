@@ -18,7 +18,12 @@ export default function Aside({ className }) {
         <ProfileView tab="profile" onCloseClick={selectTab("inbox")} />
         <InboxMenu
           tab="inbox"
-          onAddFriendClick={selectTab("addFriend")}
+          onAddFriendClick={selectTab("inbox2")}
+          onAddGroupClick={selectTab("addGroup")}
+        />
+        <InboxMenu
+          tab="inbox2"
+          onAddFriendClick={selectTab("inbox")}
           onAddGroupClick={selectTab("addGroup")}
         />
         <AddFriendMenu
@@ -32,7 +37,10 @@ export default function Aside({ className }) {
           onGroupCreate={selectTab("inbox")}
         />
       </SlidingTabs>
-      <ProfileControls onProfileClick={selectTab("profile")} />
+      {/* <ProfileControls onProfileClick={selectTab("profile")} n={1} />
+      <ProfileControls onProfileClick={selectTab("profile")} n={2} />
+      <ProfileControls onProfileClick={selectTab("profile")} n={3} />
+      <ProfileControls onProfileClick={selectTab("profile")} n={4} /> */}
     </Surface>
   );
 }

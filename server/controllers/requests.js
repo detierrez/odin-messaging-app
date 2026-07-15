@@ -1,75 +1,86 @@
 const { matchedData } = require("express-validator");
 const prisma = require("../lib/prisma");
-const { httpError } = require("../middlewares");
-const { notifyRequest } = require("../socket.io");
+const socketIo = require("../lib/socket-io");
+const { toSorted } = require("../lib/utils");
+const { HttpError } = require("../lib/errors");
 
 module.exports.getRequests = async (req, res) => {
   const { id: userId } = req.user;
 
-  const [sent, received] = await Promise.all([
-    prisma.request.findMany({
-      where: { senderId: userId },
-      select: { receiverId: true },
-    }),
-    prisma.request.findMany({
-      where: { receiverId: userId },
-      select: { senderId: true },
-    }),
-  ]);
+  const requests = await prisma.request.findMany({
+    where: { OR: [{ senderId: userId }, { receiverId: userId }] },
+    select: { senderId: true, receiverId: true },
+  });
 
-  const sentTo = sent.map(({ receiverId }) => receiverId);
-  const receivedFrom = received.map(({ senderId }) => senderId);
-
-  res.json({ requests: { sentTo, receivedFrom } });
+  res.json({ requests });
 };
 
 module.exports.postRequest = async (req, res) => {
-  const { id: userId } = req.user;
-  const { username } = matchedData(req);
+  const { id: userId, username } = req.user;
+  let { userId: otherUserId, username: otherUsername } = matchedData(req);
 
-  const otherUser = await prisma.user.findFirst({ where: { username } });
-  if (!otherUser) throw new httpError(400, [{ reason: "User does not exist" }]);
-
-  const otherUserId = otherUser.id;
-  if (userId === otherUserId) {
-    throw new httpError(400, [{ reason: "Cannot send a request to yourself" }]);
+  if (userId === otherUserId || username === otherUsername) {
+    throw new HttpError(422, "You cannot send a request to yourself.");
   }
 
-  const [existingDirect, existingRequest] = await Promise.all([
-    prisma.chat.findFirst({
-      where: {
-        type: "DIRECT",
-        AND: [
-          { writeAccesses: { some: { userId, endedAt: null } } },
-          { writeAccesses: { some: { userId: otherUserId, endedAt: null } } },
-        ],
-      },
-      select: { id: true },
+  const senderId = userId;
+  const receiverId = otherUserId
+    ? (
+        await prisma.user.findUnique({
+          where: { id: otherUserId },
+          select: { id: true },
+        })
+      )?.id
+    : (
+        await prisma.user.findUnique({
+          where: { username: otherUsername },
+          select: { id: true },
+        })
+      )?.id;
+
+  if (!receiverId) {
+    throw new HttpError(404, "User not found.");
+  }
+
+  const [friendAId, friendBId] = toSorted([senderId, receiverId]);
+  const [friendship, sentRequest, receivedRequest] = await Promise.all([
+    prisma.friendship.findUnique({
+      where: { friendAId_friendBId: { friendAId, friendBId } },
+      select: { endedAt: true },
     }),
-    prisma.request.findFirst({
+    prisma.request.findUnique({
       where: {
-        OR: [
-          { senderId: userId, receiverId: otherUserId },
-          { senderId: otherUserId, receiverId: userId },
-        ],
+        senderId_receiverId: { senderId, receiverId },
+      },
+    }),
+    prisma.request.findUnique({
+      where: {
+        senderId_receiverId: { senderId: receiverId, receiverId: senderId },
       },
     }),
   ]);
 
-  if (existingDirect) {
-    throw new httpError(400, [{ reason: "You are already friends" }]);
-  }
-  if (existingRequest) {
-    throw new httpError(400, [
-      { reason: "A request already exists between these users" },
-    ]);
+  if (friendship && !friendship.endedAt) {
+    throw new HttpError(409, "You are already friends.");
   }
 
-  await prisma.request.create({
-    data: { senderId: userId, receiverId: otherUserId },
+  if (sentRequest) {
+    throw new HttpError(409, "You already sent a request to this user");
+  }
+
+  if (receivedRequest) {
+    throw new HttpError(
+      409,
+      "You already have a pending request from this user",
+    );
+  }
+
+  const request = await prisma.request.create({
+    data: { senderId, receiverId },
+    select: { receiverId: true, senderId: true },
   });
 
-  notifyRequest("add_request", userId, otherUserId);
+  socketIo.notifyUser([senderId, receiverId], "add_request", { request });
   res.json({ success: true });
 };
 
@@ -77,7 +88,7 @@ module.exports.deleteRequest = async (req, res) => {
   const { id: userId } = req.user;
   const { otherUserId } = matchedData(req);
 
-  const request = await prisma.request.findFirst({
+  const existingRequest = await prisma.request.findFirst({
     where: {
       OR: [
         { senderId: userId, receiverId: otherUserId },
@@ -87,13 +98,14 @@ module.exports.deleteRequest = async (req, res) => {
     select: { senderId: true, receiverId: true },
   });
 
-  if (!request) throw new httpError(404, [{ reason: "Request not found" }]);
+  if (!existingRequest) throw new HttpError(404, "Request not found");
 
-  const { senderId, receiverId } = request;
-  await prisma.request.delete({
+  const { senderId, receiverId } = existingRequest;
+  const request = await prisma.request.delete({
     where: { senderId_receiverId: { senderId, receiverId } },
+    select: { senderId: true, receiverId: true },
   });
 
-  notifyRequest("remove_request", senderId, receiverId);
+  socketIo.notifyUser([userId, otherUserId], "remove_request", { request });
   res.json({ success: true });
 };

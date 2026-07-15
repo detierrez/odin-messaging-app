@@ -1,8 +1,10 @@
 module.exports = {
-  chats: require("./chats"),
-  friends: require("./friends"),
-  members: require("./members"),
-  messages: require("./messages"),
-  requests: require("./requests"),
+  auth: require("./auth"),
   users: require("./users"),
+  requests: require("./requests"),
+  friends: require("./friends"),
+  groups: require("./groups"),
+  members: require("./members"),
+  chats: require("./chats"),
+  messages: require("./messages"),
 };

@@ -24,11 +24,12 @@ export default function MemberSelect({
       </MenuTitle>
       <Input
         className={s.search}
+        placeholder="Search for a name"
         icon={search}
         value={searchText}
+        buttonIcon={cross}
         onChange={handleSearchChange}
-        onCancelClick={handleSearchCancel}
-        placeholder="Search for a name"
+        onIconClick={handleSearchCancel}
       />
       {!friends ? (
         <p className={s.placeholderText}>Loading</p>

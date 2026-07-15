@@ -11,6 +11,8 @@ import pen from "../assets/icons/pen.svg";
 import plus from "../assets/icons/plus.svg";
 import search from "../assets/icons/search.svg";
 import send from "../assets/icons/send.svg";
+import visibility from "../assets/icons/visibility.svg";
+import visibilityOff from "../assets/icons/visibility-off.svg";
 
 export {
   arrowLeft,
@@ -26,4 +28,6 @@ export {
   minus,
   search,
   send,
+  visibility,
+  visibilityOff,
 };

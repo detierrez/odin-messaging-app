@@ -1,3 +1,7 @@
+.loading {
+  composes: loading from "@styles/shared.css";
+}
+
 .controls {
   border-top: 1px solid #fff1;
   padding: var(--spacing);

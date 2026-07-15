@@ -120,6 +120,13 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.SessionScalarFieldEnum = {
+  id: 'id',
+  sid: 'sid',
+  data: 'data',
+  expiresAt: 'expiresAt'
+};
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   username: 'username',
@@ -133,34 +140,39 @@ exports.Prisma.RequestScalarFieldEnum = {
   receiverId: 'receiverId'
 };
 
-exports.Prisma.WriteAccessScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  chatId: 'chatId',
-  startedAt: 'startedAt',
-  endedAt: 'endedAt',
-  role: 'role'
+exports.Prisma.FriendshipScalarFieldEnum = {
+  friendAId: 'friendAId',
+  friendBId: 'friendBId',
+  endedAt: 'endedAt'
 };
 
-exports.Prisma.ReadAccessScalarFieldEnum = {
+exports.Prisma.GroupScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  avatarUrl: 'avatarUrl',
+  description: 'description'
+};
+
+exports.Prisma.ParticipationScalarFieldEnum = {
   userId: 'userId',
-  chatId: 'chatId'
+  groupId: 'groupId',
+  role: 'role',
+  endedAt: 'endedAt'
 };
 
 exports.Prisma.ChatScalarFieldEnum = {
   id: 'id',
-  name: 'name',
-  avatarUrl: 'avatarUrl',
-  description: 'description',
-  type: 'type'
+  friendAId: 'friendAId',
+  friendBId: 'friendBId',
+  groupId: 'groupId'
 };
 
 exports.Prisma.MessageScalarFieldEnum = {
   id: 'id',
   chatId: 'chatId',
+  userId: 'userId',
   sentAt: 'sentAt',
   type: 'type',
-  userId: 'userId',
   content: 'content',
   attachmentUrl: 'attachmentUrl',
   metadata: 'metadata'
@@ -196,11 +208,6 @@ exports.Role = exports.$Enums.Role = {
   ADMIN: 'ADMIN'
 };
 
-exports.Type = exports.$Enums.Type = {
-  DIRECT: 'DIRECT',
-  GROUP: 'GROUP'
-};
-
 exports.MessageType = exports.$Enums.MessageType = {
   USER_MESSAGE: 'USER_MESSAGE',
   OPEN: 'OPEN',
@@ -212,10 +219,12 @@ exports.MessageType = exports.$Enums.MessageType = {
 };
 
 exports.Prisma.ModelName = {
+  Session: 'Session',
   User: 'User',
   Request: 'Request',
-  WriteAccess: 'WriteAccess',
-  ReadAccess: 'ReadAccess',
+  Friendship: 'Friendship',
+  Group: 'Group',
+  Participation: 'Participation',
   Chat: 'Chat',
   Message: 'Message'
 };

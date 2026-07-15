@@ -2,26 +2,19 @@ const { Router } = require("express");
 const m = require("../middlewares");
 const c = require("../controllers");
 
-const { validators: v } = m;
+const { validators: v, errors: e } = m;
+
+// AUTHENTICATION
+const auth = Router();
+auth.post("/login", v.login, m.passport.authenticate, c.auth.postLogin);
+auth.post("/logout", c.auth.postLogout);
+auth.get("/protected", m.passport.protect, c.auth.protected);
 
 // USERS
 const users = Router();
 users.get("/me", c.users.getMe);
-users.patch(
-  "/me",
-  m.parseAvatar,
-  m.uploadAvatar,
-  m.logReq,
-  v.patchMe,
-  c.users.patchMe,
-);
+users.patch("/me", m.uploadFile("avatar"), v.patchMe, c.users.patchMe);
 users.get("/:userId", v.paramId("userId"), c.users.getUser);
-
-// FRIENDS
-const friends = Router();
-friends.use("/:friendId", v.paramId("friendId"));
-friends.post("/:friendId", c.friends.postFriend);
-friends.delete("/:friendId", c.friends.deleteFriend);
 
 // REQUESTS
 const requests = Router();
@@ -33,46 +26,57 @@ requests.delete(
   c.requests.deleteRequest,
 );
 
-// CHATS
-const chats = Router();
-chats.get("/inbox", c.chats.getInbox);
-chats.post("/", m.parseAvatar, m.uploadAvatar, v.postChat, c.chats.postChat);
+// FRIENDS
+const friends = Router();
+friends.get("/", c.friends.getFriends);
+friends.use("/:friendId", v.paramId("friendId"));
+friends.post("/:friendId", c.friends.postFriend);
+friends.delete("/:friendId", c.friends.deleteFriend);
 
+// GROUPS
+const groups = Router();
+groups.post("/", m.uploadFile("avatar"), v.postGroup, c.groups.postGroup);
+
+groups.use("/:groupId", v.paramId("groupId"));
+groups.use("/:groupId", c.groups.checkRole("MEMBER"));
+groups.delete("/:groupId/members/me", c.members.deleteMemberMe);
+groups.use("/:groupId", c.groups.checkRole("ADMIN"));
+groups.patch(
+  "/:groupId",
+  m.uploadFile("avatar"),
+  v.patchGroup,
+  c.groups.patchGroup,
+);
+groups.post("/:groupId/members", v.postMember, c.members.postMember);
+groups.use("/:groupId/members/:memberId", v.paramId("memberId"));
+groups.patch(
+  "/:groupId/members/:memberId",
+  v.patchMember,
+  c.members.patchMember,
+);
+groups.delete("/:groupId/members/:memberId", c.members.deleteMember);
+
+const chats = Router();
+chats.get("/", c.chats.getChats);
 chats.use("/:chatId", v.paramId("chatId"));
 chats.get("/:chatId/messages", v.getMessages, c.messages.getMessages);
 chats.post(
   "/:chatId/messages",
-  m.parseAttachment,
-  m.uploadAttachment,
+  m.uploadFile("attachment"),
   v.postMessage,
   c.messages.postMessage,
 );
 
-chats.use("/:chatId", v.access("MEMBER"), v.chatType("GROUP"));
-chats.delete("/:chatId/members/me", c.members.deleteMemberMe);
-
-chats.use("/:chatId", v.access("ADMIN"));
-chats.patch(
-  "/:chatId",
-  m.parseAvatar,
-  m.uploadAvatar,
-  v.patchChat,
-  c.chats.patchChat,
-);
-chats.post("/:chatId/members", v.postMember, c.members.postMember);
-
-chats.use("/:chatId/members/:memberId", v.paramId("memberId"));
-chats.patch("/:chatId/members/:memberId", v.patchMember, c.members.patchMember);
-chats.delete("/:chatId/members/:memberId", c.members.deleteMember);
-
 // MAIN ROUTER
 const index = Router();
-index.use(m.logger);
-index.use(m.strictAuthenticate);
-index.use("/users", users);
-index.use("/friends", friends);
-index.use("/requests", requests);
-index.use("/chats", chats);
-index.use(m.throw404, m.maskInternalErrors, m.sendError);
-
+index.use(m.debug.logger);
+index.use(m.session);
+index.use(m.passport.session);
+index.use("/", auth);
+index.use("/users", m.passport.protect, users);
+index.use("/requests", m.passport.protect, requests);
+index.use("/friends", m.passport.protect, friends);
+index.use("/groups", m.passport.protect, groups);
+index.use("/chats", m.passport.protect, chats);
+index.use(e.throwNotFoundError, e.maskInternalErrors, e.respondWithError);
 module.exports = index;

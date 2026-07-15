@@ -1,93 +1,84 @@
-/* -------------------------------------------------------------------------- */
-/*                               API & Utilities                              */
-/* -------------------------------------------------------------------------- */
+import { redirect } from "react-router";
+import * as api from "@lib/api";
+import { ApiError } from "@lib/errors";
+import cache from "@lib/cache";
 
-// function getJwtToken() {
-//   return localStorage.getItem("Authorization");
-// }
+const actions = {};
+const loaders = {};
 
-// function login(token) {
-//   localStorage.setItem("Authorization", `Bearer ${token}`);
-// }
+let isLoggedIn = false;
+let controllerPromise = null;
+const awaitControllerLoader = () => controllerPromise?.catch(() => {});
 
-// function logout() {
-//   localStorage.removeItem("Authorization");
-// }
+api.onUnauthenticated(() => {
+  if (isLoggedIn) window.location.replace("/login");
+});
 
-// function parseJwt(token) {
-//   const base64Url = token.split(".")[1];
-//   const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-//   const jsonPayload = decodeURIComponent(
-//     window
-//       .atob(base64)
-//       .split("")
-//       .map(function (c) {
-//         return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-//       })
-//       .join(""),
-//   );
+loaders.controller = async ({ request }) => {
+  console.log("Controller loader");
+  const { pathname } = new URL(request.url);
+  controllerPromise = api.getProfile().then(
+    (profile) => {
+      isLoggedIn = true;
+      cache.set("ownId", profile.id);
+    },
+    (e) => {
+      if (e.body?.errors[0].type === "UNAUTHENTICATED") {
+        isLoggedIn = false;
+        return pathname === "/login" ? null : redirect("/login");
+      }
+      throw new Error("Error loading the web app", { cause: e });
+    },
+  );
+  return controllerPromise;
+};
 
-//   return JSON.parse(jsonPayload);
-// }
+loaders.login = async () => {
+  await awaitControllerLoader();
+  if (isLoggedIn) {
+    return redirect("/");
+  }
+};
 
-// export function redirectLoggedIn() {
-//   if (getJwtToken()) return redirect("/posts");
-// }
+actions.login = async ({ request }) => {
+  const formData = await request.formData();
+  try {
+    await api.login(formData.get("username"), formData.get("password"));
+    isLoggedIn = true;
+    return redirect("/");
+  } catch (e) {
+    if (e instanceof ApiError) {
+      return e;
+    }
+    throw new Error("Error logging in", { cause: e });
+  }
+};
 
-// export function redirectLoggedOut() {
-//   if (!getJwtToken()) return redirect("/login");
-// }
+loaders.logout = async () => {
+  await awaitControllerLoader();
+  if (isLoggedIn) {
+    await api.logout();
+    isLoggedIn = false;
+  }
+  return redirect("/login");
+};
 
-// function authenticate() {
-//   try {
-//     const token = getJwtToken();
-//     if (token) {
-//       const user = parseJwt(token);
-//       return user;
-//     }
-//     return null;
-//   } catch (e) {
-//     console.log(e)
-//     return null;
-//   }
-// }
+loaders.app = async () => {
+  await awaitControllerLoader();
+  if (!isLoggedIn) {
+    return redirect("/login");
+  }
+  const [{ chats }, { requests }, { friends }] = await Promise.all([
+    api.getInbox(),
+    api.getRequests(),
+    api.getFriends(),
+  ]);
 
-/* -------------------------------------------------------------------------- */
-/*                                   Loaders                                  */
-/* -------------------------------------------------------------------------- */
+  cache.set("chats", new Map(chats.map(chat)));
+  cache.set("requests");
+  cache.set("friends", new Set(friends));
 
-// export async function rootLoader() {
-//   return authenticate();
-// }
+  return { chats, requests, friends };
+};
 
-// export async function rocksLoader() {
-//   const rocks = await fetchBackend("/rocks");
-//   return rocks;
-// }
-
-// export async function rockLoader({ params }) {
-//   const { rockId } = params;
-//   const rock = await fetchBackend(`/rock/${rockId}`);
-//   return rock;
-// }
-
-/* -------------------------------------------------------------------------- */
-/*                                   Actions                                  */
-/* -------------------------------------------------------------------------- */
-
-// export async function rockAction({ request, params }) {
-//   const formData = await request.formData();
-//   const { rockId } = params;
-//   try {
-//     await fetchBackend({
-//       path: `/rocks/${rockId}`,
-//       body: {
-//         size: formData.get("size") || undefined,
-//       },
-//       method: formData.get("_method_override"),
-//     });
-//   } catch (error) {
-//     console.log(error);
-//   }
-//   return redirect(formData.get("_redirect"));
-// }
+export { actions, loaders };

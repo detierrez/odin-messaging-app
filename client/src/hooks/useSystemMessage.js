@@ -1,8 +1,8 @@
-import { useId } from "./useContext";
+import { useProfile } from "./useContext";
 import useProfileData from "./useProfileData";
 
 export default function useSystemMessage(message) {
-  const { id: userId } = useId();
+  const userId = useProfile().id;
   const { type, userId: actorUserId, metadata } = message;
   const { targetUserId, role, updatedFields } = metadata ?? {};
   const actorName = useProfileData({ userId: actorUserId }).data?.name;

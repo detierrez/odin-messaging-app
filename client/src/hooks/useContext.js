@@ -1,18 +1,28 @@
 import { useContext } from "react";
 import {
   ApiContext,
+  ProfileContext,
   ChatsContext,
   CurrentChatContext,
-  IdContext,
   RequestsContext,
   UsersContext,
+  AppContext,
 } from "@contexts";
 
-const useId = () => useContext(IdContext);
+const useApp = () => useContext(AppContext);
+const useProfile = () => useContext(ProfileContext);
 const useUsers = () => useContext(UsersContext);
 const useRequests = () => useContext(RequestsContext);
 const useChats = () => useContext(ChatsContext);
 const useApi = () => useContext(ApiContext);
 const useCurrentChat = () => useContext(CurrentChatContext);
 
-export { useId, useCurrentChat, useApi, useUsers, useRequests, useChats };
+export {
+  useApp,
+  useProfile,
+  useCurrentChat,
+  useApi,
+  useUsers,
+  useRequests,
+  useChats,
+};

@@ -1,15 +1,17 @@
 const { matchedData } = require("express-validator");
 const prisma = require("../lib/prisma");
-const { genericUserSelect } = require("./apiSelects");
-const { httpError } = require("../middlewares");
-const { notifyUser } = require("../socket.io");
+const socketIo = require("../lib/socket-io");
+const { HttpError } = require("../lib/errors");
+const apiSeletors = require("./api-selectors");
 
 module.exports.getMe = async (req, res) => {
   const { id: userId } = req.user;
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: genericUserSelect,
+    select: apiSeletors.user,
   });
+
+  user.isFriend = false;
 
   res.json({ user });
 };
@@ -22,27 +24,28 @@ module.exports.patchMe = async (req, res) => {
   const user = await prisma.user.update({
     where: { id: userId },
     data: { alias, description, avatarUrl },
-    select: genericUserSelect,
+    select: apiSeletors.user,
   });
 
-  notifyUser("update_profile", userId, {
-    alias: user.alias,
-    description: user.description,
-    avatarUrl: user.avatarUrl,
+  socketIo.notifyUser("updateUser", userId, {
+    id: userId,
+    ...(alias ? { alias } : {}),
+    ...(description ? { description } : {}),
+    ...(avatarUrl ? { avatarUrl } : {}),
   });
 
-  res.json({ success: true });
+  res.json({ user });
 };
 
 module.exports.getUser = async (req, res) => {
   const { userId } = matchedData(req);
-  const user = await prisma.user.findUnique({
+  const { friendshipsA, friendshipsB, ...user } = await prisma.user.findUnique({
     where: { id: userId },
-    select: genericUserSelect,
+    select: apiSeletors.user,
   });
 
   if (!user) {
-    throw new httpError(404, [{ reason: "User not found" }]);
+    throw new HttpError(404, "User not found");
   }
 
   res.json({ user });

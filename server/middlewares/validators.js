@@ -8,80 +8,125 @@ const {
   validationResult,
 } = require("express-validator");
 const prisma = require("../lib/prisma");
-const { httpError } = require("./errorHandlers");
+const { HttpError } = require("../lib/errors");
 
-const GROUPNAME_MAX_LENGTH = 2 ** 6;
+const NAME_MAX_LENGTH = 2 ** 6;
 const DESCRIPTION_MAX_LENGTH = 2 ** 7;
 const CONTENT_MAX_LENGTH = 2 ** 11;
+const MIN_PASSWORD_LENGTH = 2 ** 3;
+const MAX_PASSWORD_LENGTH = 2 ** 6;
 const MIN_LIMIT = 1;
 const MAX_LIMIT = 100;
+const ALLOWED_ROLES = ["ADMIN", "MEMBER"];
 
-const throwValidationErrors = (req, res, next) => {
-  const errors = validationResult(req);
+const withUsernameValidation = (chain) =>
+  chain
+    .matches(/^[a-zA-Z].*/)
+    .withMessage("username must start with a letter")
+    .isAlphanumeric()
+    .withMessage("username must only contain letters and numbers");
 
-  if (errors.isEmpty()) {
-    return next();
-  }
-
-  const cause = errors.array({ onlyFirstError: true }).map((err) => {
-    const { location, path, value, msg } = err;
-    return { location, field: path, value, reason: msg };
-  });
-
-  throw new httpError(400, cause);
-};
-
-const validate = (validations) => [
-  ...(Array.isArray(validations) ? validations.flat() : [validations]),
-  throwValidationErrors,
-];
-
-const required = (fields) => {
-  return body(fields)
+const requiredUsername = withUsernameValidation(
+  body("username")
     .trim()
+    .toLowerCase()
     .exists({ values: "falsy" })
-    .withMessage("Field is required");
-};
+    .withMessage("username is required"),
+);
 
-const login = validate(required(["username", "password"]));
-const signup = validate([
-  required(["username", "password"]),
-  body("username").custom(async (username) => {
-    const user = await prisma.user.findUnique({ where: { username } });
-    if (user) throw new Error("already exists");
-  }),
-  body("password")
-    .isLength({ min: 8 })
-    .withMessage("must be at least 8 characters long"),
-]);
+const optionalUsername = withUsernameValidation(
+  body("username").trim().toLowerCase().optional({ values: "falsy" }),
+);
 
-const paramId = (key) => validate(param(key).isInt().toInt());
+const password = body("password")
+  .exists({ values: "falsy" })
+  .withMessage("password is required")
+  .isLength({ min: MIN_PASSWORD_LENGTH, max: MAX_PASSWORD_LENGTH })
+  .withMessage(
+    `password must be between ${MIN_PASSWORD_LENGTH} and ${MAX_PASSWORD_LENGTH} characters long`,
+  );
 
-const memberId = required("memberId").isInt().toInt();
+const alias = body("alias")
+  .optional()
+  .trim()
+  .default(null)
+  .isLength({ max: NAME_MAX_LENGTH })
+  .withMessage(`Alias cannot exceed ${NAME_MAX_LENGTH} characters`);
 
-const role = required("role").toUpperCase().isIn(["ADMIN", "MEMBER"]);
+const name = body("name")
+  .optional()
+  .trim()
+  .default(null)
+  .isLength({ max: NAME_MAX_LENGTH })
+  .withMessage(`Name cannot exceed ${NAME_MAX_LENGTH} characters`);
 
 const description = body("description")
-  .trim()
   .optional()
+  .trim()
   .default(null)
   .isLength({ max: DESCRIPTION_MAX_LENGTH })
   .withMessage(
     `Description cannot exceed ${DESCRIPTION_MAX_LENGTH} characters`,
   );
 
-const username = required("username")
-  .isString()
-  .toLowerCase()
-  .isAlphanumeric()
-  .withMessage("username must only contain letters and numbers");
+const aliasDescriptionOrAvatar = oneOf(
+  [
+    body("alias").exists({ values: "falsy" }),
+    body("description").exists({ values: "falsy" }),
+    check().custom((_, { req }) => req.avatarUrl),
+  ],
+  { message: "Either alias, description or avatar must be provided" },
+);
 
-const alias = body("alias").trim().optional().default(null);
+const nameDescriptionOrAvatar = oneOf(
+  [
+    body("name").exists({ values: "falsy" }),
+    body("description").exists({ values: "falsy" }),
+    check().custom((_, { req }) => req.avatarUrl),
+  ],
+  { message: "Either name, description or avatar must be provided" },
+);
 
-const contentOrAttachment = oneOf([
-  check().custom((_, { req }) => req.attachmentUrl),
-  body("content").trim().exists({ values: "falsy" }),
-]);
+const userId = body("userId")
+  .optional({ values: "falsy" })
+  .toInt()
+  .isInt({ min: 1 })
+  .withMessage("userId must be a positive integer");
+
+const userIdOrUsername = oneOf(
+  [
+    body("userId").exists({ values: "falsy" }),
+    body("username").exists({ values: "falsy" }),
+  ],
+  { message: "Either username or userId must be provided" },
+);
+
+const memberIds = [
+  body("memberIds").customSanitizer((value) =>
+    Array.isArray(value) ? value : [value],
+  ),
+  body("memberIds.*")
+    .toInt()
+    .isInt({ min: 1 })
+    .withMessage("memberId must be a positive integer"),
+];
+
+const memberId = body("memberId")
+  .toInt()
+  .exists({ values: "falsy" })
+  .withMessage("memberId is required")
+  .isInt({ min: 1 })
+  .withMessage("memberId must be a positive integer");
+
+const role = body("role")
+  .trim()
+  .toUpperCase()
+  .exists({ values: "falsy" })
+  .withMessage("role is required")
+  .isIn(ALLOWED_ROLES)
+  .withMessage(
+    `role must be one of the following: ${ALLOWED_ROLES.join(", ")}`,
+  );
 
 const content = body("content")
   .optional()
@@ -92,6 +137,11 @@ const content = body("content")
     `Message content cannot exceed ${CONTENT_MAX_LENGTH} characters`,
   );
 
+const contentOrAttachment = oneOf([
+  body("content").exists({ values: "falsy" }),
+  check().custom((_, { req }) => req.attachmentUrl),
+]);
+
 const cursor = query("cursor")
   .optional()
   .isInt({ min: 1 })
@@ -99,106 +149,56 @@ const cursor = query("cursor")
   .toInt();
 
 const limit = query("limit")
+  .toInt()
   .default(5)
   .isInt({ min: MIN_LIMIT, max: MAX_LIMIT })
-  .withMessage(`limit must be an integer between ${MIN_LIMIT} and ${MAX_LIMIT}`)
-  .toInt();
+  .withMessage(
+    `limit must be an integer between ${MIN_LIMIT} and ${MAX_LIMIT}`,
+  );
 
-const isActive = body("isActive")
-  .optional()
-  .isBoolean({ strict: true })
-  .withMessage("isActive must be a boolean");
-
-const memberIds = [
-  body("memberIds").customSanitizer((value) =>
-    Array.isArray(value) ? value : [value],
-  ),
-  body("memberIds.*").isInt().toInt(),
-];
-
-const groupName = body("name")
-  .trim()
-  .optional()
-  .default(null)
-  .isLength({ max: GROUPNAME_MAX_LENGTH })
-  .withMessage(`Group name cannot exceed ${GROUPNAME_MAX_LENGTH} characters`);
-
-const patchMe = validate([alias, description]);
-const postRequest = validate(username);
-const getMessages = validate([cursor, limit]);
-const postMessage = validate([contentOrAttachment, content]);
-const postChat = validate([groupName, description, memberIds]);
-const patchChat = validate([isActive, groupName, description]);
-const postMember = validate(memberId);
-const patchMember = validate(role);
-
-const access = (role) => async (req, res, next) => {
-  const { id: userId } = req.user;
-  const { chatId } = matchedData(req);
-
-  const writeAccess = await getWriteAccess(res, userId, chatId);
-  const hasAccess =
-    writeAccess && (role === "ADMIN" ? writeAccess.role === "ADMIN" : true);
-  if (!hasAccess) {
-    throw new httpError(403, [
-      {
-        reason: `You do not have ${role.toLowerCase()} participation in this chat`,
-      },
-    ]);
-  }
-
-  next();
+const bodyValidators = {
+  login: [requiredUsername, password],
+  signup: [requiredUsername, password],
+  patchMe: [alias, description, aliasDescriptionOrAvatar],
+  postRequest: [userId, optionalUsername, userIdOrUsername],
+  postGroup: [name, description, memberIds],
+  patchGroup: [name, description, nameDescriptionOrAvatar],
+  postMember: memberId,
+  patchMember: role,
+  getMessages: [cursor, limit],
+  postMessage: [content, contentOrAttachment],
 };
 
-const chatType = (type) => async (req, res, next) => {
-  const { id: userId } = req.user;
-  const { chatId } = matchedData(req);
+const throwValidationErrors = (req, res, next) => {
+  const errors = validationResult(req);
 
-  const writeAccess = await getWriteAccess(res, userId, chatId);
-  if (!writeAccess) {
-    throw new httpError(403, [
-      {
-        reason: `You do not have access to this chat`,
-      },
-    ]);
-  }
-  if (writeAccess.chat.type !== type) {
-    throw new httpError(403, [
-      {
-        reason: `You must provide a valid ${type.toLowerCase()} chat`,
-      },
-    ]);
+  if (errors.isEmpty()) {
+    return next();
   }
 
-  next();
+  const httpErrors = errors
+    .array({ onlyFirstError: true })
+    .map(({ location, path, value, msg }) => ({
+      type: "VALIDATION_ERROR",
+      message: msg,
+      location,
+      field: path,
+      value,
+    }));
+
+  throw new HttpError(422, httpErrors);
 };
 
-async function getWriteAccess(res, userId, chatId) {
-  let { access } = res.locals;
-  if (access === undefined) {
-    access =
-      (await prisma.writeAccess.findFirst({
-        where: { userId, chatId, endedAt: null },
-        select: { role: true, chat: { select: { type: true } } },
-      })) || null;
-    res.locals.access = access;
-  }
-
-  return access;
+for (const [validator, chain] of Object.entries(bodyValidators)) {
+  bodyValidators[validator] = [
+    ...(Array.isArray(chain) ? chain.flat() : [chain]),
+    throwValidationErrors,
+  ];
 }
 
+const paramId = (key) => [param(key).isInt().toInt(), throwValidationErrors];
+
 module.exports = {
-  login,
-  signup,
   paramId,
-  access,
-  chatType,
-  patchMe,
-  postRequest,
-  getMessages,
-  postMessage,
-  postChat,
-  patchChat,
-  postMember,
-  patchMember,
+  ...bodyValidators,
 };

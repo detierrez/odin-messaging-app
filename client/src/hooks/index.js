@@ -1,5 +1,6 @@
 import {
-  useId,
+  useApp,
+  useProfile,
   useCurrentChat,
   useApi,
   useUsers,
@@ -16,9 +17,12 @@ import useSocketIo from "./useSocketIo";
 import useInitialFetch from "./useInitialFetch";
 import useSystemMessage from "./useSystemMessage";
 import useTimeTag from "./useTimeTag";
+import useCache from "./useCacheFetch";
+import useIsPreloaded from "./useIsPeloaded";
 
 export {
-  useId,
+  useApp,
+  useProfile,
   useCurrentChat,
   useApi,
   useUsers,
@@ -34,4 +38,6 @@ export {
   useProfileData,
   useSystemMessage,
   useTimeTag,
+  useCache,
+  useIsPreloaded,
 };

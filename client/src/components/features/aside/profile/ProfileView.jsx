@@ -3,14 +3,14 @@ import s from "./ProfileView.module.css";
 import MenuTitle from "../shared/MenuTitle";
 import { cross } from "@lib/icons";
 import Menu from "../shared/Menu";
-import { useApi, useId, useUser } from "@hooks";
+import { useApi, useProfile, useUser } from "@hooks";
 import { DEFAULT_USER_AVATAR } from "@lib/images";
 import { SelectableImage } from "@components/common";
 import ControlLabel from "@components/common/Test";
 
 export default function ProfileView({ onCloseClick, ...props }) {
   const { updateProfile } = useApi();
-  const { id: userId } = useId();
+  const userId = useProfile().id;
 
   const [{ username, alias, avatarUrl, description }, isLoading] =
     useUser(userId);

@@ -3,8 +3,9 @@ import { useChats } from "./useContext";
 import useUser from "./useUser";
 import { useReducer } from "react";
 
-export default function useProfileData({ chatId, userId }) {
+export default function useProfileData({ chatId, userId, groupId }) {
   const [, rerender] = useReducer(() => ({}), {});
+
   const chat = useChats().chats[chatId];
   const [user, isUserLoading, error] = useUser(userId || chat?.otherUserId);
 

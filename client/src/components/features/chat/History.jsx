@@ -5,7 +5,7 @@ import {
   useApi,
   useChats,
   useCurrentChat,
-  useId,
+  useProfile,
   useSystemMessage,
 } from "@hooks";
 import { Avatar } from "@components/common";
@@ -98,7 +98,7 @@ export default function History({ className }) {
 }
 
 function MessagesStrip({ messages }) {
-  const { id: userId } = useId();
+  const userId = useProfile().id;
 
   return messages.map((message, index) => {
     const { type, userId: authorId } = message;

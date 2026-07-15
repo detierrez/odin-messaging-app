@@ -1,5 +1,3 @@
-import { useId } from "@hooks";
-
 export default function ProfileSwitcher() {
   return (
     <div>
@@ -14,6 +12,5 @@ export default function ProfileSwitcher() {
 }
 
 function ProfileButton({ userId }) {
-  const { setId } = useId();
-  return <button onClick={() => setId(userId)}>{userId}</button>;
+  return <button onClick={() => {}}>{userId}</button>;
 }

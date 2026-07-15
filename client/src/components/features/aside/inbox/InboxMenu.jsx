@@ -1,10 +1,11 @@
-import { filter, search } from "@lib/icons";
+import { cross, filter, search } from "@lib/icons";
 import { merge } from "@lib/index";
-import { useCurrentChat, useInbox } from "@hooks";
+import { useApp } from "@hooks";
 import { Dropdown, Heading, IconButton, Input } from "@components/common";
 import InboxEntry from "./InboxEntry";
 import s from "./InboxMenu.module.css";
 import { useState } from "react";
+import ProfileControls from "../profile/ProfileControls";
 
 export default function InboxMenu({
   className,
@@ -12,12 +13,17 @@ export default function InboxMenu({
   onAddGroupClick,
   ...props
 }) {
-  const inbox = useInbox();
-  const { setCurrentChat } = useCurrentChat();
+  const { chats, setSelectedChat } = useApp();
   const [searchText, setSearchText] = useState("");
+  const inbox = chats.map((chat) => chat.messages.at(-1));
 
   return (
     <div className={merge(className, s.menu)} {...{ ...props }}>
+      <ProfileControls n={1} />
+      <ProfileControls n={2} />
+      <ProfileControls n={3} />
+      <ProfileControls n={4} />
+
       <div className={s.flex}>
         <Heading className={s.title}>Odinbox</Heading>
         <Dropdown className={s.button}>
@@ -29,11 +35,12 @@ export default function InboxMenu({
       <div className={s.flex}>
         <Input
           className={s.search}
-          icon={search}
           placeholder="Search for a chat"
+          icon={search}
           value={searchText}
+          buttonIcon={cross}
           onChange={handleSearchChange}
-          onCancelClick={handleClearSearch}
+          onIconClick={handleClearSearch}
         />
         <IconButton
           variant="cancelPadding"
@@ -62,6 +69,6 @@ export default function InboxMenu({
   }
 
   function handleEntryClick(id) {
-    return () => setCurrentChat(id);
+    return () => setSelectedChat(id);
   }
 }

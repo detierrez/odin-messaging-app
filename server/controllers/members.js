@@ -1,256 +1,276 @@
 const { matchedData } = require("express-validator");
 const prisma = require("../lib/prisma");
-const { httpError } = require("../middlewares");
-const {
-  firstMessageChatSelect,
-  genericChatSelect,
-  genericMessageSelect,
-} = require("./apiSelects");
-const {
-  notifyUser,
-  notifyUsers,
-  addToChatRoom,
-  notifyChat,
-  removeFromChatRoom,
-} = require("../socket.io");
-const { formatChat } = require("./chats");
+const socketIo = require("../lib/socket-io");
+const { HttpError } = require("../lib/errors");
+const apiSelectors = require("./api-selectors");
 
 module.exports.postMember = async (req, res) => {
   const { id: userId } = req.user;
-  const { chatId, memberId } = matchedData(req);
+  const { groupId, memberId } = matchedData(req);
 
   if (userId === memberId) {
-    throw new httpError(400, [{ reason: "You cannot add yourself" }]);
+    throw new HttpError(422, "You cannot add yourself.");
   }
 
-  const { chat, membership, message } = await prisma.$transaction(
+  const { group, participation, message } = await prisma.$transaction(
     async (tx) => {
       const user = await tx.user.findUnique({
         where: { id: memberId },
         select: {
-          writeAccesses: {
-            where: {
-              userId: memberId,
-              endedAt: null,
-              OR: [
-                { chatId },
-                {
-                  chat: {
-                    type: "DIRECT",
-                    AND: { writeAccesses: { some: { userId, endedAt: null } } },
-                  },
-                },
-              ],
-            },
-            select: { chat: { select: { id: true, type: true } } },
-          },
+          participations: { where: { groupId, endedAt: null } },
+          friendshipsA: { where: { friendAId: userId, endedAt: null } },
+          friendshipsB: { where: { friendBId: userId, endedAt: null } },
         },
       });
 
       if (!user) {
-        throw new httpError(404, [{ reason: "User not found" }]);
+        throw new HttpError(404, "User not found.");
       }
 
-      if (user.writeAccesses.some((wa) => wa.chat.id === chatId)) {
-        throw new httpError(400, [{ reason: "This user is already a member" }]);
+      if (user.participations) {
+        throw new HttpError(409, "This user is already a member.");
       }
 
-      if (!user.writeAccesses.some((wa) => wa.chat.type === "DIRECT")) {
-        throw new httpError(400, [
-          { reason: "You are not friends with this user" },
-        ]);
+      if (!user.friendshipsA && !user.friendshipsB) {
+        throw new HttpError(422, "You are not friends with this user.");
       }
 
       const message = await tx.message.create({
         data: {
-          chatId,
+          groupId,
           type: "JOIN",
           userId,
           metadata: { targetUserId: memberId },
         },
-        select: genericMessageSelect,
+        select: apiSelectors.message,
       });
 
-      const create = { userId: memberId, role: "MEMBER" };
-      const chat = await tx.chat.update({
+      const participation = await tx.participation.create({
         where: { id: chatId },
-        data: {
-          writeAccesses: { create },
-          readAccesses: {
-            connectOrCreate: {
-              where: { userId_chatId: { userId: memberId, chatId } },
-              create: { userId: memberId },
+        data: { userId, groupId },
+        select: {
+          userId: true,
+          groupId: true,
+          role: true,
+          group: {
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              avatarUrl: true,
+              messages: {
+                select: apiSelectors.message,
+                take: 1,
+                orderBy: { id: "desc" },
+              },
+              participations: {
+                where: { endedAt: null },
+                select: { userId: true, groupId: true, role: true },
+              },
             },
           },
         },
-        select: firstMessageChatSelect,
       });
 
-      return { chat, membership: create, message };
+      return { group: participation.group, participation, message };
     },
   );
 
-  notifyChat("add_membership", chatId, { chatId, membership });
-  notifyChat("add_message", chatId, { chatId, message });
-  notifyUser("add_chat", memberId, { chat: formatChat(chat, memberId) });
-  addToChatRoom(memberId, chatId);
+  socketIo.notifyGroup(groupId, "add_participation", {
+    participation,
+  });
+  socketIo.notifyGroup(groupId, "add_message", { message });
+  socketIo.notifyUser(userId, "add_group", { group });
+  socketIo.addToGroupRoom(memberId, groupId);
+
+  res.json({ success: true });
+};
+
+module.exports.deleteMembers = async (req, res) => {
+  const { id: userId } = req.user;
+  const { groupId } = matchedData(req);
+
+  const { group, message } = await prisma.$transaction(async (tx) => {
+    await tx.participation.updateMany({
+      where: { groupId, endedAt: null },
+      data: { endedAt: new Date() },
+    });
+
+    const message = await tx.message.create({
+      data: { groupId, type: "CLOSE", userId },
+      select: { ...apiSelectors.message },
+    });
+
+    return { message };
+  });
+
+  socketIo.notifyGroup(groupId, "add_message", { message });
+  socketIo.notifyGroup(groupId, "update_group", {
+    group: { id: groupId, description: null, participations: null },
+  });
+  socketIo.closeGroupRoom(groupId);
 
   res.json({ success: true });
 };
 
 module.exports.patchMember = async (req, res) => {
   const { id: userId } = req.user;
-  const { chatId, memberId, role } = matchedData(req);
+  const { groupId, memberId, role } = matchedData(req);
 
   if (userId === memberId) {
-    throw new httpError(400, [
-      { reason: "You cannot update your own membership" },
-    ]);
+    throw new HttpError(422, "You cannot update your own role");
   }
 
-  const message = await prisma.$transaction(async (tx) => {
-    const { count } = await tx.writeAccess.updateMany({
-      where: { userId: memberId, chatId, endedAt: null },
-      data: { role },
-    });
-
-    if (count === 0) {
-      throw new httpError(404, [
-        { reason: "A membership for this user and chat was not found" },
-      ]);
+  const { participation, message } = await prisma.$transaction(async (tx) => {
+    let participation;
+    try {
+      participation = await tx.participation.update({
+        where: { userId_groupId: { userId: memberId, groupId }, endedAt: null },
+        data: { role },
+        select: { userId: true, groupId: true, role: true },
+      });
+    } catch (error) {
+      throw error.code === "P2025"
+        ? new HttpError(404, "Member not found.")
+        : error;
     }
 
     const message = await tx.message.create({
       data: {
-        chatId,
+        groupId,
         type: "ROLE_UPDATE",
         userId,
         metadata: { targetUserId: memberId, role },
       },
-      select: genericMessageSelect,
+      select: apiSelectors.message,
     });
 
-    return message;
+    return { participation, message };
   });
 
-  notifyChat("add_message", chatId, { chatId, message });
-  notifyChat("update_membership", chatId, {
-    chatId,
-    membership: { userId: memberId, role },
-  });
+  socketIo.notifyGroup(groupId, "add_message", { message });
+  socketIo.notifyGroup(groupId, "update_participation", { participation });
 
   res.json({ success: true });
 };
 
 module.exports.deleteMember = async (req, res) => {
   const { id: userId } = req.user;
-  const { chatId, memberId } = matchedData(req);
+  const { groupId, memberId } = matchedData(req);
 
   if (userId === memberId) {
-    throw new httpError(400, [{ reason: "You cannot remove yourself" }]);
+    throw new HttpError(422, "You cannot remove yourself.");
   }
 
-  const message = await prisma.$transaction(async (tx) => {
-    const { count } = await tx.writeAccess.updateMany({
-      where: { userId: memberId, chatId, endedAt: null },
+  const { participation, message } = await prisma.$transaction(async (tx) => {
+    const participation = await tx.participation.update({
+      where: { userId_groupId: { userId: memberId, groupId }, endedAt: null },
       data: { endedAt: new Date() },
+      select: { userId: true, groupId: true },
     });
 
-    if (count === 0) {
-      throw new httpError(404, [
-        { reason: "A membership for this user and chat was not found" },
-      ]);
+    if (!participation) {
+      throw new HttpError(404, "Member not found");
     }
 
     const message = await tx.message.create({
       data: {
-        chatId,
+        groupId,
         type: "LEAVE",
         userId,
         metadata: { targetUserId: memberId },
       },
-      select: genericMessageSelect,
+      select: apiSelectors.message,
     });
 
-    return message;
+    return { participation, message };
   });
 
-  notifyChat("add_message", chatId, { chatId, message });
-  notifyChat("remove_membership", chatId, { chatId, memberId });
-  removeFromChatRoom(memberId, chatId);
-  notifyUser("deactivate_chat", memberId, { chatId });
+  socketIo.notifyGroup(groupId, "add_message", { message });
+  socketIo.removeFromGroupRoom(memberId, groupId);
+  socketIo.notifyGroup(groupId, "remove_participation", { participation });
+  socketIo.notifyUser(memberId, "update_group", {
+    group: { id: groupId, description: null, participations: null },
+  });
 
   res.json({ success: true });
 };
 
 module.exports.deleteMemberMe = async (req, res) => {
   const { id: userId } = req.user;
-  const { chatId } = matchedData(req);
+  const { groupId } = matchedData(req);
 
-  const { promotedMembership, leaveMessage, roleMessage } =
+  const { participation, message, promotedParticipation, promotionMessage } =
     await prisma.$transaction(async (tx) => {
-      const { count } = await tx.writeAccess.updateMany({
-        where: { userId, chatId, endedAt: null },
+      const participation = await tx.participation.update({
+        where: { userId_groupId: { userId, groupId }, endedAt: null },
         data: { endedAt: new Date() },
+        select: { userId: true, groupId: true, role: true },
       });
 
-      if (count === 0) {
-        throw new httpError(404, [
-          { reason: "A membership for this user and chat was not found" },
-        ]);
+      const message = await tx.message.create({
+        data: {
+          groupId,
+          type: "LEAVE",
+          userId,
+          metadata: { targetUserId: memberId },
+        },
+        select: apiSelectors.message,
+      });
+
+      if (participation.role !== "ADMIN") {
+        return { participation, message };
       }
 
-      const adminAccess = await tx.writeAccess.findFirst({
-        where: { chatId, role: "ADMIN", endedAt: null },
-        select: { id: true },
+      const succeedingParticipation = await tx.participation.findFirst({
+        where: { groupId, endedAt: null },
+        orderBy: { startedAt: "asc" },
+        select: { userId: true },
       });
 
-      const leaveMessage = await tx.message.create({
-        data: { chatId, type: "LEAVE", userId },
-        select: genericMessageSelect,
-      });
-
-      let promotedMembership;
-      let roleMessage;
-      if (!adminAccess) {
-        const memberAccess = await tx.writeAccess.findFirst({
-          where: { chatId, endedAt: null },
-          orderBy: { startedAt: "asc" },
-          select: { id: true, userId: true },
-        });
-
-        if (memberAccess) {
-          const role = "ADMIN";
-          promotedMembership = await tx.writeAccess.update({
-            where: { id: memberAccess.id },
-            data: { role },
-            select: { userId: true, role: true },
-          });
-
-          roleMessage = await tx.message.create({
-            data: {
-              chatId,
-              type: "ROLE_UPDATE",
-              userId: memberAccess.userId,
-              metadata: { role },
-            },
-            select: genericMessageSelect,
-          });
-        }
+      if (!succeedingParticipation) {
+        return { participation, message };
       }
 
-      return { promotedMembership, leaveMessage, roleMessage };
+      const promotedId = succeedingParticipation.userId;
+      const role = "ADMIN";
+      const promotedParticipation = await tx.participation.update({
+        where: {
+          userId_groupId: { userId: promotedId, groupId },
+        },
+        data: { role },
+        select: { userId: true, groupId: true, role: true },
+      });
+
+      const promotionMessage = await tx.message.create({
+        data: {
+          groupId,
+          type: "ROLE_UPDATE",
+          userId: promotedId,
+          metadata: { role },
+        },
+        select: apiSelectors.message,
+      });
+
+      return {
+        participation,
+        message,
+        promotedParticipation,
+        promotionMessage,
+      };
     });
 
-  notifyChat("add_message", chatId, { chatId, message: leaveMessage });
-  notifyChat("remove_membership", chatId, { chatId, userId });
-  removeFromChatRoom(userId, chatId);
-  notifyUser("deactivate_chat", userId, { chatId });
-  if (promotedMembership) {
-    notifyChat("add_message", chatId, { chatId, message: roleMessage });
-    notifyChat("update_membership", chatId, {
-      chatId,
-      membership: promotedMembership,
+  socketIo.notifyGroup(groupId, "add_message", { message });
+  socketIo.removeFromGroupRoom(userId, groupId);
+  socketIo.notifyGroup(groupId, "remove_participation", { participation });
+  socketIo.notifyUser(userId, "update_group", {
+    group: { id: groupId, description: null, participations: null },
+  });
+
+  if (promotedParticipation) {
+    socketIo.notifyGroup(groupId, "add_message", { message: promotionMessage });
+    socketIo.notifyGroup(groupId, "update_participation", {
+      participation: promotedParticipation,
     });
   }
 

@@ -1,6 +1,6 @@
 import { plus } from "@lib/icons";
 import { merge } from "@lib/index";
-import { useApi, useCurrentChat, useId, useUsers } from "@hooks";
+import { useApi, useCurrentChat, useProfile, useUsers } from "@hooks";
 import { Avatar, Dropdown, IconButton, Name } from "@components/common";
 import s from "./Members.module.css";
 
@@ -49,7 +49,7 @@ export default function MemberList({ className, onMoreClick, ...props }) {
 
 function Member({ memberId, role, chatId, isUserAdmin }) {
   const { updateMember, removeMember } = useApi();
-  const { id: userId } = useId();
+  const userId = useProfile().id;
 
   const isMemberAdmin = role === "ADMIN";
   const roleAction = isMemberAdmin ? "Demote" : "Promote";

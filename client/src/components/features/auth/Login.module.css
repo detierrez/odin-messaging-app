@@ -1,0 +1,117 @@
+.submit {
+  composes: accent from "@styles/shared.css";
+}
+
+.username,
+.password {
+  composes: input from "@styles/shared.css";
+}
+
+.login {
+  --spacing: 3em;
+  --half-spacing: calc(var(--spacing) / 2);
+  --quarter-spacing: calc(var(--spacing) / 4);
+  --neg-quarter-spacing: calc(-1 * var(--quarter-spacing));
+
+  height: 100%;
+  display: flex;
+  border: 1px solid yellow;
+
+  .left {
+    flex-grow: 1;
+    padding: var(--spacing);
+    gap: var(--half-spacing);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid red;
+
+    .logo {
+      align-self: flex-start;
+      max-width: 50px;
+    }
+
+    .heroText {
+      line-height: 2;
+      font-size: 30px;
+      text-align: center;
+    }
+
+    .imageWrapper {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .heroImage {
+        margin-block: auto;
+        width: 300px;
+        max-width: 100%;
+      }
+    }
+  }
+
+  .right {
+    max-width: 650px;
+    padding: var(--spacing);
+    gap: var(--half-spacing);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid green;
+
+    .cta {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--half-spacing);
+
+      .username,
+      .password {
+        border: 1px solid #fff3;
+        padding: 1em 2em;
+        gap: 1em;
+        background-color: transparent;
+      }
+
+      .password {
+        margin-top: var(--neg-half-spacing);
+      }
+
+      .submit {
+        padding-block: 0.75em;
+        border-radius: 999px;
+        text-align: center;
+      }
+    }
+
+    .signup,
+    .brand {
+      text-align: center;
+      text-decoration: none;
+      color: var(--font-color);
+    }
+
+    .signup {
+      margin-top: calc(var(--neg-quarter-spacing));
+      font-size: 16px;
+    }
+
+    .brand {
+      margin-top: calc(var(--quarter-spacing));
+      .brandIcon {
+        height: 1.15em;
+        vertical-align: bottom;
+      }
+
+      .brandName {
+        display: inline-block;
+      }
+    }
+  }
+}
