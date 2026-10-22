@@ -1,19 +1,21 @@
-import { merge } from "@lib/index";
-import s from "./ProfileView.module.css";
-import MenuTitle from "../shared/MenuTitle";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@lib/api";
 import { cross } from "@lib/icons";
-import Menu from "../shared/Menu";
-import { useApi, useProfile, useUser } from "@hooks";
 import { DEFAULT_USER_AVATAR } from "@lib/images";
-import { SelectableImage } from "@components/common";
+import { useOwnId, useUser } from "@hooks";
+import { Loading, SelectableImage } from "@components/common";
 import ControlLabel from "@components/common/Test";
+import MenuTitle from "../shared/MenuTitle";
+import Menu from "../shared/Menu";
+import s from "./ProfileView.module.css";
 
 export default function ProfileView({ onCloseClick, ...props }) {
-  const { updateProfile } = useApi();
-  const userId = useProfile().id;
-
-  const [{ username, alias, avatarUrl, description }, isLoading] =
-    useUser(userId);
+  const ownId = useOwnId();
+  const { isLoading, user: { avatarUrl, username, alias, description } = {} } =
+    useUser(ownId, { waitAvatar: true });
+  const profileMutation = useMutation({
+    mutationFn: ({ field, value }) => api.updateProfile({ [field]: value }),
+  });
 
   return (
     <Menu {...{ ...props }}>
@@ -22,54 +24,63 @@ export default function ProfileView({ onCloseClick, ...props }) {
       </MenuTitle>
 
       {isLoading ? (
-        <div className={merge(s.avatar, s.loading)}></div>
+        <>
+          <Loading className={s.avatar} />
+          <Loading className={s.aliasWrapper} />
+          <Loading className={s.username} />
+          <div className={s.statusHeading}>Status</div>
+          <Loading className={s.descriptionWrapper} />
+        </>
       ) : (
-        <SelectableImage
-          className={s.avatar}
-          text="Change profile picture"
-          placeholder={avatarUrl ?? DEFAULT_USER_AVATAR}
-          onChange={handleSubmit("file")}
-        />
+        <>
+          <SelectableImage
+            className={s.avatar}
+            text="Change profile picture"
+            data-field={"file"}
+            placeholder={avatarUrl ?? DEFAULT_USER_AVATAR}
+            onChange={handleSubmit("file")}
+          />
+
+          <div className={s.aliasWrapper}>
+            <div className={s.editButton}></div>
+            <ControlLabel
+              className={s.editButton}
+              defaultValue={alias ?? ""}
+              onSubmit={handleSubmit("alias")}
+              renderInput={(props) => (
+                <input
+                  className={s.alias}
+                  placeholder={"Add an alias"}
+                  {...props}
+                />
+              )}
+            />
+          </div>
+
+          <span className={s.username}>@{username}</span>
+
+          <div className={s.statusHeading}>Status</div>
+          <div className={s.descriptionWrapper}>
+            <ControlLabel
+              defaultValue={description ?? ""}
+              onSubmit={handleSubmit("description")}
+              renderInput={(props) => (
+                <textarea
+                  className={s.description}
+                  placeholder={"Add a status"}
+                  {...props}
+                />
+              )}
+            />
+          </div>
+        </>
       )}
-
-      <div className={s.aliasWrapper}>
-        <div className={s.editButton}></div>
-        <ControlLabel
-          className={s.editButton}
-          defaultValue={alias ?? ""}
-          onSubmit={handleSubmit("alias")}
-          renderInput={(value, disabled, onChange, onKeyDown, ref) => (
-            <input
-              className={s.alias}
-              placeholder={"Add an alias"}
-              {...{ value, disabled, onChange, onKeyDown, ref }}
-            />
-          )}
-        />
-      </div>
-
-      <span className={s.username}>@{username}</span>
-
-      <div className={s.statusHeading}>Status</div>
-      <div className={s.descriptionWrapper}>
-        <ControlLabel
-          defaultValue={description ?? ""}
-          onSubmit={handleSubmit("description")}
-          renderInput={(value, disabled, onChange, onKeyDown, ref) => (
-            <textarea
-              className={s.description}
-              placeholder={"Add a status"}
-              {...{ value, disabled, onChange, onKeyDown, ref }}
-            />
-          )}
-        />
-      </div>
     </Menu>
   );
 
   function handleSubmit(field) {
-    return async (value) => {
-      return await updateProfile({ [field]: value });
+    return (value) => {
+      profileMutation.mutate({ field, value });
     };
   }
 }

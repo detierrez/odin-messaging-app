@@ -50,7 +50,6 @@ export default function DetailsInput({
         variant="accent"
         src={check}
         alt="next"
-        isAccent={true}
         onClick={onCreateGroup}
         disabled={isButtonDisabled}
       />

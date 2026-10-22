@@ -1,11 +1,10 @@
 import { cross, filter, search } from "@lib/icons";
 import { merge } from "@lib/index";
-import { useApp } from "@hooks";
-import { Dropdown, Heading, IconButton, Input } from "@components/common";
+import { Dropdown, IconButton, Input } from "@components/common";
 import InboxEntry from "./InboxEntry";
 import s from "./InboxMenu.module.css";
 import { useState } from "react";
-import ProfileControls from "../profile/ProfileControls";
+import { useSelectedChat, useChats } from "@hooks";
 
 export default function InboxMenu({
   className,
@@ -13,19 +12,15 @@ export default function InboxMenu({
   onAddGroupClick,
   ...props
 }) {
-  const { chats, setSelectedChat } = useApp();
-  const [searchText, setSearchText] = useState("");
-  const inbox = chats.map((chat) => chat.messages.at(-1));
+  const { setSelectedChat } = useSelectedChat();
+  const { chats = {}, isLoading } = useChats();
 
+  const [searchText, setSearchText] = useState("");
+  if (isLoading) return <div>Loading</div>;
   return (
     <div className={merge(className, s.menu)} {...{ ...props }}>
-      <ProfileControls n={1} />
-      <ProfileControls n={2} />
-      <ProfileControls n={3} />
-      <ProfileControls n={4} />
-
       <div className={s.flex}>
-        <Heading className={s.title}>Odinbox</Heading>
+        <h1 className={s.title}>Odinbox</h1>
         <Dropdown className={s.button}>
           <button onClick={onAddFriendClick}>Add friends</button>
           <button onClick={onAddGroupClick}>New group</button>
@@ -50,10 +45,10 @@ export default function InboxMenu({
         />
       </div>
       <div className={s.list}>
-        {inbox.map((message) => (
+        {Object.values(chats).map((chat) => (
           <InboxEntry
-            {...{ message, onClick: handleEntryClick(message.chatId) }}
-            key={message.chatId}
+            {...{ chat, onClick: handleEntryClick(chat.id) }}
+            key={chat.id}
           />
         ))}
       </div>

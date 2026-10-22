@@ -1,18 +1,19 @@
 const { matchedData } = require("express-validator");
 const prisma = require("../lib/prisma");
 const socketIo = require("../lib/socket-io");
-const { httpError } = require("../middlewares");
 const apiSelectors = require("./api-selectors");
+const { HttpError } = require("../lib/errors");
 
 module.exports.checkRole = (role) => async (req, res, next) => {
   const { id: userId } = req.user;
   const { groupId } = matchedData(req);
 
-  const participation = await prisma.participation.findUnique({
-    where: { userId_groupId: { userId, groupId }, role, endedAt: null },
-  });
+  const { role: currentRole } =
+    (await getParticipation(prisma, userId, groupId)) ?? {};
 
-  if (!participation) {
+  const requiredRoles = role === "MEMBER" ? ["MEMBER", "ADMIN"] : ["ADMIN"];
+
+  if (!currentRole || !requiredRoles.includes(currentRole)) {
     throw new HttpError(
       403,
       `You do not have ${role.toLowerCase()} participation in this chat.`,
@@ -22,7 +23,24 @@ module.exports.checkRole = (role) => async (req, res, next) => {
   next();
 };
 
-async (req, res) => {};
+module.exports.getGroup = async (req, res) => {
+  const { id: userId } = req.user;
+  const { groupId } = matchedData(req);
+
+  const group = await prisma.$transaction(async (tx) => {
+    const participation = await getParticipation(tx, userId, groupId);
+    const group = await prisma.group.findUnique({
+      where: { id: groupId },
+      select: !!participation
+        ? apiSelectors.fullAccessGroup
+        : apiSelectors.group,
+    });
+
+    return group;
+  });
+
+  res.json({ group });
+};
 
 module.exports.postGroup = async (req, res) => {
   const { id: userId } = req.user;
@@ -33,7 +51,7 @@ module.exports.postGroup = async (req, res) => {
   const otherMembers = allMembers.filter((id) => id !== userId);
 
   if (otherMembers.length === 0) {
-    throw new httpError(400, "You must add at least one other member");
+    throw new HttpError(400, "You must add at least one other member");
   }
 
   const friendships = await prisma.friendship.findMany({
@@ -56,7 +74,7 @@ module.exports.postGroup = async (req, res) => {
   const unfoundMembers = otherMembers.filter((id) => !friendIds.has(id));
 
   if (unfoundMembers.length > 0) {
-    throw new httpError(
+    throw new HttpError(
       409,
       `These members are not in your friend list: ${unfoundMembers.join(", ")}`,
     );
@@ -94,7 +112,11 @@ module.exports.postGroup = async (req, res) => {
       id: true,
       chat: {
         select: {
-          messages: { select: apiSelectors, take: 1, orderBy: { id: "desc" } },
+          messages: {
+            select: apiSelectors.message,
+            take: 1,
+            orderBy: { id: "desc" },
+          },
         },
       },
     },
@@ -117,9 +139,9 @@ module.exports.patchGroup = async (req, res) => {
       data: { name, description, avatarUrl },
       select: {
         id: true,
-        name,
-        description,
-        avatarUrl,
+        name: !!name,
+        description: !!description,
+        avatarUrl: !!avatarUrl,
         chat: { select: { id: true } },
       },
     });
@@ -131,7 +153,7 @@ module.exports.patchGroup = async (req, res) => {
         userId,
         metadata: { updatedFields: { name, description, avatarUrl } },
       },
-      select: genericMessageSelect,
+      select: apiSelectors.message,
     });
 
     return { group, message };
@@ -142,3 +164,15 @@ module.exports.patchGroup = async (req, res) => {
 
   res.json({ success: true });
 };
+
+async function getParticipation(client, userId, groupId) {
+  const participation = await client.participation.findUnique({
+    where: {
+      userId_groupId: { userId, groupId },
+      endedAt: null,
+    },
+    select: { role: true },
+  });
+
+  return participation;
+}

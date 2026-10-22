@@ -34,7 +34,11 @@ module.exports.getMessages = async (req, res) => {
   const { endedAt } = group ? group.participations[0] : friendship;
 
   const messages = await prisma.message.findMany({
-    where: { chatId, id: { lt: cursor } },
+    where: {
+      chatId,
+      ...(cursor ? { id: { lt: cursor } } : {}),
+      ...(endedAt ? { sentAt: { lte: endedAt } } : {}),
+    },
     select: apiSelectors.message,
     take: limit,
     orderBy: { id: "desc" },

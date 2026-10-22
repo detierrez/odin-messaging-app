@@ -1,4 +1,0 @@
-.loading {
-  composes: loading from "@styles/shared.css";
-  color: transparent;
-}

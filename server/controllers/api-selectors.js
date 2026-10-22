@@ -25,24 +25,20 @@ const friendship = {
 };
 
 const group = {
-  select: {
-    id: true,
-    name: true,
-    description: false,
-    avatarUrl: true,
-    chat: { select: { id: true } },
-    participations: false,
-  },
+  id: true,
+  name: true,
+  description: false,
+  avatarUrl: true,
+  chat: { select: { id: true } },
+  participations: false,
 };
 
 const fullAccessGroup = {
-  select: {
-    ...group.select,
-    description: true,
-    participations: {
-      where: { endedAt: null },
-      select: { userId: true, groupId: true, role: true },
-    },
+  ...group,
+  description: true,
+  participations: {
+    where: { endedAt: null },
+    select: { userId: true, groupId: true, role: true },
   },
 };
 
@@ -50,6 +46,8 @@ const apiSelectors = {
   user,
   message,
   friendship,
+  group,
+  fullAccessGroup,
 };
 
 module.exports = apiSelectors;

@@ -11,12 +11,12 @@ cloudinary.config({
 const uploadFile = (fieldName) => [
   parseFile(fieldName),
   async (req, res, next) => {
-    const file = req[fieldName];
+    const { file } = req;
     if (file) {
       const b64 = Buffer.from(file.buffer).toString("base64");
       const dataURI = `data:${file.mimetype};base64,${b64}`;
       const result = await cloudinary.uploader.upload(dataURI, {
-        folder: `odinbox/${req.user.id}/${fieldName}`,
+        folder: `odinbox/user-${req.user.id}/${fieldName}`,
       });
       req[`${fieldName}Url`] = result.secure_url;
     }

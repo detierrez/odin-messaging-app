@@ -2,12 +2,7 @@ import { ApiError } from "./errors";
 
 export const SERVER_BASE_URL = import.meta.env.VITE_SERVER_URL;
 
-let _onUnauthenticated = null;
-export function onUnauthenticated(handler) {
-  _onUnauthenticated = handler;
-}
-
-export async function fetchBackend(path, { body, method, signal } = {}) {
+async function fetchBackend(path, { body, method, signal } = {}) {
   const options = {
     signal,
     credentials: "include",
@@ -28,165 +23,186 @@ export async function fetchBackend(path, { body, method, signal } = {}) {
 
   {
     // Debug
-    console.log({
-      req: { endpoint: `${method ?? (body ? "POST" : "GET")} ${path}`, body },
-      res: { status, text: response.statusText, payload },
+    console.log(`${options.method} ${path} > ${status}`, {
+      body: options.body,
+      payload,
     });
   }
 
   if (status >= 400) {
-    if (payload.errors[0].type === "UNAUTHENTICATED") {
-      _onUnauthenticated?.();
-    }
     throw new ApiError(payload);
   }
 
   return payload;
 }
 
-// ============ AUTH ============
+export const api = {
+  // ============ DEBUG ============
 
-export function login(username, password, signal) {
-  return fetchBackend("/login", {
-    body: { username, password },
-    signal,
-  });
-}
+  async getUnauthenticated() {
+    console.log("getUnauthenticated...");
+    await fetchBackend("/unauthenticated");
+    return "asd";
+  },
 
-export function logout(signal) {
-  return fetchBackend(`/logout`, { method: "POST", signal });
-}
+  // ============ AUTH ============
 
-// ============ USERS ============
+  login(username, password, signal) {
+    return fetchBackend("/login", {
+      body: { username, password },
+      signal,
+    });
+  },
 
-export async function getProfile(signal) {
-  const { user: profile } = await fetchBackend("/users/me", { signal });
-  return profile;
-}
+  logout(signal) {
+    return fetchBackend(`/logout`, { method: "POST", signal });
+  },
 
-export function updateProfile({ alias, description: desc, file }, signal) {
-  const formData = new FormData();
-  (alias || alias === "") && formData.append("alias", alias);
-  (desc || desc === "") && formData.append("description", desc);
-  file && formData.append("avatar", file);
+  // ============ USERS ============
 
-  return fetchBackend(`/users/me`, { method: "PATCH", body: formData, signal });
-}
+  async getOwnUserId(signal) {
+    const { user } = await fetchBackend("/users/me", { signal });
+    return user.id;
+  },
 
-export function getUser(userId, signal) {
-  return fetchBackend(`/users/${userId}`, { signal });
-}
+  updateProfile({ alias, description: desc, file }, signal) {
+    const formData = new FormData();
+    (alias || alias === "") && formData.append("alias", alias);
+    (desc || desc === "") && formData.append("description", desc);
+    file && formData.append("avatar", file);
 
-// ============ REQUESTS AND FRIENDSHIPS ============
+    console.log({ alias, desc, file });
 
-export function getRequests(signal) {
-  return fetchBackend(`/requests`, { signal });
-}
+    return fetchBackend(`/users/me`, {
+      method: "PATCH",
+      body: formData,
+      signal,
+    });
+  },
 
-export function sendRequest(username, signal) {
-  return fetchBackend(`/requests`, { body: { username }, signal });
-}
+  async getUser(userId, signal) {
+    const { user } = await fetchBackend(`/users/${userId}`, { signal });
+    return user;
+  },
 
-export function deleteRequest(userId, signal) {
-  return fetchBackend(`/requests/${userId}`, { method: "DELETE", signal });
-}
+  // ============ REQUESTS AND FRIENDSHIPS ============
 
-export function getFriends(signal) {
-  return fetchBackend(`/friends`, { signal });
-}
+  getRequests(signal) {
+    return fetchBackend(`/requests`, { signal });
+  },
 
-export function acceptRequest(userId, signal) {
-  return fetchBackend(`/friends/${userId}`, { method: "POST", signal });
-}
+  sendRequest(username, signal) {
+    return fetchBackend(`/requests`, { body: { username }, signal });
+  },
 
-export function removeFriend(friendId, signal) {
-  return fetchBackend(`/friends/${friendId}`, { method: "DELETE", signal });
-}
+  deleteRequest(userId, signal) {
+    return fetchBackend(`/requests/${userId}`, { method: "DELETE", signal });
+  },
 
-// ============ GROUPS ============
+  async getFriends(signal) {
+    const { friendIds } = await fetchBackend(`/friends`, { signal });
+    return friendIds;
+  },
 
-export function getGroup(groupId, signal) {
-  return fetchBackend(`/groups/${groupId}`, { signal });
-}
+  acceptRequest(userId, signal) {
+    return fetchBackend(`/friends/${userId}`, { method: "POST", signal });
+  },
 
-export function createGroup(name, description, memberIds, file, signal) {
-  const formData = new FormData();
-  formData.append("name", name);
-  formData.append("description", description);
-  formData.append("avatar", file);
-  memberIds.forEach((id) => formData.append("memberIds", id));
+  removeFriend(friendId, signal) {
+    return fetchBackend(`/friends/${friendId}`, { method: "DELETE", signal });
+  },
 
-  return fetchBackend(`/chats`, { body: formData, signal });
-}
+  // ============ GROUPS ============
 
-export function updateGroup(chatId, { name, description: desc, file }, signal) {
-  const formData = new FormData();
-  (name || name === "") && formData.append("name", name);
-  (desc || desc === "") && formData.append("description", desc);
-  file && formData.append("avatar", file);
+  async getGroup(groupId, signal) {
+    const { group } = await fetchBackend(`/groups/${groupId}`, { signal });
+    return group;
+  },
 
-  return fetchBackend(`/chats/${chatId}`, {
-    method: "PATCH",
-    body: formData,
-    signal,
-  });
-}
+  createGroup(name, description, memberIds, file, signal) {
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("avatar", file);
+    memberIds.forEach((id) => formData.append("memberIds", id));
 
-export function leaveGroup(chatId, signal) {
-  return fetchBackend(`/chats/${chatId}/members/me`, {
-    method: "DELETE",
-    signal,
-  });
-}
+    return fetchBackend(`/groups`, { body: formData, signal });
+  },
 
-export function closeGroup(chatId, signal) {
-  return fetchBackend(`/chats/${chatId}`, {
-    body: { isActive: false },
-    method: "PATCH",
-    signal,
-  });
-}
+  updateGroup(groupId, { name, description: desc, file }, signal) {
+    const formData = new FormData();
+    (name || name === "") && formData.append("name", name);
+    (desc || desc === "") && formData.append("description", desc);
+    file && formData.append("avatar", file);
 
-// ============ MEMBERS ============
+    return fetchBackend(`/groups/${groupId}`, {
+      method: "PATCH",
+      body: formData,
+      signal,
+    });
+  },
 
-export function addMember(chatId, memberId, signal) {
-  return fetchBackend(`/chats/${chatId}/members`, {
-    body: { memberId },
-    signal,
-  });
-}
+  leaveGroup(groupId, signal) {
+    return fetchBackend(`/groups/${groupId}/members/me`, {
+      method: "DELETE",
+      signal,
+    });
+  },
 
-export function updateMember(chatId, memberId, role, signal) {
-  return fetchBackend(`/chats/${chatId}/members/${memberId}`, {
-    body: { role },
-    method: "PATCH",
-    signal,
-  });
-}
+  closeGroup(groupId, signal) {
+    return fetchBackend(`/groups/${groupId}`, {
+      body: { isActive: false },
+      method: "PATCH",
+      signal,
+    });
+  },
 
-export function removeMember(chatId, memberId, signal) {
-  return fetchBackend(`/chats/${chatId}/members/${memberId}`, {
-    method: "DELETE",
-    signal,
-  });
-}
+  // ============ MEMBERS ============
 
-// ============ CHATS ============
+  addMember(groupId, memberId, signal) {
+    return fetchBackend(`/groups/${groupId}/members`, {
+      body: { memberId },
+      signal,
+    });
+  },
 
-export function getInbox(signal) {
-  return fetchBackend(`/chats`, { signal });
-}
+  updateMember(groupId, memberId, role, signal) {
+    return fetchBackend(`/groups/${groupId}/members/${memberId}`, {
+      body: { role },
+      method: "PATCH",
+      signal,
+    });
+  },
 
-export function loadMessages(chatId, cursor, limit = 10, signal) {
-  return fetchBackend(
-    `/chats/${chatId}/messages?cursor=${cursor}&limit=${limit}`,
-    { signal },
-  );
-}
+  removeMember(groupId, memberId, signal) {
+    return fetchBackend(`/groups/${groupId}/members/${memberId}`, {
+      method: "DELETE",
+      signal,
+    });
+  },
 
-export function postMessage(chatId, content, attachment, signal) {
-  const formData = new FormData();
-  (content || content === "") && formData.append("content", content);
-  attachment && formData.append("attachment", attachment);
-  return fetchBackend(`/chats/${chatId}/messages`, { body: formData, signal });
-}
+  // ============ CHATS ============
+
+  async getInbox(signal) {
+    const { chats } = await fetchBackend(`/chats`, { signal });
+    return chats;
+  },
+
+  async loadMessages(chatId, cursor, limit = 10, signal) {
+    const { messages } = await fetchBackend(
+      `/chats/${chatId}/messages?limit=${limit}${cursor ? `&cursor=${cursor}` : ""}`,
+      { signal },
+    );
+    return messages;
+  },
+
+  postMessage(chatId, content, attachment, signal) {
+    const formData = new FormData();
+    (content || content === "") && formData.append("content", content);
+    attachment && formData.append("attachment", attachment);
+    return fetchBackend(`/chats/${chatId}/messages`, {
+      body: formData,
+      signal,
+    });
+  },
+};

@@ -1,57 +1,68 @@
 import { merge } from "@lib/index";
-import { useApi, useCurrentChat, useUser } from "@hooks";
-import { Avatar, Dropdown, Name, Surface } from "@components/common";
+import { useCurrentProfile } from "@hooks";
+import { Dropdown, IconButton, Loading, Surface } from "@components/common";
 import s from "./Banner.module.css";
 
 export default function Banner({ className, onInfoClick }) {
-  const { id: chatId } = useCurrentChat().chat;
+  const { profile: { name, avatarUrl } = {}, isLoading } = useCurrentProfile();
 
-  return (
+  return isLoading ? (
     <Surface className={merge(className, s.banner)}>
-      <Avatar className={s.avatar} chatId={chatId} onClick={onInfoClick} />
-      <Name className={s.name} chatId={chatId} onClick={onInfoClick} />
+      <Loading className={s.avatar} />
+      <Loading className={s.name} />
+      <IconButton variant="loading cancelPadding" />
+    </Surface>
+  ) : (
+    <Surface className={merge(className, s.banner)}>
+      <img className={s.avatar} src={avatarUrl} alt="" onClick={onInfoClick} />
+      <div className={s.name} onClick={onInfoClick}>
+        {name}
+      </div>
       <Options onInfoClick={onInfoClick} />
     </Surface>
   );
 }
 
 function Options({ onInfoClick }) {
-  const { sendRequest, removeFriend, leaveGroup, closeGroup } = useApi();
   const {
-    id: chatId,
-    isDirect,
-    isFriend,
-    isUserAdmin,
-    otherUserId,
-    isActive,
-  } = useCurrentChat().chat;
-  const [user, isLoading, error] = useUser(otherUserId);
+    profile: { id: profileId, isGroup, isActive, isAdmin },
+  } = useCurrentProfile();
 
-  if (!isDirect && !isActive) return;
+  if (isGroup && !isActive) return;
 
   return (
     <Dropdown>
-      <button onClick={onInfoClick}>Chat info.</button>
-      {isDirect ? (
-        isFriend ? (
-          <button onClick={() => removeFriend(otherUserId)}>Unfriend</button>
-        ) : (
-          <button onClick={handleSendRequest}>Add friend</button>
-        )
+      <button onClick={onInfoClick}>More info.</button>
+      {isGroup ? (
+        <>
+          <button onClick={handleLeave}>Leave</button>
+          {isAdmin && <button onClick={handleClose}>Close</button>}
+        </>
       ) : (
         <>
-          <button onClick={() => leaveGroup(chatId)}>Leave</button>
-          {isUserAdmin && (
-            <button onClick={() => closeGroup(chatId)}>Close</button>
+          {isActive ? (
+            <button onClick={handleUnfriend}>Unfriend</button>
+          ) : (
+            <button onClick={handleSendRequest}>Add friend</button>
           )}
         </>
       )}
     </Dropdown>
   );
 
+  function handleUnfriend() {
+    // removeFriend(profileId); // APICALL
+  }
+
   function handleSendRequest() {
-    if (isLoading || error || !user) return;
-    console.log(user);
-    sendRequest(user.username);
+    // sendRequest(profileId);
+  }
+
+  function handleLeave() {
+    // leaveGroup(profileId);
+  }
+
+  function handleClose() {
+    // closeGroup(profileId);
   }
 }

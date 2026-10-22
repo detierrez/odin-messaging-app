@@ -1,0 +1,16 @@
+.loading {
+  color: transparent !important;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.2);
+  animation: loading 750ms ease-in-out infinite alternate;
+}
+
+@keyframes loading {
+  from {
+    opacity: 0.1;
+  }
+
+  to {
+    opacity: 0.6;
+  }
+}

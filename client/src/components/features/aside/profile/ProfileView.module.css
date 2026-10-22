@@ -28,19 +28,23 @@
   color: var(--font-color-muted);
 }
 
+.aliasWrapper {
+  font-size: 1.15rem;
+}
+
 .aliasWrapper,
 .descriptionWrapper {
+  min-height: 1.5em;
   margin-block: calc(-1 * var(--quarter-spacing));
   gap: var(--spacing);
   display: flex;
   align-items: center;
 
   .editButton {
-    flex: 0 0 1.5em;
+    flex: 0 0 calc(1.15em);
   }
 
   .alias {
-    font-size: 1.15rem;
     text-align: center;
   }
 

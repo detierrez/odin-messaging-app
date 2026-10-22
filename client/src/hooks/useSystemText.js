@@ -1,15 +1,14 @@
-import { useProfile } from "./useContext";
-import useProfileData from "./useProfileData";
+import { useOwnId, useUser } from "./useCache";
 
-export default function useSystemMessage(message) {
-  const userId = useProfile().id;
+export function useSystemText(message) {
+  const ownId = useOwnId();
   const { type, userId: actorUserId, metadata } = message;
   const { targetUserId, role, updatedFields } = metadata ?? {};
-  const actorName = useProfileData({ userId: actorUserId }).data?.name;
-  const targetName = useProfileData({ userId: targetUserId }).data?.name;
+  const actorName = useUser(actorUserId).user?.name;
+  const targetName = useUser(targetUserId).user?.name;
 
-  const isUserActor = userId === actorUserId;
-  const isUserTarget = userId === targetUserId;
+  const isUserActor = ownId === actorUserId;
+  const isUserTarget = ownId === targetUserId;
 
   switch (type) {
     case "OPEN":

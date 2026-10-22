@@ -1,21 +1,37 @@
-import { useApp, useSystemMessage, useTimeTag } from "@hooks";
-import { Avatar, Name } from "@components/common";
-import s from "./InboxEntry.module.css";
+import {
+  useOwnId,
+  useChatProfile,
+  useSystemText,
+  useTimeTag,
+  useUser,
+} from "@hooks";
 import { merge } from "@lib/index";
+import { Loading } from "@components/common";
+import s from "./InboxEntry.module.css";
 
-export default function InboxEntry({ message, ...props }) {
-  const { type, chatId, sentAt } = message;
+export default function InboxEntry({ chat, ...props }) {
+  const { profile: { name, avatarUrl } = {}, isLoading } = useChatProfile(
+    chat,
+    { waitAvatar: true },
+  );
+  const message = chat.messages.at(-1);
+  const { type, sentAt } = message;
   const timeTag = useTimeTag(sentAt);
   const isSystemMessage = type !== "USER_MESSAGE";
 
-  console.log({ message });
-
-  return (
+  return isLoading ? (
     <button className={s.entry} {...props}>
-      <Avatar className={s.avatar} chatId={chatId} />
-      {/* <Name className={s.name} chatId={chatId} /> */}
+      <Loading className={s.avatar} />
+      <Loading className={s.name} />
+      <Loading className={s.date} />
+      <Loading className={s.text} />
+    </button>
+  ) : (
+    <button className={s.entry} {...props}>
+      <img className={s.avatar} src={avatarUrl} />
+      <div className={s.name}> {name}</div>
       <span className={s.date}>{timeTag}</span>
-      <div className={merge(s.text, isSystemMessage && s.system)}>
+      <div className={merge(s.text)}>
         {isSystemMessage ? (
           <SystemText {...message} />
         ) : (
@@ -26,18 +42,23 @@ export default function InboxEntry({ message, ...props }) {
   );
 }
 
-function SystemText(message) {
-  // const text = useSystemMessage(message);
-  // return text;
-}
+function UserText({ userId, content }) {
+  const ownId = useOwnId();
+  const authorName = useUser(userId).user?.name;
 
-function UserText({ userId: authorId, content }) {
-  const userId = useApp().profile.id;
-
-  return (
+  return content ? (
     <>
-      {authorId === userId && <span className={s.prepend}>You: </span>}
+      {userId === ownId && <span className={s.prepend}>You: </span>}
       {content}
     </>
+  ) : (
+    <span className={s.system}>
+      {userId === ownId ? "You" : authorName} sent an attachment
+    </span>
   );
+}
+
+function SystemText(message) {
+  const text = useSystemText(message);
+  return <span className={s.system}>{text}</span>;
 }

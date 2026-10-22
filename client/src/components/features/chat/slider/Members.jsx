@@ -1,31 +1,27 @@
 import { plus } from "@lib/icons";
 import { merge } from "@lib/index";
-import { useApi, useCurrentChat, useProfile, useUsers } from "@hooks";
-import { Avatar, Dropdown, IconButton, Name } from "@components/common";
+import { useCurrentProfile, useOwnId, useUser } from "@hooks";
+import { Dropdown, IconButton, Loading } from "@components/common";
 import s from "./Members.module.css";
 
-export default function MemberList({ className, onMoreClick, ...props }) {
-  const { id: chatId, memberships, isUserAdmin } = useCurrentChat().chat;
-  const { users } = useUsers();
+export default function Members({ className, onMoreClick, ...props }) {
+  const { profile: { participations, isAdmin } = {} } = useCurrentProfile();
 
-  const sortedMemberships = Object.entries(memberships).toSorted(
-    ([idA, roleA], [idB, roleB]) => {
-      const nameA = users[idA]?.alias ?? users[idA]?.username;
-      const nameB = users[idB]?.alias ?? users[idB]?.username;
+  if (!participations) return;
 
-      if (roleA !== roleB) {
-        return roleA === "ADMIN" ? -1 : 1;
-      }
-
-      return nameA?.localeCompare(nameB);
-    },
-  );
+  const sortedParticipations = participations.toSorted((pA, pB) => {
+    pA.role === pB.role
+      ? pA.name?.localeCompare(pB.name)
+      : pA.role === "ADMIN"
+        ? -1
+        : 1;
+  });
 
   return (
     <div className={merge(className, s.members)} {...{ ...props }}>
       <div className={s.heading}>
-        <p className={s.title}>Members - {Object.keys(memberships).length}</p>
-        {isUserAdmin && (
+        <p className={s.title}>Members - {sortedParticipations.length}</p>
+        {isAdmin && (
           <IconButton
             variant="cancelPadding"
             className={s.addMembers}
@@ -36,42 +32,55 @@ export default function MemberList({ className, onMoreClick, ...props }) {
         )}
       </div>
       <div className={s.list}>
-        {sortedMemberships.map(([memberId, role]) => (
-          <Member
-            {...{ memberId: Number(memberId), role, chatId, isUserAdmin }}
-            key={memberId}
-          />
+        {sortedParticipations.map(({ userId, role }) => (
+          <Member {...{ userId, role }} key={userId} />
         ))}
       </div>
     </div>
   );
 }
 
-function Member({ memberId, role, chatId, isUserAdmin }) {
-  const { updateMember, removeMember } = useApi();
-  const userId = useProfile().id;
+function Member({ userId, role }) {
+  const ownId = useOwnId();
+  const {
+    profile: { id: groupId },
+    isAdmin,
+  } = useCurrentProfile();
+  const { user, isLoading } = useUser(userId, { waitAvatar: true });
 
   const isMemberAdmin = role === "ADMIN";
   const roleAction = isMemberAdmin ? "Demote" : "Promote";
   const nextRole = isMemberAdmin ? "MEMBER" : "ADMIN";
 
-  return (
+  return isLoading ? (
     <div className={s.membership}>
-      <Avatar className={s.avatar} userId={memberId} />
+      <Loading className={s.avatar} />
       <div className={s.verticalWrapper}>
-        <Name className={s.username} userId={memberId} />
+        <Loading className={s.username} />
+        <Loading className={s.role} />
+      </div>
+    </div>
+  ) : (
+    <div className={s.membership}>
+      <img className={s.avatar} src={user.avatarUrl} alt="" />
+      <div className={s.verticalWrapper}>
+        <div className={s.username}>{user.name}</div>
         {isMemberAdmin && <div className={s.role}>Administrator</div>}
       </div>
-      {isUserAdmin && memberId !== userId ? (
+      {isAdmin && userId !== ownId && (
         <Dropdown className={s.options} title={"⋮"}>
-          <button onClick={() => updateMember(chatId, memberId, nextRole)}>
-            {roleAction}
-          </button>
-          <button onClick={() => removeMember(chatId, memberId)}>Remove</button>
+          <button onClick={handleUpdate}>{roleAction}</button>
+          <button onClick={handleRemove}>Remove</button>
         </Dropdown>
-      ) : (
-        <div className={s.options}></div>
       )}
     </div>
   );
+
+  function handleUpdate() {
+    // updateMember(groupId, userId, nextRole); // APICALL
+  }
+
+  function handleRemove() {
+    // removeMember(groupId, userId);
+  }
 }

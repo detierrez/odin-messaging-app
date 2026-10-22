@@ -6,7 +6,7 @@ export default function ControlLabel({
   className,
   defaultValue,
   disabled,
-  onSubmit = () => Promise.resolve(),
+  onSubmit = () => {},
   renderInput = () => {},
 }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -21,7 +21,13 @@ export default function ControlLabel({
 
   return (
     <>
-      {renderInput(value, !isEditing, handleChange, handleKeyDown, inputRef)}
+      {renderInput({
+        value,
+        disabled: !isEditing,
+        onChange: handleChange,
+        onKeyDown: handleKeyDown,
+        ref: inputRef,
+      })}
       {!disabled && (
         <IconButton
           variant="cancelPadding"
@@ -34,8 +40,8 @@ export default function ControlLabel({
     </>
   );
 
-  async function submit() {
-    await onSubmit(value);
+  function submit() {
+    onSubmit(value);
     setIsEditing(false);
   }
 
@@ -51,7 +57,7 @@ export default function ControlLabel({
     setValue(e.target.value);
   }
 
-  async function handleKeyDown(e) {
+  async function handleKeyDown() {
     if (e.key === "Escape") {
       setValue(defaultValue);
       setIsEditing(false);

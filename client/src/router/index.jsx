@@ -13,9 +13,8 @@ const router = createBrowserRouter([
     element: <Controller />,
     loader: l.controller,
     // errorElement: <ErrorPage />,
-    shouldRevalidate: ({ formAction }) => formAction === "/login",
+    // shouldRevalidate: ({ formAction }) => formAction === "/login",
     HydrateFallback,
-    handle: {},
     children: [
       { index: true, element: <App />, loader: l.app },
       {

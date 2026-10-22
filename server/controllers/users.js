@@ -11,8 +11,6 @@ module.exports.getMe = async (req, res) => {
     select: apiSeletors.user,
   });
 
-  user.isFriend = false;
-
   res.json({ user });
 };
 
@@ -27,11 +25,13 @@ module.exports.patchMe = async (req, res) => {
     select: apiSeletors.user,
   });
 
-  socketIo.notifyUser("updateUser", userId, {
-    id: userId,
-    ...(alias ? { alias } : {}),
-    ...(description ? { description } : {}),
-    ...(avatarUrl ? { avatarUrl } : {}),
+  socketIo.notifyUser(userId, "update_user", {
+    user: {
+      id: userId,
+      ...(alias ? { alias } : {}),
+      ...(description ? { description } : {}),
+      ...(avatarUrl ? { avatarUrl } : {}),
+    },
   });
 
   res.json({ user });
@@ -39,7 +39,7 @@ module.exports.patchMe = async (req, res) => {
 
 module.exports.getUser = async (req, res) => {
   const { userId } = matchedData(req);
-  const { friendshipsA, friendshipsB, ...user } = await prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: userId },
     select: apiSeletors.user,
   });

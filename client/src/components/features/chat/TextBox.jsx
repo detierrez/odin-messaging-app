@@ -1,19 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { attach, cross, send } from "@lib/icons";
 import { merge } from "@lib/index";
-import { useApi, useCurrentChat } from "@hooks";
+import { useSelectedChat, useCurrentProfile } from "@hooks";
 import { IconButton } from "@components/common";
 import s from "./TextBox.module.css";
 
 export default function TextBox({ className }) {
-  const { postMessage } = useApi();
-  const { id: chatId, isActive } = useCurrentChat().chat;
+  const { selectedChat } = useSelectedChat();
+  const { profile: { isActive } = {} } = useCurrentProfile();
   const [drafts, setDrafts] = useState({});
   const [attachment, setAttachment] = useState(null);
   const attachmentRef = useRef(null);
   const textareaRef = useRef(null);
 
-  const content = drafts[chatId] || "";
+  const content = drafts[selectedChat] || "";
 
   const previewUrl = useMemo(
     () => attachment && URL.createObjectURL(attachment),
@@ -93,7 +93,7 @@ export default function TextBox({ className }) {
   }
 
   function updateActiveDraft(text) {
-    setDrafts((prev) => ({ ...prev, [chatId]: text }));
+    setDrafts((prev) => ({ ...prev, [selectedChat]: text }));
   }
 
   function handleInputChange(e) {
@@ -126,7 +126,7 @@ export default function TextBox({ className }) {
     if (content.length > 0 || attachment) {
       updateActiveDraft("");
       removeAttachment();
-      await postMessage(chatId, content, attachment);
+      // await postMessage(selectedChat, content, attachment); APICALL
     }
   }
 }

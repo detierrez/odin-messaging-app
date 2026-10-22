@@ -1,33 +1,15 @@
-import arrowLeft from "../assets/icons/arrow-left.svg";
-import arrowRight from "../assets/icons/arrow-right.svg";
-import attach from "../assets/icons/attach.svg";
-import check from "../assets/icons/check.svg";
-import cross from "../assets/icons/cross.svg";
-import filter from "../assets/icons/filter.svg";
-import logout from "../assets/icons/logout.svg";
-import minus from "../assets/icons/minus.svg";
-import moreVertical from "../assets/icons/more-vertical.svg";
-import pen from "../assets/icons/pen.svg";
-import plus from "../assets/icons/plus.svg";
-import search from "../assets/icons/search.svg";
-import send from "../assets/icons/send.svg";
-import visibility from "../assets/icons/visibility.svg";
-import visibilityOff from "../assets/icons/visibility-off.svg";
-
-export {
-  arrowLeft,
-  arrowRight,
-  attach,
-  check,
-  cross,
-  filter,
-  logout,
-  pen,
-  plus,
-  moreVertical,
-  minus,
-  search,
-  send,
-  visibility,
-  visibilityOff,
-};
+export { default as arrowLeft } from "../assets/icons/arrow-left.svg";
+export { default as arrowRight } from "../assets/icons/arrow-right.svg";
+export { default as attach } from "../assets/icons/attach.svg";
+export { default as check } from "../assets/icons/check.svg";
+export { default as cross } from "../assets/icons/cross.svg";
+export { default as filter } from "../assets/icons/filter.svg";
+export { default as logout } from "../assets/icons/logout.svg";
+export { default as minus } from "../assets/icons/minus.svg";
+export { default as moreVertical } from "../assets/icons/more-vertical.svg";
+export { default as pen } from "../assets/icons/pen.svg";
+export { default as plus } from "../assets/icons/plus.svg";
+export { default as search } from "../assets/icons/search.svg";
+export { default as send } from "../assets/icons/send.svg";
+export { default as visibility } from "../assets/icons/visibility.svg";
+export { default as visibilityOff } from "../assets/icons/visibility-off.svg";

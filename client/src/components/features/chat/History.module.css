@@ -1,3 +1,8 @@
+.avatar {
+  composes: avatar from "@styles/shared.css";
+  --size: 16px;
+}
+
 .history {
   --messages-gap: 12px;
   gap: var(--messages-gap);
@@ -18,7 +23,7 @@
 
   .message {
     --content-radius: 15px;
-    &.userMessage {
+    &.ownMessage {
       --flex-direction: row-reverse;
       --content-bg-color: var(--accent-color);
       --avatar-translation: 150%;
@@ -47,10 +52,6 @@
     .avatar {
       align-self: flex-end;
       position: absolute;
-      height: 16px;
-      width: 16px;
-
-      border-radius: 50%;
       translate: var(--avatar-translation, -150%);
     }
 

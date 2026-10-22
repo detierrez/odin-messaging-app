@@ -1,41 +1,15 @@
-import Avatar from "./Avatar";
-import ButtonHeading from "./ButtonHeading";
-import ClickableImage from "./ClickableImage";
-import Collapsible from "./Collapsible";
-import Dropdown from "./Dropdown";
-import Error from "./Error";
-import Example from "./Example";
-import FormOverride from "./FormOverride";
-import Heading from "./Heading";
-import HydrateFallback from "./HydrateFallback";
-import IconButton from "./IconButton";
-import Modal from "./Modal";
-import Name from "./Name";
-import Input from "./Input";
-import SelectableImage from "./SelectableImage";
-import Slider from "./Slider";
-import SlidingTabs from "./SlidingTabs";
-import Surface from "./Surface";
-import ControlLabel from "./Test";
-
-export {
-  Avatar,
-  ButtonHeading,
-  ClickableImage,
-  Collapsible,
-  ControlLabel,
-  Dropdown,
-  Error,
-  Example,
-  FormOverride,
-  Heading,
-  HydrateFallback,
-  IconButton,
-  Input,
-  Name,
-  Modal,
-  SelectableImage,
-  Slider,
-  SlidingTabs,
-  Surface,
-};
+export { default as ClickableImage } from "./ClickableImage";
+export { default as Collapsible } from "./Collapsible";
+export { default as ControlLabel } from "./Test";
+export { default as Dropdown } from "./Dropdown";
+export { default as Error } from "./Error";
+export { default as FormOverride } from "./FormOverride";
+export { default as HydrateFallback } from "./HydrateFallback";
+export { default as IconButton } from "./IconButton";
+export { default as Input } from "./Input";
+export * from "./Loading";
+export { default as Modal } from "./Modal";
+export { default as SelectableImage } from "./SelectableImage";
+export { default as Slider } from "./Slider";
+export { default as SlidingTabs } from "./SlidingTabs";
+export { default as Surface } from "./Surface";

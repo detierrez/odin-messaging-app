@@ -1,17 +1,17 @@
 import { cross, plus, search } from "@lib/icons";
 import { merge } from "@lib/index";
-import { useApi, useCurrentChat, useFriends } from "@hooks";
-import { Avatar, IconButton, Input, Name, Surface } from "@components/common";
+import { useCurrentProfile, useFriends, useUser } from "@hooks";
+import { IconButton, Input, Loading, Surface } from "@components/common";
 import s from "./AddMembers.module.css";
 import { useState } from "react";
 
 export default function AddMembers({ className, onCancelClick, ...props }) {
-  const { chat } = useCurrentChat();
-  const friends = useFriends();
+  const { friends } = useFriends();
+  const { profile: { id: groupId, participations } = {} } = useCurrentProfile();
   const [searchText, setSearchText] = useState("");
 
-  const { id: chatId, memberships } = chat;
-  const nonMembers = friends.filter(({ friendId }) => !memberships[friendId]);
+  const nonMembers = new Set(friends);
+  participations?.forEach((p) => nonMembers.delete(p.userId));
 
   return (
     <Surface className={merge(className, s.menu)} {...{ ...props }}>
@@ -32,12 +32,12 @@ export default function AddMembers({ className, onCancelClick, ...props }) {
 
       <div className={s.subHeading}>Friends</div>
 
-      {nonMembers.length === 0 ? (
+      {nonMembers.size === 0 ? (
         <p className={s.placeholderText}>No friends found</p>
       ) : (
         <div className={s.list}>
-          {nonMembers.map(({ friendId }) => (
-            <InvitationEntry {...{ chatId, friendId }} key={friendId} />
+          {[...nonMembers].map((userId) => (
+            <InvitationEntry {...{ groupId, userId }} key={userId} />
           ))}
         </div>
       )}
@@ -45,18 +45,24 @@ export default function AddMembers({ className, onCancelClick, ...props }) {
   );
 }
 
-function InvitationEntry({ chatId, friendId }) {
-  const { addMember } = useApi();
+function InvitationEntry({ groupId, userId }) {
+  const { user, isLoading } = useUser(userId, { waitAvatar: true });
 
-  return (
+  return isLoading ? (
+    <button className={s.entry}>
+      <Loading className={s.avatar} />
+      <Loading className={s.name} />
+      <Loading className={s.addIcon} />
+    </button>
+  ) : (
     <button className={s.entry} onClick={handleClick}>
-      <Avatar className={s.avatar} userId={friendId} />
-      <Name className={s.name} userId={friendId} />
+      <img className={s.avatar} src={user.avatarUrl} alt="" />
+      <div className={s.name}>{user.name}</div>
       <img className={s.addIcon} src={plus} alt="add" />
     </button>
   );
 
   function handleClick() {
-    addMember(chatId, friendId);
+    // addMember(groupId, userId); // APICALL
   }
 }

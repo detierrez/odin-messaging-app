@@ -103,10 +103,10 @@ module.exports.postFriend = async (req, res) => {
 
   socketIo.notifyUser([userId, friendId], "remove_request", { request });
   socketIo.notifyUser(userId, "add_friend", { friendId });
-  socketIo.notifyUser(friendId, "add_friend", { friendId: userdId });
+  socketIo.notifyUser(friendId, "add_friend", { friendId: userId });
   socketIo.notifyUser([userId, friendId], "add_message", { message });
 
-  res.json({ friendship });
+  res.json({ friendId });
 };
 
 module.exports.deleteFriend = async (req, res) => {
@@ -139,7 +139,7 @@ module.exports.deleteFriend = async (req, res) => {
   });
 
   socketIo.notifyUser(userId, "remove_friend", { friendId });
-  socketIo.notifyUser(friendId, "remove_friend", { friendId: userdId });
+  socketIo.notifyUser(friendId, "remove_friend", { friendId: userId });
   socketIo.notifyUser([userId, friendId], "add_message", { message });
 
   res.json({ success: true });

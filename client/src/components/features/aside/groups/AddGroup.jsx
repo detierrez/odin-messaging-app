@@ -1,25 +1,28 @@
 import { useState } from "react";
-import { useApi, useFriends, useTabs } from "@hooks";
+import { useTabs } from "@hooks";
 import { SlidingTabs } from "@components/common";
 import DetailsInput from "./DetailsInput";
 import MemberSelect from "./MemberSelect";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@lib/api";
 
 export default function AddGroup({ onCancelClick, onGroupCreate, ...props }) {
-  const { createGroup } = useApi();
   const [tab, selectTab] = useTabs("memberSelect");
-  const friends = useFriends();
   const [selected, setSelected] = useState(new Set());
   const [file, setFile] = useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isPending, setIsPending] = useState(false);
+  const mutation = useMutation({
+    mutationFn: () =>
+      api.createGroup(name, description, Array.from(selected), file),
+  });
 
   return (
     <SlidingTabs {...{ ...props, tab }}>
       <MemberSelect
         {...{
           tab: "memberSelect",
-          friends,
           isButtonDisabled: selected.size === 0,
           checkSelected: (friendId) => selected.has(friendId),
           selectMember,
@@ -55,7 +58,7 @@ export default function AddGroup({ onCancelClick, onGroupCreate, ...props }) {
   async function handleCreateGroup() {
     setIsPending(true);
     try {
-      await createGroup(name, description, Array.from(selected), file);
+      mutation.mutate();
       onGroupCreate();
     } catch (error) {
       setIsPending(false);

@@ -7,7 +7,7 @@ import {
 import { millisecondsInHour, millisecondsInMinute } from "date-fns/constants";
 import { useEffect, useReducer } from "react";
 
-export default function useTimeTag(date) {
+export function useTimeTag(date) {
   const [tick, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const [tag, refreshTime] = calculateTagAndRefresh(date);

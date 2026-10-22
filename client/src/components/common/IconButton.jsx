@@ -1,5 +1,6 @@
 import { merge } from "@lib/index";
 import s from "./IconButton.module.css";
+import { Loading } from ".";
 
 export default function IconButton({
   src,
@@ -9,16 +10,17 @@ export default function IconButton({
   alt,
   ...props
 }) {
-  const isLoading = variant === "loading";
+  const variants = variant ? variant.split(" ") : [];
+  const isLoading = variants.includes("loading");
 
   return (
     <button
       type="button"
-      className={merge(className, s.button, isLoading ? null : s[variant])}
+      className={merge(className, s.button, ...variants.map((v) => s[v]))}
       {...props}
     >
       {isLoading ? (
-        <div className={merge(iconClass, s.img, s.loading)}></div>
+        <Loading className={merge(iconClass, s.img)} />
       ) : (
         <img className={merge(iconClass, s.img)} src={src} alt={alt} />
       )}

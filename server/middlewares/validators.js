@@ -4,10 +4,8 @@ const {
   param,
   query,
   body,
-  matchedData,
   validationResult,
 } = require("express-validator");
-const prisma = require("../lib/prisma");
 const { HttpError } = require("../lib/errors");
 
 const NAME_MAX_LENGTH = 2 ** 6;

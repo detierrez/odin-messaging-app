@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { useApi } from "@hooks";
 import s from "./RequestInput.module.css";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "@lib/api";
 
 export default function RequestInput() {
-  const { sendRequest } = useApi();
   const [username, setUsername] = useState("");
   const isValidUsername = !!username.trim();
+  const mutation = useMutation({
+    mutationFn: () => api.sendRequest(username),
+  });
 
   return (
     <div className={s.container}>
@@ -29,7 +32,7 @@ export default function RequestInput() {
 
   async function sendFriendRequest() {
     if (isValidUsername) {
-      await sendRequest(username);
+      mutation.mutate();
       setUsername("");
     }
   }

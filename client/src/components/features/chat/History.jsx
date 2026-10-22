@@ -1,90 +1,46 @@
-import { useCallback, useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { differenceInDays, differenceInYears, format } from "date-fns";
 import { merge } from "@lib/index";
 import {
-  useApi,
-  useChats,
-  useCurrentChat,
-  useProfile,
-  useSystemMessage,
+  useSelectedChat,
+  useMessages,
+  useOwnId,
+  useSystemText,
+  useUser,
 } from "@hooks";
-import { Avatar } from "@components/common";
 import s from "./History.module.css";
+import { Loading } from "@components/common";
 
 export default function History({ className }) {
-  const { loadMessages } = useApi();
-  const { dispatchChats } = useChats();
-  const { chat } = useCurrentChat();
-  const isFetching = useRef(false);
+  const { selectedChat } = useSelectedChat();
+  const {
+    messages = [],
+    fetchNextPage,
+    isFetching,
+  } = useMessages(selectedChat);
+
   const scrollableRef = useRef(null);
-  const scrollSnapshot = useRef({
-    snapshotHeight: 0,
-    hasScrolledTop: false,
-  });
-
-  const fetchMessages = useCallback(async () => {
-    if (!chat || isFetching.current) return;
-
-    const { id: chatId, messages } = chat;
-    const oldestMessage = messages[0];
-    const hasReachedBegin = !oldestMessage ? true : oldestMessage.isBegin;
-
-    if (hasReachedBegin) return;
-
-    try {
-      isFetching.current = true;
-      const { messages: newMessages } = await loadMessages(
-        chatId,
-        oldestMessage.id,
-      );
-      dispatchChats({
-        type: "add_messages",
-        chatId,
-        messages: newMessages,
-      });
-    } catch (error) {
-      console.log("Error loading messages", error);
-    } finally {
-      isFetching.current = false;
-    }
-  }, [chat, loadMessages, dispatchChats]);
+  const snapshotHeight = useRef(0);
 
   useLayoutEffect(() => {
-    const { current: scrollable } = scrollableRef;
+    const scrollable = scrollableRef.current;
     if (!scrollable) return;
 
     const { scrollHeight, scrollTop, clientHeight } = scrollable;
-    const { snapshotHeight, hasScrolledTop } = scrollSnapshot.current;
+    const delta = scrollHeight - snapshotHeight.current;
 
-    if (scrollHeight === clientHeight) fetchMessages();
-
-    if (snapshotHeight - (scrollTop + clientHeight) <= 1) {
-      // if was docked to bottom
-      // theoretically 0, but use 1 due to rounding effects
-      scrollable.scrollTop = scrollHeight;
+    if (scrollHeight === clientHeight && !isFetching) {
+      fetchNextPage(); // if no scrollbar, try to fetch
     }
 
-    if (hasScrolledTop) {
-      const reRenderGap = scrollHeight - snapshotHeight;
-      scrollable.scrollTop = reRenderGap;
-      scrollSnapshot.current.hasScrolledTop = false;
+    if (snapshotHeight.current - (scrollTop + clientHeight) <= 1) {
+      scrollable.scrollTop = scrollHeight; // stay pinned to bottom
+    } else if (delta > 0) {
+      scrollable.scrollTop = scrollTop + delta; // keep anchored when history is prepended
     }
 
-    scrollSnapshot.current.snapshotHeight = scrollHeight;
-  }, [fetchMessages]);
-
-  const handleScroll = () => {
-    if (scrollSnapshot.current.hasScrolledTop) return;
-
-    const { clientHeight, scrollTop, scrollHeight } = scrollableRef.current;
-    const isNearTop = scrollTop <= 200;
-    const isAtBottom = scrollHeight - (scrollTop + clientHeight) <= 1;
-
-    if (isNearTop && !isAtBottom) {
-      scrollSnapshot.current.hasScrolledTop = true;
-      fetchMessages();
-    }
-  };
+    snapshotHeight.current = scrollHeight;
+  }, [messages]);
 
   return (
     <ul
@@ -92,30 +48,31 @@ export default function History({ className }) {
       ref={scrollableRef}
       onScroll={handleScroll}
     >
-      <MessagesStrip messages={chat.messages} />
+      <MessagesStrip messages={messages} />
     </ul>
   );
+
+  function handleScroll() {
+    if (scrollableRef.current.scrollTop <= 250 && !isFetching) {
+      fetchNextPage();
+    }
+  }
 }
 
 function MessagesStrip({ messages }) {
-  const userId = useProfile().id;
-
-  return messages.map((message, index) => {
+  return messages.map((message, i) => {
     const { type, userId: authorId } = message;
-    const previousMessage = messages[index - 1];
-    const nextMessage = messages[index + 1];
+    const previous = messages[i - 1];
+    const next = messages[i + 1];
 
     return type === "USER_MESSAGE" ? (
       <UserMessage
         {...{
           ...message,
-          isUserAuthor: userId === authorId,
           isContinuation:
-            previousMessage?.type === "USER_MESSAGE" &&
-            previousMessage?.userId === authorId,
+            previous?.type === "USER_MESSAGE" && previous?.userId === authorId,
           hasContinuation:
-            nextMessage?.type === "USER_MESSAGE" &&
-            nextMessage?.userId === authorId,
+            next?.type === "USER_MESSAGE" && next?.userId === authorId,
         }}
         key={message.id}
       />
@@ -126,24 +83,24 @@ function MessagesStrip({ messages }) {
 }
 
 function UserMessage({
-  userId,
+  userId: authorId,
   attachmentUrl,
   content,
   sentAt,
-  isUserAuthor,
   isContinuation,
   hasContinuation,
 }) {
+  const ownId = useOwnId();
+
   return (
     <li
       className={merge(
         s.message,
-        isUserAuthor ? s.userMessage : null,
+        ownId === authorId ? s.ownMessage : null,
         isContinuation ? s.continuation : null,
       )}
     >
-      {!hasContinuation && <Avatar className={s.avatar} userId={userId} />}
-
+      {!hasContinuation && <Avatar className={s.avatar} userId={authorId} />}
       <div className={s.messageBox}>
         {attachmentUrl && (
           <img className={s.attachment} src={attachmentUrl} alt="" />
@@ -155,15 +112,25 @@ function UserMessage({
   );
 }
 
+function SystemMessage(message) {
+  const text = useSystemText(message);
+  return <li className={s.systemMessage}>{text}</li>;
+}
+
+function Avatar({ userId, ...props }) {
+  const { user, isLoading } = useUser(userId, { waitAvatar: true });
+
+  return isLoading ? (
+    <Loading {...props} />
+  ) : (
+    <img src={user.avatarUrl} alt="" {...props} />
+  );
+}
+
 function formatTime(date) {
   return differenceInDays(new Date(), date) <= 1
     ? format(date, "H:mm")
     : differenceInYears(new Date(), date) <= 1
       ? format(date, "H:mm d-MM")
       : format(date, "H:mm d-MM-Y");
-}
-
-function SystemMessage(message) {
-  const text = useSystemMessage(message);
-  return <li className={s.systemMessage}>{text}</li>;
 }

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { cross } from "@lib/icons";
 import { merge } from "@lib/index";
 import { DEFAULT_GROUP_AVATAR, DEFAULT_USER_AVATAR } from "@lib/images";
-import { useApi, useProfileData, useCurrentChat } from "@hooks";
+import { useCurrentProfile } from "@hooks";
 import {
   ControlLabel,
   IconButton,
@@ -10,18 +10,25 @@ import {
   SelectableImage,
   Surface,
 } from "@components/common";
-import MemberList from "./Members";
+import Members from "./Members";
 import AddMembers from "./AddMembers";
-import s from "./Details.module.css";
+import s from "./Profile.module.css";
 
-export default function Details({ className, onCloseClick }) {
-  const { updateGroup } = useApi();
-  const { id: chatId, isDirect, isUserAdmin } = useCurrentChat().chat;
-  const {
-    data: { username, name, avatarUrl, description },
-  } = useProfileData({ chatId });
-
+export default function Profile({ className, onClose }) {
   const [isModal, setIsModal] = useState(false);
+
+  const {
+    profile: {
+      id: profileId,
+      username,
+      name,
+      avatarUrl,
+      description,
+      isLoading,
+      isDirect,
+      isAdmin,
+    } = {},
+  } = useCurrentProfile();
 
   return (
     <Surface className={merge(className, s.menu)}>
@@ -31,7 +38,7 @@ export default function Details({ className, onCloseClick }) {
           className={s.button}
           src={cross}
           alt="back"
-          onClick={onCloseClick}
+          onClick={onClose}
         />
         <span>Chat info.</span>
       </div>
@@ -41,16 +48,16 @@ export default function Details({ className, onCloseClick }) {
         placeholder={
           avatarUrl ?? (isDirect ? DEFAULT_USER_AVATAR : DEFAULT_GROUP_AVATAR)
         }
-        disabled={!isUserAdmin}
+        disabled={!isAdmin}
         onChange={handleSubmit("file")}
       />
 
       <div className={s.nameWrapper}>
-        {isUserAdmin && <div className={s.editButton}></div>}
+        {isAdmin && <div className={s.editButton}></div>}
         <ControlLabel
           className={s.editButton}
           defaultValue={name ?? ""}
-          disabled={!isUserAdmin}
+          disabled={!isAdmin}
           onSubmit={handleSubmit("name")}
           renderInput={(value, disabled, onChange, onKeyDown, ref) => (
             <input
@@ -64,7 +71,7 @@ export default function Details({ className, onCloseClick }) {
 
       {username && <span className={s.username}>@{username}</span>}
 
-      {(description || isUserAdmin) && (
+      {(description || isAdmin) && (
         <>
           <div className={s.statusHeading}>
             {username ? "Status" : "Description"}
@@ -72,7 +79,7 @@ export default function Details({ className, onCloseClick }) {
           <div className={s.descriptionWrapper}>
             <ControlLabel
               defaultValue={description ?? ""}
-              disabled={!isUserAdmin}
+              disabled={!isAdmin}
               onSubmit={handleSubmit("description")}
               renderInput={(value, disabled, onChange, onKeyDown, ref) => (
                 <textarea
@@ -86,7 +93,7 @@ export default function Details({ className, onCloseClick }) {
         </>
       )}
 
-      {!isDirect && <MemberList onMoreClick={handleMoreMembersClick} />}
+      {!isDirect && <Members onMoreClick={handleMoreMembersClick} />}
       {!isDirect && (
         <Modal isOpen={isModal} onClose={handleModalClose}>
           <AddMembers
@@ -100,7 +107,7 @@ export default function Details({ className, onCloseClick }) {
 
   function handleSubmit(field) {
     return async (value) => {
-      return await updateGroup(chatId, { [field]: value });
+      // return await updateGroup(profileId, { [field]: value }); // APICALL
     };
   }
 

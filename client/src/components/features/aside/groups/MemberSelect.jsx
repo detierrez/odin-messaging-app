@@ -1,13 +1,13 @@
 import { merge } from "@lib/index";
 import { arrowRight, cross, search } from "@lib/icons";
-import { Avatar, IconButton, Input, Name } from "@components/common";
+import { IconButton, Input, Loading } from "@components/common";
 import MenuTitle from "../shared/MenuTitle";
 import Menu from "../shared/Menu";
 import s from "./MemberSelect.module.css";
 import { useState } from "react";
+import { useFriends, useUser } from "@hooks";
 
 export default function MemberSelect({
-  friends,
   isButtonDisabled,
   checkSelected,
   selectMember,
@@ -16,7 +16,10 @@ export default function MemberSelect({
   ...props
 }) {
   const [searchText, setSearchText] = useState("");
+  const { friends, isLoading } = useFriends();
+  const friendsCount = friends.size;
 
+  if (isLoading) return <div>Loading...</div>;
   return (
     <Menu {...{ ...props }}>
       <MenuTitle src={cross} alt="cancel" onClick={onCancelClick}>
@@ -31,31 +34,20 @@ export default function MemberSelect({
         onChange={handleSearchChange}
         onIconClick={handleSearchCancel}
       />
-      {!friends ? (
-        <p className={s.placeholderText}>Loading</p>
-      ) : friends.length === 0 ? (
+      {friendsCount === 0 ? (
         <p className={s.placeholderText}>No friends found</p>
       ) : (
         <>
-          <div className={s.subheading}>Friends - {friends.length}</div>
+          <div className={s.subheading}>Friends - {friendsCount}</div>
           <div className={s.list}>
-            {friends.map(({ friendId }) => (
-              <button
+            {[...friends].map((friendId) => (
+              <FriendEntry
                 className={s.entry}
                 key={friendId}
+                friendId={friendId}
+                isSelected={checkSelected(friendId)}
                 onClick={() => selectMember(friendId)}
-              >
-                <input
-                  className={s.checkbox}
-                  type="checkbox"
-                  name="membersIds"
-                  id="membersIds"
-                  checked={checkSelected(friendId)}
-                  readOnly
-                />
-                <Avatar className={s.avatar} userId={friendId} />
-                <Name userId={friendId} />
-              </button>
+              />
             ))}
           </div>
         </>
@@ -65,7 +57,6 @@ export default function MemberSelect({
         variant="accent"
         src={arrowRight}
         alt="next"
-        isAccent={true}
         onClick={onNextClick}
         disabled={isButtonDisabled}
       />
@@ -78,4 +69,33 @@ export default function MemberSelect({
   function handleSearchCancel() {
     setSearchText("");
   }
+}
+
+function FriendEntry({ friendId, isSelected, ...props }) {
+  const { user, isLoading } = useUser(friendId, { waitAvatar: true });
+
+  return (
+    <>
+      {isLoading ? (
+        <button className={s.entry} {...props}>
+          <Loading className={s.checkbox} />
+          <Loading className={s.avatar} />
+          <Loading className={s.name} />
+        </button>
+      ) : (
+        <button className={s.entry} {...props}>
+          <input
+            className={s.checkbox}
+            type="checkbox"
+            name="membersIds"
+            id="membersIds"
+            checked={isSelected}
+            readOnly
+          />
+          <img className={s.avatar} src={user.avatarUrl} alt="" />
+          <div>{user.name}</div>
+        </button>
+      )}
+    </>
+  );
 }

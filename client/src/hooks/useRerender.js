@@ -1,6 +1,6 @@
 import { useReducer } from "react";
 
-export default function useRerender() {
+export function useRerender() {
   const [, rerender] = useReducer(() => ({}), {});
   return rerender;
 }

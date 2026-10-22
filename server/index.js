@@ -11,5 +11,5 @@ app.use(express.json());
 app.use(cors({ origin, credentials: true }));
 app.use("/", index);
 
-const server = initializeIo(app, { cors: { origin } });
+const server = initializeIo(app, { cors: { origin, credentials: true } });
 server.listen(PORT, () => console.log(`http://localhost:${PORT}`));

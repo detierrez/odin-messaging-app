@@ -2,10 +2,6 @@
   composes: accent from "@styles/shared.css";
 }
 
-.loading {
-  composes: loading from "@styles/shared.css";
-}
-
 .button {
   padding: 0.25em;
 
@@ -19,6 +15,7 @@
   }
 
   .img {
+    object-fit: cover;
     height: 1.15em;
     width: 1.15em;
     min-width: 0;

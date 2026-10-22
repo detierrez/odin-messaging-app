@@ -12,76 +12,62 @@ module.exports.postMember = async (req, res) => {
     throw new HttpError(422, "You cannot add yourself.");
   }
 
-  const { group, participation, message } = await prisma.$transaction(
-    async (tx) => {
-      const user = await tx.user.findUnique({
-        where: { id: memberId },
-        select: {
-          participations: { where: { groupId, endedAt: null } },
-          friendshipsA: { where: { friendAId: userId, endedAt: null } },
-          friendshipsB: { where: { friendBId: userId, endedAt: null } },
-        },
-      });
+  const { participation, message } = await prisma.$transaction(async (tx) => {
+    const user = await tx.user.findUnique({
+      where: { id: memberId },
+      select: {
+        participations: { where: { groupId, endedAt: null } },
+        friendshipsA: { where: { friendAId: userId, endedAt: null } },
+        friendshipsB: { where: { friendBId: userId, endedAt: null } },
+      },
+    });
 
-      if (!user) {
-        throw new HttpError(404, "User not found.");
-      }
+    if (!user) {
+      throw new HttpError(404, "User not found.");
+    }
 
-      if (user.participations) {
-        throw new HttpError(409, "This user is already a member.");
-      }
+    if (user.participations.length > 0) {
+      throw new HttpError(409, "This user is already a member.");
+    }
 
-      if (!user.friendshipsA && !user.friendshipsB) {
-        throw new HttpError(422, "You are not friends with this user.");
-      }
+    if (!(user.friendshipsA.length > 0 || user.friendshipsB.length > 0)) {
+      throw new HttpError(422, "You are not friends with this user.");
+    }
 
-      const message = await tx.message.create({
-        data: {
-          groupId,
-          type: "JOIN",
-          userId,
-          metadata: { targetUserId: memberId },
-        },
-        select: apiSelectors.message,
-      });
-
-      const participation = await tx.participation.create({
-        where: { id: chatId },
-        data: { userId, groupId },
-        select: {
-          userId: true,
-          groupId: true,
-          role: true,
-          group: {
-            select: {
-              id: true,
-              name: true,
-              description: true,
-              avatarUrl: true,
-              messages: {
-                select: apiSelectors.message,
-                take: 1,
-                orderBy: { id: "desc" },
-              },
-              participations: {
-                where: { endedAt: null },
-                select: { userId: true, groupId: true, role: true },
-              },
-            },
+    const { group, ...participation } = await tx.participation.upsert({
+      where: { userId_groupId: { userId: memberId, groupId } },
+      update: { endedAt: null, role: "MEMBER" },
+      create: { userId: memberId, groupId },
+      select: {
+        userId: true,
+        groupId: true,
+        role: true,
+        group: {
+          select: {
+            chat: { select: { id: true } },
           },
         },
-      });
+      },
+    });
 
-      return { group: participation.group, participation, message };
-    },
-  );
+    const message = await tx.message.create({
+      data: {
+        chatId: group.chat.id,
+        type: "JOIN",
+        userId,
+        metadata: { targetUserId: memberId },
+      },
+      select: apiSelectors.message,
+    });
+
+    return { participation, message };
+  });
 
   socketIo.notifyGroup(groupId, "add_participation", {
     participation,
   });
-  socketIo.notifyGroup(groupId, "add_message", { message });
-  socketIo.notifyUser(userId, "add_group", { group });
   socketIo.addToGroupRoom(memberId, groupId);
+  socketIo.notifyGroup(groupId, "add_message", { message });
 
   res.json({ success: true });
 };
@@ -163,10 +149,14 @@ module.exports.deleteMember = async (req, res) => {
   }
 
   const { participation, message } = await prisma.$transaction(async (tx) => {
-    const participation = await tx.participation.update({
+    const { group, ...participation } = await tx.participation.update({
       where: { userId_groupId: { userId: memberId, groupId }, endedAt: null },
       data: { endedAt: new Date() },
-      select: { userId: true, groupId: true },
+      select: {
+        userId: true,
+        groupId: true,
+        group: { select: { chat: { select: { id: true } } } },
+      },
     });
 
     if (!participation) {
@@ -175,7 +165,7 @@ module.exports.deleteMember = async (req, res) => {
 
     const message = await tx.message.create({
       data: {
-        groupId,
+        chatId: group.chat.id,
         type: "LEAVE",
         userId,
         metadata: { targetUserId: memberId },
@@ -202,18 +192,27 @@ module.exports.deleteMemberMe = async (req, res) => {
 
   const { participation, message, promotedParticipation, promotionMessage } =
     await prisma.$transaction(async (tx) => {
-      const participation = await tx.participation.update({
+      const {
+        group: {
+          chat: { id: chatId },
+        },
+        ...participation
+      } = await tx.participation.update({
         where: { userId_groupId: { userId, groupId }, endedAt: null },
         data: { endedAt: new Date() },
-        select: { userId: true, groupId: true, role: true },
+        select: {
+          userId: true,
+          groupId: true,
+          role: true,
+          group: { select: { chat: { select: { id: true } } } },
+        },
       });
 
       const message = await tx.message.create({
         data: {
-          groupId,
-          type: "LEAVE",
+          chatId,
           userId,
-          metadata: { targetUserId: memberId },
+          type: "LEAVE",
         },
         select: apiSelectors.message,
       });
@@ -224,7 +223,6 @@ module.exports.deleteMemberMe = async (req, res) => {
 
       const succeedingParticipation = await tx.participation.findFirst({
         where: { groupId, endedAt: null },
-        orderBy: { startedAt: "asc" },
         select: { userId: true },
       });
 
@@ -244,7 +242,7 @@ module.exports.deleteMemberMe = async (req, res) => {
 
       const promotionMessage = await tx.message.create({
         data: {
-          groupId,
+          chatId,
           type: "ROLE_UPDATE",
           userId: promotedId,
           metadata: { role },

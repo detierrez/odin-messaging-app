@@ -7,21 +7,21 @@ function onlyForHandshake(middleware) {
   return (req, res, next) => {
     const isHandshake = req._query.sid === undefined;
     if (isHandshake) {
-      // Node.js 22 removed the internal _header property and _implicitHeader()
-      // method that express-session relies on. Shim them back for compatibility.
-      if (typeof res._implicitHeader !== "function") {
-        res._implicitHeader = function () {
-          if (!this.headersSent) this.writeHead(this.statusCode);
-        };
-      }
-      if (!("_header" in res)) {
-        Object.defineProperty(res, "_header", {
-          get() {
-            return this.headersSent ? true : null;
-          },
-          configurable: true,
-        });
-      }
+      // // Node.js 22 removed the internal _header property and _implicitHeader()
+      // // method that express-session relies on. Shim them back for compatibility.
+      // if (typeof res._implicitHeader !== "function") {
+      //   res._implicitHeader = function () {
+      //     if (!this.headersSent) this.writeHead(this.statusCode);
+      //   };
+      // }
+      // if (!("_header" in res)) {
+      //   Object.defineProperty(res, "_header", {
+      //     get() {
+      //       return this.headersSent ? true : null;
+      //     },
+      //     configurable: true,
+      //   });
+      // }
       middleware(req, res, next);
     } else {
       next();
@@ -39,7 +39,7 @@ const initializeIo = (app, options) => {
   io.engine.use(onlyForHandshake(m.passport.session));
   io.engine.use(
     onlyForHandshake((req, res, next) => {
-      if (req.user) {
+      if (req.isAuthenticated()) {
         next();
       } else {
         res.writeHead(401);
@@ -70,6 +70,7 @@ const initializeIo = (app, options) => {
 };
 
 function notifyUser(userIds, action, payload) {
+  console.log(`Notifying ${action} to '${getUserRoomIds(userIds)}'`);
   io.to(getUserRoomIds(userIds)).emit(action, payload);
 }
 
