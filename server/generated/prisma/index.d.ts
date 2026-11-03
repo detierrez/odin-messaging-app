@@ -24,6 +24,11 @@ export type Session = $Result.DefaultSelection<Prisma.$SessionPayload>
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
+ * Model Password
+ * 
+ */
+export type Password = $Result.DefaultSelection<Prisma.$PasswordPayload>
+/**
  * Model Request
  * 
  */
@@ -228,6 +233,16 @@ export class PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.password`: Exposes CRUD operations for the **Password** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Passwords
+    * const passwords = await prisma.password.findMany()
+    * ```
+    */
+  get password(): Prisma.PasswordDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.request`: Exposes CRUD operations for the **Request** model.
@@ -724,6 +739,7 @@ export namespace Prisma {
   export const ModelName: {
     Session: 'Session',
     User: 'User',
+    Password: 'Password',
     Request: 'Request',
     Friendship: 'Friendship',
     Group: 'Group',
@@ -745,7 +761,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "session" | "user" | "request" | "friendship" | "group" | "participation" | "chat" | "message"
+      modelProps: "session" | "user" | "password" | "request" | "friendship" | "group" | "participation" | "chat" | "message"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -894,6 +910,80 @@ export namespace Prisma {
           count: {
             args: Prisma.UserCountArgs<ExtArgs>
             result: $Utils.Optional<UserCountAggregateOutputType> | number
+          }
+        }
+      }
+      Password: {
+        payload: Prisma.$PasswordPayload<ExtArgs>
+        fields: Prisma.PasswordFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PasswordFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasswordPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PasswordFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasswordPayload>
+          }
+          findFirst: {
+            args: Prisma.PasswordFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasswordPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PasswordFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasswordPayload>
+          }
+          findMany: {
+            args: Prisma.PasswordFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasswordPayload>[]
+          }
+          create: {
+            args: Prisma.PasswordCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasswordPayload>
+          }
+          createMany: {
+            args: Prisma.PasswordCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PasswordCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasswordPayload>[]
+          }
+          delete: {
+            args: Prisma.PasswordDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasswordPayload>
+          }
+          update: {
+            args: Prisma.PasswordUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasswordPayload>
+          }
+          deleteMany: {
+            args: Prisma.PasswordDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PasswordUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PasswordUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasswordPayload>[]
+          }
+          upsert: {
+            args: Prisma.PasswordUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasswordPayload>
+          }
+          aggregate: {
+            args: Prisma.PasswordAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePassword>
+          }
+          groupBy: {
+            args: Prisma.PasswordGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PasswordGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PasswordCountArgs<ExtArgs>
+            result: $Utils.Optional<PasswordCountAggregateOutputType> | number
           }
         }
       }
@@ -1451,6 +1541,7 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     session?: SessionOmit
     user?: UserOmit
+    password?: PasswordOmit
     request?: RequestOmit
     friendship?: FriendshipOmit
     group?: GroupOmit
@@ -2865,6 +2956,7 @@ export namespace Prisma {
     friendshipsB?: boolean | User$friendshipsBArgs<ExtArgs>
     participations?: boolean | User$participationsArgs<ExtArgs>
     messages?: boolean | User$messagesArgs<ExtArgs>
+    password?: boolean | User$passwordArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2900,6 +2992,7 @@ export namespace Prisma {
     friendshipsB?: boolean | User$friendshipsBArgs<ExtArgs>
     participations?: boolean | User$participationsArgs<ExtArgs>
     messages?: boolean | User$messagesArgs<ExtArgs>
+    password?: boolean | User$passwordArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2914,6 +3007,7 @@ export namespace Prisma {
       friendshipsB: Prisma.$FriendshipPayload<ExtArgs>[]
       participations: Prisma.$ParticipationPayload<ExtArgs>[]
       messages: Prisma.$MessagePayload<ExtArgs>[]
+      password: Prisma.$PasswordPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -3321,6 +3415,7 @@ export namespace Prisma {
     friendshipsB<T extends User$friendshipsBArgs<ExtArgs> = {}>(args?: Subset<T, User$friendshipsBArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FriendshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     participations<T extends User$participationsArgs<ExtArgs> = {}>(args?: Subset<T, User$participationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParticipationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     messages<T extends User$messagesArgs<ExtArgs> = {}>(args?: Subset<T, User$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    password<T extends User$passwordArgs<ExtArgs> = {}>(args?: Subset<T, User$passwordArgs<ExtArgs>>): Prisma__PasswordClient<$Result.GetResult<Prisma.$PasswordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3892,6 +3987,25 @@ export namespace Prisma {
   }
 
   /**
+   * User.password
+   */
+  export type User$passwordArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Password
+     */
+    select?: PasswordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Password
+     */
+    omit?: PasswordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasswordInclude<ExtArgs> | null
+    where?: PasswordWhereInput
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3907,6 +4021,1064 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Password
+   */
+
+  export type AggregatePassword = {
+    _count: PasswordCountAggregateOutputType | null
+    _avg: PasswordAvgAggregateOutputType | null
+    _sum: PasswordSumAggregateOutputType | null
+    _min: PasswordMinAggregateOutputType | null
+    _max: PasswordMaxAggregateOutputType | null
+  }
+
+  export type PasswordAvgAggregateOutputType = {
+    userId: number | null
+  }
+
+  export type PasswordSumAggregateOutputType = {
+    userId: number | null
+  }
+
+  export type PasswordMinAggregateOutputType = {
+    userId: number | null
+    hash: string | null
+  }
+
+  export type PasswordMaxAggregateOutputType = {
+    userId: number | null
+    hash: string | null
+  }
+
+  export type PasswordCountAggregateOutputType = {
+    userId: number
+    hash: number
+    _all: number
+  }
+
+
+  export type PasswordAvgAggregateInputType = {
+    userId?: true
+  }
+
+  export type PasswordSumAggregateInputType = {
+    userId?: true
+  }
+
+  export type PasswordMinAggregateInputType = {
+    userId?: true
+    hash?: true
+  }
+
+  export type PasswordMaxAggregateInputType = {
+    userId?: true
+    hash?: true
+  }
+
+  export type PasswordCountAggregateInputType = {
+    userId?: true
+    hash?: true
+    _all?: true
+  }
+
+  export type PasswordAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Password to aggregate.
+     */
+    where?: PasswordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Passwords to fetch.
+     */
+    orderBy?: PasswordOrderByWithRelationInput | PasswordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PasswordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Passwords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Passwords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Passwords
+    **/
+    _count?: true | PasswordCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PasswordAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PasswordSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PasswordMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PasswordMaxAggregateInputType
+  }
+
+  export type GetPasswordAggregateType<T extends PasswordAggregateArgs> = {
+        [P in keyof T & keyof AggregatePassword]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePassword[P]>
+      : GetScalarType<T[P], AggregatePassword[P]>
+  }
+
+
+
+
+  export type PasswordGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PasswordWhereInput
+    orderBy?: PasswordOrderByWithAggregationInput | PasswordOrderByWithAggregationInput[]
+    by: PasswordScalarFieldEnum[] | PasswordScalarFieldEnum
+    having?: PasswordScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PasswordCountAggregateInputType | true
+    _avg?: PasswordAvgAggregateInputType
+    _sum?: PasswordSumAggregateInputType
+    _min?: PasswordMinAggregateInputType
+    _max?: PasswordMaxAggregateInputType
+  }
+
+  export type PasswordGroupByOutputType = {
+    userId: number
+    hash: string
+    _count: PasswordCountAggregateOutputType | null
+    _avg: PasswordAvgAggregateOutputType | null
+    _sum: PasswordSumAggregateOutputType | null
+    _min: PasswordMinAggregateOutputType | null
+    _max: PasswordMaxAggregateOutputType | null
+  }
+
+  type GetPasswordGroupByPayload<T extends PasswordGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PasswordGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PasswordGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PasswordGroupByOutputType[P]>
+            : GetScalarType<T[P], PasswordGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PasswordSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    userId?: boolean
+    hash?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["password"]>
+
+  export type PasswordSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    userId?: boolean
+    hash?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["password"]>
+
+  export type PasswordSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    userId?: boolean
+    hash?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["password"]>
+
+  export type PasswordSelectScalar = {
+    userId?: boolean
+    hash?: boolean
+  }
+
+  export type PasswordOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"userId" | "hash", ExtArgs["result"]["password"]>
+  export type PasswordInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type PasswordIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type PasswordIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $PasswordPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Password"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      userId: number
+      hash: string
+    }, ExtArgs["result"]["password"]>
+    composites: {}
+  }
+
+  type PasswordGetPayload<S extends boolean | null | undefined | PasswordDefaultArgs> = $Result.GetResult<Prisma.$PasswordPayload, S>
+
+  type PasswordCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PasswordFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PasswordCountAggregateInputType | true
+    }
+
+  export interface PasswordDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Password'], meta: { name: 'Password' } }
+    /**
+     * Find zero or one Password that matches the filter.
+     * @param {PasswordFindUniqueArgs} args - Arguments to find a Password
+     * @example
+     * // Get one Password
+     * const password = await prisma.password.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PasswordFindUniqueArgs>(args: SelectSubset<T, PasswordFindUniqueArgs<ExtArgs>>): Prisma__PasswordClient<$Result.GetResult<Prisma.$PasswordPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Password that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PasswordFindUniqueOrThrowArgs} args - Arguments to find a Password
+     * @example
+     * // Get one Password
+     * const password = await prisma.password.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PasswordFindUniqueOrThrowArgs>(args: SelectSubset<T, PasswordFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PasswordClient<$Result.GetResult<Prisma.$PasswordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Password that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasswordFindFirstArgs} args - Arguments to find a Password
+     * @example
+     * // Get one Password
+     * const password = await prisma.password.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PasswordFindFirstArgs>(args?: SelectSubset<T, PasswordFindFirstArgs<ExtArgs>>): Prisma__PasswordClient<$Result.GetResult<Prisma.$PasswordPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Password that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasswordFindFirstOrThrowArgs} args - Arguments to find a Password
+     * @example
+     * // Get one Password
+     * const password = await prisma.password.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PasswordFindFirstOrThrowArgs>(args?: SelectSubset<T, PasswordFindFirstOrThrowArgs<ExtArgs>>): Prisma__PasswordClient<$Result.GetResult<Prisma.$PasswordPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Passwords that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasswordFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Passwords
+     * const passwords = await prisma.password.findMany()
+     * 
+     * // Get first 10 Passwords
+     * const passwords = await prisma.password.findMany({ take: 10 })
+     * 
+     * // Only select the `userId`
+     * const passwordWithUserIdOnly = await prisma.password.findMany({ select: { userId: true } })
+     * 
+     */
+    findMany<T extends PasswordFindManyArgs>(args?: SelectSubset<T, PasswordFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasswordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Password.
+     * @param {PasswordCreateArgs} args - Arguments to create a Password.
+     * @example
+     * // Create one Password
+     * const Password = await prisma.password.create({
+     *   data: {
+     *     // ... data to create a Password
+     *   }
+     * })
+     * 
+     */
+    create<T extends PasswordCreateArgs>(args: SelectSubset<T, PasswordCreateArgs<ExtArgs>>): Prisma__PasswordClient<$Result.GetResult<Prisma.$PasswordPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Passwords.
+     * @param {PasswordCreateManyArgs} args - Arguments to create many Passwords.
+     * @example
+     * // Create many Passwords
+     * const password = await prisma.password.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PasswordCreateManyArgs>(args?: SelectSubset<T, PasswordCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Passwords and returns the data saved in the database.
+     * @param {PasswordCreateManyAndReturnArgs} args - Arguments to create many Passwords.
+     * @example
+     * // Create many Passwords
+     * const password = await prisma.password.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Passwords and only return the `userId`
+     * const passwordWithUserIdOnly = await prisma.password.createManyAndReturn({
+     *   select: { userId: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PasswordCreateManyAndReturnArgs>(args?: SelectSubset<T, PasswordCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasswordPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Password.
+     * @param {PasswordDeleteArgs} args - Arguments to delete one Password.
+     * @example
+     * // Delete one Password
+     * const Password = await prisma.password.delete({
+     *   where: {
+     *     // ... filter to delete one Password
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PasswordDeleteArgs>(args: SelectSubset<T, PasswordDeleteArgs<ExtArgs>>): Prisma__PasswordClient<$Result.GetResult<Prisma.$PasswordPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Password.
+     * @param {PasswordUpdateArgs} args - Arguments to update one Password.
+     * @example
+     * // Update one Password
+     * const password = await prisma.password.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PasswordUpdateArgs>(args: SelectSubset<T, PasswordUpdateArgs<ExtArgs>>): Prisma__PasswordClient<$Result.GetResult<Prisma.$PasswordPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Passwords.
+     * @param {PasswordDeleteManyArgs} args - Arguments to filter Passwords to delete.
+     * @example
+     * // Delete a few Passwords
+     * const { count } = await prisma.password.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PasswordDeleteManyArgs>(args?: SelectSubset<T, PasswordDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Passwords.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasswordUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Passwords
+     * const password = await prisma.password.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PasswordUpdateManyArgs>(args: SelectSubset<T, PasswordUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Passwords and returns the data updated in the database.
+     * @param {PasswordUpdateManyAndReturnArgs} args - Arguments to update many Passwords.
+     * @example
+     * // Update many Passwords
+     * const password = await prisma.password.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Passwords and only return the `userId`
+     * const passwordWithUserIdOnly = await prisma.password.updateManyAndReturn({
+     *   select: { userId: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PasswordUpdateManyAndReturnArgs>(args: SelectSubset<T, PasswordUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasswordPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Password.
+     * @param {PasswordUpsertArgs} args - Arguments to update or create a Password.
+     * @example
+     * // Update or create a Password
+     * const password = await prisma.password.upsert({
+     *   create: {
+     *     // ... data to create a Password
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Password we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PasswordUpsertArgs>(args: SelectSubset<T, PasswordUpsertArgs<ExtArgs>>): Prisma__PasswordClient<$Result.GetResult<Prisma.$PasswordPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Passwords.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasswordCountArgs} args - Arguments to filter Passwords to count.
+     * @example
+     * // Count the number of Passwords
+     * const count = await prisma.password.count({
+     *   where: {
+     *     // ... the filter for the Passwords we want to count
+     *   }
+     * })
+    **/
+    count<T extends PasswordCountArgs>(
+      args?: Subset<T, PasswordCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PasswordCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Password.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasswordAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PasswordAggregateArgs>(args: Subset<T, PasswordAggregateArgs>): Prisma.PrismaPromise<GetPasswordAggregateType<T>>
+
+    /**
+     * Group by Password.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasswordGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PasswordGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PasswordGroupByArgs['orderBy'] }
+        : { orderBy?: PasswordGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PasswordGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPasswordGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Password model
+   */
+  readonly fields: PasswordFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Password.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PasswordClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Password model
+   */
+  interface PasswordFieldRefs {
+    readonly userId: FieldRef<"Password", 'Int'>
+    readonly hash: FieldRef<"Password", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Password findUnique
+   */
+  export type PasswordFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Password
+     */
+    select?: PasswordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Password
+     */
+    omit?: PasswordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasswordInclude<ExtArgs> | null
+    /**
+     * Filter, which Password to fetch.
+     */
+    where: PasswordWhereUniqueInput
+  }
+
+  /**
+   * Password findUniqueOrThrow
+   */
+  export type PasswordFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Password
+     */
+    select?: PasswordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Password
+     */
+    omit?: PasswordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasswordInclude<ExtArgs> | null
+    /**
+     * Filter, which Password to fetch.
+     */
+    where: PasswordWhereUniqueInput
+  }
+
+  /**
+   * Password findFirst
+   */
+  export type PasswordFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Password
+     */
+    select?: PasswordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Password
+     */
+    omit?: PasswordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasswordInclude<ExtArgs> | null
+    /**
+     * Filter, which Password to fetch.
+     */
+    where?: PasswordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Passwords to fetch.
+     */
+    orderBy?: PasswordOrderByWithRelationInput | PasswordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Passwords.
+     */
+    cursor?: PasswordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Passwords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Passwords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Passwords.
+     */
+    distinct?: PasswordScalarFieldEnum | PasswordScalarFieldEnum[]
+  }
+
+  /**
+   * Password findFirstOrThrow
+   */
+  export type PasswordFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Password
+     */
+    select?: PasswordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Password
+     */
+    omit?: PasswordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasswordInclude<ExtArgs> | null
+    /**
+     * Filter, which Password to fetch.
+     */
+    where?: PasswordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Passwords to fetch.
+     */
+    orderBy?: PasswordOrderByWithRelationInput | PasswordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Passwords.
+     */
+    cursor?: PasswordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Passwords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Passwords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Passwords.
+     */
+    distinct?: PasswordScalarFieldEnum | PasswordScalarFieldEnum[]
+  }
+
+  /**
+   * Password findMany
+   */
+  export type PasswordFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Password
+     */
+    select?: PasswordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Password
+     */
+    omit?: PasswordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasswordInclude<ExtArgs> | null
+    /**
+     * Filter, which Passwords to fetch.
+     */
+    where?: PasswordWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Passwords to fetch.
+     */
+    orderBy?: PasswordOrderByWithRelationInput | PasswordOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Passwords.
+     */
+    cursor?: PasswordWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Passwords from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Passwords.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Passwords.
+     */
+    distinct?: PasswordScalarFieldEnum | PasswordScalarFieldEnum[]
+  }
+
+  /**
+   * Password create
+   */
+  export type PasswordCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Password
+     */
+    select?: PasswordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Password
+     */
+    omit?: PasswordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasswordInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Password.
+     */
+    data: XOR<PasswordCreateInput, PasswordUncheckedCreateInput>
+  }
+
+  /**
+   * Password createMany
+   */
+  export type PasswordCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Passwords.
+     */
+    data: PasswordCreateManyInput | PasswordCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Password createManyAndReturn
+   */
+  export type PasswordCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Password
+     */
+    select?: PasswordSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Password
+     */
+    omit?: PasswordOmit<ExtArgs> | null
+    /**
+     * The data used to create many Passwords.
+     */
+    data: PasswordCreateManyInput | PasswordCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasswordIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Password update
+   */
+  export type PasswordUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Password
+     */
+    select?: PasswordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Password
+     */
+    omit?: PasswordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasswordInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Password.
+     */
+    data: XOR<PasswordUpdateInput, PasswordUncheckedUpdateInput>
+    /**
+     * Choose, which Password to update.
+     */
+    where: PasswordWhereUniqueInput
+  }
+
+  /**
+   * Password updateMany
+   */
+  export type PasswordUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Passwords.
+     */
+    data: XOR<PasswordUpdateManyMutationInput, PasswordUncheckedUpdateManyInput>
+    /**
+     * Filter which Passwords to update
+     */
+    where?: PasswordWhereInput
+    /**
+     * Limit how many Passwords to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Password updateManyAndReturn
+   */
+  export type PasswordUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Password
+     */
+    select?: PasswordSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Password
+     */
+    omit?: PasswordOmit<ExtArgs> | null
+    /**
+     * The data used to update Passwords.
+     */
+    data: XOR<PasswordUpdateManyMutationInput, PasswordUncheckedUpdateManyInput>
+    /**
+     * Filter which Passwords to update
+     */
+    where?: PasswordWhereInput
+    /**
+     * Limit how many Passwords to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasswordIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Password upsert
+   */
+  export type PasswordUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Password
+     */
+    select?: PasswordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Password
+     */
+    omit?: PasswordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasswordInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Password to update in case it exists.
+     */
+    where: PasswordWhereUniqueInput
+    /**
+     * In case the Password found by the `where` argument doesn't exist, create a new Password with this data.
+     */
+    create: XOR<PasswordCreateInput, PasswordUncheckedCreateInput>
+    /**
+     * In case the Password was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PasswordUpdateInput, PasswordUncheckedUpdateInput>
+  }
+
+  /**
+   * Password delete
+   */
+  export type PasswordDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Password
+     */
+    select?: PasswordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Password
+     */
+    omit?: PasswordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasswordInclude<ExtArgs> | null
+    /**
+     * Filter which Password to delete.
+     */
+    where: PasswordWhereUniqueInput
+  }
+
+  /**
+   * Password deleteMany
+   */
+  export type PasswordDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Passwords to delete
+     */
+    where?: PasswordWhereInput
+    /**
+     * Limit how many Passwords to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Password without action
+   */
+  export type PasswordDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Password
+     */
+    select?: PasswordSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Password
+     */
+    omit?: PasswordOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasswordInclude<ExtArgs> | null
   }
 
 
@@ -10656,6 +11828,14 @@ export namespace Prisma {
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+  export const PasswordScalarFieldEnum: {
+    userId: 'userId',
+    hash: 'hash'
+  };
+
+  export type PasswordScalarFieldEnum = (typeof PasswordScalarFieldEnum)[keyof typeof PasswordScalarFieldEnum]
+
+
   export const RequestScalarFieldEnum: {
     senderId: 'senderId',
     receiverId: 'receiverId'
@@ -10926,6 +12106,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipListRelationFilter
     participations?: ParticipationListRelationFilter
     messages?: MessageListRelationFilter
+    password?: XOR<PasswordNullableScalarRelationFilter, PasswordWhereInput> | null
   }
 
   export type UserOrderByWithRelationInput = {
@@ -10940,6 +12121,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipOrderByRelationAggregateInput
     participations?: ParticipationOrderByRelationAggregateInput
     messages?: MessageOrderByRelationAggregateInput
+    password?: PasswordOrderByWithRelationInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -10957,6 +12139,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipListRelationFilter
     participations?: ParticipationListRelationFilter
     messages?: MessageListRelationFilter
+    password?: XOR<PasswordNullableScalarRelationFilter, PasswordWhereInput> | null
   }, "id" | "username">
 
   export type UserOrderByWithAggregationInput = {
@@ -10981,6 +12164,48 @@ export namespace Prisma {
     alias?: StringNullableWithAggregatesFilter<"User"> | string | null
     avatarUrl?: StringNullableWithAggregatesFilter<"User"> | string | null
     description?: StringNullableWithAggregatesFilter<"User"> | string | null
+  }
+
+  export type PasswordWhereInput = {
+    AND?: PasswordWhereInput | PasswordWhereInput[]
+    OR?: PasswordWhereInput[]
+    NOT?: PasswordWhereInput | PasswordWhereInput[]
+    userId?: IntFilter<"Password"> | number
+    hash?: StringFilter<"Password"> | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type PasswordOrderByWithRelationInput = {
+    userId?: SortOrder
+    hash?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type PasswordWhereUniqueInput = Prisma.AtLeast<{
+    userId?: number
+    AND?: PasswordWhereInput | PasswordWhereInput[]
+    OR?: PasswordWhereInput[]
+    NOT?: PasswordWhereInput | PasswordWhereInput[]
+    hash?: StringFilter<"Password"> | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "userId">
+
+  export type PasswordOrderByWithAggregationInput = {
+    userId?: SortOrder
+    hash?: SortOrder
+    _count?: PasswordCountOrderByAggregateInput
+    _avg?: PasswordAvgOrderByAggregateInput
+    _max?: PasswordMaxOrderByAggregateInput
+    _min?: PasswordMinOrderByAggregateInput
+    _sum?: PasswordSumOrderByAggregateInput
+  }
+
+  export type PasswordScalarWhereWithAggregatesInput = {
+    AND?: PasswordScalarWhereWithAggregatesInput | PasswordScalarWhereWithAggregatesInput[]
+    OR?: PasswordScalarWhereWithAggregatesInput[]
+    NOT?: PasswordScalarWhereWithAggregatesInput | PasswordScalarWhereWithAggregatesInput[]
+    userId?: IntWithAggregatesFilter<"Password"> | number
+    hash?: StringWithAggregatesFilter<"Password"> | string
   }
 
   export type RequestWhereInput = {
@@ -11388,6 +12613,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipCreateNestedManyWithoutFriendAInput
     participations?: ParticipationCreateNestedManyWithoutUserInput
     messages?: MessageCreateNestedManyWithoutUserInput
+    password?: PasswordCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -11402,6 +12628,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipUncheckedCreateNestedManyWithoutFriendAInput
     participations?: ParticipationUncheckedCreateNestedManyWithoutUserInput
     messages?: MessageUncheckedCreateNestedManyWithoutUserInput
+    password?: PasswordUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -11415,6 +12642,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipUpdateManyWithoutFriendANestedInput
     participations?: ParticipationUpdateManyWithoutUserNestedInput
     messages?: MessageUpdateManyWithoutUserNestedInput
+    password?: PasswordUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -11429,6 +12657,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipUncheckedUpdateManyWithoutFriendANestedInput
     participations?: ParticipationUncheckedUpdateManyWithoutUserNestedInput
     messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
+    password?: PasswordUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -11452,6 +12681,40 @@ export namespace Prisma {
     alias?: NullableStringFieldUpdateOperationsInput | string | null
     avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type PasswordCreateInput = {
+    hash: string
+    user: UserCreateNestedOneWithoutPasswordInput
+  }
+
+  export type PasswordUncheckedCreateInput = {
+    userId: number
+    hash: string
+  }
+
+  export type PasswordUpdateInput = {
+    hash?: StringFieldUpdateOperationsInput | string
+    user?: UserUpdateOneRequiredWithoutPasswordNestedInput
+  }
+
+  export type PasswordUncheckedUpdateInput = {
+    userId?: IntFieldUpdateOperationsInput | number
+    hash?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PasswordCreateManyInput = {
+    userId: number
+    hash: string
+  }
+
+  export type PasswordUpdateManyMutationInput = {
+    hash?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PasswordUncheckedUpdateManyInput = {
+    userId?: IntFieldUpdateOperationsInput | number
+    hash?: StringFieldUpdateOperationsInput | string
   }
 
   export type RequestCreateInput = {
@@ -11880,6 +13143,11 @@ export namespace Prisma {
     none?: MessageWhereInput
   }
 
+  export type PasswordNullableScalarRelationFilter = {
+    is?: PasswordWhereInput | null
+    isNot?: PasswordWhereInput | null
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -11970,6 +13238,29 @@ export namespace Prisma {
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
+  }
+
+  export type PasswordCountOrderByAggregateInput = {
+    userId?: SortOrder
+    hash?: SortOrder
+  }
+
+  export type PasswordAvgOrderByAggregateInput = {
+    userId?: SortOrder
+  }
+
+  export type PasswordMaxOrderByAggregateInput = {
+    userId?: SortOrder
+    hash?: SortOrder
+  }
+
+  export type PasswordMinOrderByAggregateInput = {
+    userId?: SortOrder
+    hash?: SortOrder
+  }
+
+  export type PasswordSumOrderByAggregateInput = {
+    userId?: SortOrder
   }
 
   export type RequestSenderIdReceiverIdCompoundUniqueInput = {
@@ -12393,6 +13684,12 @@ export namespace Prisma {
     connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
   }
 
+  export type PasswordCreateNestedOneWithoutUserInput = {
+    create?: XOR<PasswordCreateWithoutUserInput, PasswordUncheckedCreateWithoutUserInput>
+    connectOrCreate?: PasswordCreateOrConnectWithoutUserInput
+    connect?: PasswordWhereUniqueInput
+  }
+
   export type RequestUncheckedCreateNestedManyWithoutSenderInput = {
     create?: XOR<RequestCreateWithoutSenderInput, RequestUncheckedCreateWithoutSenderInput> | RequestCreateWithoutSenderInput[] | RequestUncheckedCreateWithoutSenderInput[]
     connectOrCreate?: RequestCreateOrConnectWithoutSenderInput | RequestCreateOrConnectWithoutSenderInput[]
@@ -12433,6 +13730,12 @@ export namespace Prisma {
     connectOrCreate?: MessageCreateOrConnectWithoutUserInput | MessageCreateOrConnectWithoutUserInput[]
     createMany?: MessageCreateManyUserInputEnvelope
     connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+  }
+
+  export type PasswordUncheckedCreateNestedOneWithoutUserInput = {
+    create?: XOR<PasswordCreateWithoutUserInput, PasswordUncheckedCreateWithoutUserInput>
+    connectOrCreate?: PasswordCreateOrConnectWithoutUserInput
+    connect?: PasswordWhereUniqueInput
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
@@ -12521,6 +13824,16 @@ export namespace Prisma {
     update?: MessageUpdateWithWhereUniqueWithoutUserInput | MessageUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: MessageUpdateManyWithWhereWithoutUserInput | MessageUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
+  }
+
+  export type PasswordUpdateOneWithoutUserNestedInput = {
+    create?: XOR<PasswordCreateWithoutUserInput, PasswordUncheckedCreateWithoutUserInput>
+    connectOrCreate?: PasswordCreateOrConnectWithoutUserInput
+    upsert?: PasswordUpsertWithoutUserInput
+    disconnect?: PasswordWhereInput | boolean
+    delete?: PasswordWhereInput | boolean
+    connect?: PasswordWhereUniqueInput
+    update?: XOR<XOR<PasswordUpdateToOneWithWhereWithoutUserInput, PasswordUpdateWithoutUserInput>, PasswordUncheckedUpdateWithoutUserInput>
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -12613,6 +13926,30 @@ export namespace Prisma {
     update?: MessageUpdateWithWhereUniqueWithoutUserInput | MessageUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: MessageUpdateManyWithWhereWithoutUserInput | MessageUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
+  }
+
+  export type PasswordUncheckedUpdateOneWithoutUserNestedInput = {
+    create?: XOR<PasswordCreateWithoutUserInput, PasswordUncheckedCreateWithoutUserInput>
+    connectOrCreate?: PasswordCreateOrConnectWithoutUserInput
+    upsert?: PasswordUpsertWithoutUserInput
+    disconnect?: PasswordWhereInput | boolean
+    delete?: PasswordWhereInput | boolean
+    connect?: PasswordWhereUniqueInput
+    update?: XOR<XOR<PasswordUpdateToOneWithWhereWithoutUserInput, PasswordUpdateWithoutUserInput>, PasswordUncheckedUpdateWithoutUserInput>
+  }
+
+  export type UserCreateNestedOneWithoutPasswordInput = {
+    create?: XOR<UserCreateWithoutPasswordInput, UserUncheckedCreateWithoutPasswordInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPasswordInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutPasswordNestedInput = {
+    create?: XOR<UserCreateWithoutPasswordInput, UserUncheckedCreateWithoutPasswordInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPasswordInput
+    upsert?: UserUpsertWithoutPasswordInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPasswordInput, UserUpdateWithoutPasswordInput>, UserUncheckedUpdateWithoutPasswordInput>
   }
 
   export type UserCreateNestedOneWithoutSentRequestsInput = {
@@ -13303,6 +14640,19 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type PasswordCreateWithoutUserInput = {
+    hash: string
+  }
+
+  export type PasswordUncheckedCreateWithoutUserInput = {
+    hash: string
+  }
+
+  export type PasswordCreateOrConnectWithoutUserInput = {
+    where: PasswordWhereUniqueInput
+    create: XOR<PasswordCreateWithoutUserInput, PasswordUncheckedCreateWithoutUserInput>
+  }
+
   export type RequestUpsertWithWhereUniqueWithoutSenderInput = {
     where: RequestWhereUniqueInput
     update: XOR<RequestUpdateWithoutSenderInput, RequestUncheckedUpdateWithoutSenderInput>
@@ -13440,6 +14790,95 @@ export namespace Prisma {
     metadata?: JsonNullableFilter<"Message">
   }
 
+  export type PasswordUpsertWithoutUserInput = {
+    update: XOR<PasswordUpdateWithoutUserInput, PasswordUncheckedUpdateWithoutUserInput>
+    create: XOR<PasswordCreateWithoutUserInput, PasswordUncheckedCreateWithoutUserInput>
+    where?: PasswordWhereInput
+  }
+
+  export type PasswordUpdateToOneWithWhereWithoutUserInput = {
+    where?: PasswordWhereInput
+    data: XOR<PasswordUpdateWithoutUserInput, PasswordUncheckedUpdateWithoutUserInput>
+  }
+
+  export type PasswordUpdateWithoutUserInput = {
+    hash?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PasswordUncheckedUpdateWithoutUserInput = {
+    hash?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type UserCreateWithoutPasswordInput = {
+    username: string
+    alias?: string | null
+    avatarUrl?: string | null
+    description?: string | null
+    sentRequests?: RequestCreateNestedManyWithoutSenderInput
+    receivedRequests?: RequestCreateNestedManyWithoutReceiverInput
+    friendshipsA?: FriendshipCreateNestedManyWithoutFriendBInput
+    friendshipsB?: FriendshipCreateNestedManyWithoutFriendAInput
+    participations?: ParticipationCreateNestedManyWithoutUserInput
+    messages?: MessageCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutPasswordInput = {
+    id?: number
+    username: string
+    alias?: string | null
+    avatarUrl?: string | null
+    description?: string | null
+    sentRequests?: RequestUncheckedCreateNestedManyWithoutSenderInput
+    receivedRequests?: RequestUncheckedCreateNestedManyWithoutReceiverInput
+    friendshipsA?: FriendshipUncheckedCreateNestedManyWithoutFriendBInput
+    friendshipsB?: FriendshipUncheckedCreateNestedManyWithoutFriendAInput
+    participations?: ParticipationUncheckedCreateNestedManyWithoutUserInput
+    messages?: MessageUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutPasswordInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutPasswordInput, UserUncheckedCreateWithoutPasswordInput>
+  }
+
+  export type UserUpsertWithoutPasswordInput = {
+    update: XOR<UserUpdateWithoutPasswordInput, UserUncheckedUpdateWithoutPasswordInput>
+    create: XOR<UserCreateWithoutPasswordInput, UserUncheckedCreateWithoutPasswordInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutPasswordInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutPasswordInput, UserUncheckedUpdateWithoutPasswordInput>
+  }
+
+  export type UserUpdateWithoutPasswordInput = {
+    username?: StringFieldUpdateOperationsInput | string
+    alias?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sentRequests?: RequestUpdateManyWithoutSenderNestedInput
+    receivedRequests?: RequestUpdateManyWithoutReceiverNestedInput
+    friendshipsA?: FriendshipUpdateManyWithoutFriendBNestedInput
+    friendshipsB?: FriendshipUpdateManyWithoutFriendANestedInput
+    participations?: ParticipationUpdateManyWithoutUserNestedInput
+    messages?: MessageUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutPasswordInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    username?: StringFieldUpdateOperationsInput | string
+    alias?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    sentRequests?: RequestUncheckedUpdateManyWithoutSenderNestedInput
+    receivedRequests?: RequestUncheckedUpdateManyWithoutReceiverNestedInput
+    friendshipsA?: FriendshipUncheckedUpdateManyWithoutFriendBNestedInput
+    friendshipsB?: FriendshipUncheckedUpdateManyWithoutFriendANestedInput
+    participations?: ParticipationUncheckedUpdateManyWithoutUserNestedInput
+    messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type UserCreateWithoutSentRequestsInput = {
     username: string
     alias?: string | null
@@ -13450,6 +14889,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipCreateNestedManyWithoutFriendAInput
     participations?: ParticipationCreateNestedManyWithoutUserInput
     messages?: MessageCreateNestedManyWithoutUserInput
+    password?: PasswordCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSentRequestsInput = {
@@ -13463,6 +14903,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipUncheckedCreateNestedManyWithoutFriendAInput
     participations?: ParticipationUncheckedCreateNestedManyWithoutUserInput
     messages?: MessageUncheckedCreateNestedManyWithoutUserInput
+    password?: PasswordUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSentRequestsInput = {
@@ -13480,6 +14921,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipCreateNestedManyWithoutFriendAInput
     participations?: ParticipationCreateNestedManyWithoutUserInput
     messages?: MessageCreateNestedManyWithoutUserInput
+    password?: PasswordCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutReceivedRequestsInput = {
@@ -13493,6 +14935,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipUncheckedCreateNestedManyWithoutFriendAInput
     participations?: ParticipationUncheckedCreateNestedManyWithoutUserInput
     messages?: MessageUncheckedCreateNestedManyWithoutUserInput
+    password?: PasswordUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutReceivedRequestsInput = {
@@ -13521,6 +14964,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipUpdateManyWithoutFriendANestedInput
     participations?: ParticipationUpdateManyWithoutUserNestedInput
     messages?: MessageUpdateManyWithoutUserNestedInput
+    password?: PasswordUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSentRequestsInput = {
@@ -13534,6 +14978,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipUncheckedUpdateManyWithoutFriendANestedInput
     participations?: ParticipationUncheckedUpdateManyWithoutUserNestedInput
     messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
+    password?: PasswordUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutReceivedRequestsInput = {
@@ -13557,6 +15002,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipUpdateManyWithoutFriendANestedInput
     participations?: ParticipationUpdateManyWithoutUserNestedInput
     messages?: MessageUpdateManyWithoutUserNestedInput
+    password?: PasswordUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReceivedRequestsInput = {
@@ -13570,6 +15016,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipUncheckedUpdateManyWithoutFriendANestedInput
     participations?: ParticipationUncheckedUpdateManyWithoutUserNestedInput
     messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
+    password?: PasswordUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserCreateWithoutFriendshipsBInput = {
@@ -13582,6 +15029,7 @@ export namespace Prisma {
     friendshipsA?: FriendshipCreateNestedManyWithoutFriendBInput
     participations?: ParticipationCreateNestedManyWithoutUserInput
     messages?: MessageCreateNestedManyWithoutUserInput
+    password?: PasswordCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutFriendshipsBInput = {
@@ -13595,6 +15043,7 @@ export namespace Prisma {
     friendshipsA?: FriendshipUncheckedCreateNestedManyWithoutFriendBInput
     participations?: ParticipationUncheckedCreateNestedManyWithoutUserInput
     messages?: MessageUncheckedCreateNestedManyWithoutUserInput
+    password?: PasswordUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutFriendshipsBInput = {
@@ -13612,6 +15061,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipCreateNestedManyWithoutFriendAInput
     participations?: ParticipationCreateNestedManyWithoutUserInput
     messages?: MessageCreateNestedManyWithoutUserInput
+    password?: PasswordCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutFriendshipsAInput = {
@@ -13625,6 +15075,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipUncheckedCreateNestedManyWithoutFriendAInput
     participations?: ParticipationUncheckedCreateNestedManyWithoutUserInput
     messages?: MessageUncheckedCreateNestedManyWithoutUserInput
+    password?: PasswordUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutFriendshipsAInput = {
@@ -13669,6 +15120,7 @@ export namespace Prisma {
     friendshipsA?: FriendshipUpdateManyWithoutFriendBNestedInput
     participations?: ParticipationUpdateManyWithoutUserNestedInput
     messages?: MessageUpdateManyWithoutUserNestedInput
+    password?: PasswordUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFriendshipsBInput = {
@@ -13682,6 +15134,7 @@ export namespace Prisma {
     friendshipsA?: FriendshipUncheckedUpdateManyWithoutFriendBNestedInput
     participations?: ParticipationUncheckedUpdateManyWithoutUserNestedInput
     messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
+    password?: PasswordUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutFriendshipsAInput = {
@@ -13705,6 +15158,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipUpdateManyWithoutFriendANestedInput
     participations?: ParticipationUpdateManyWithoutUserNestedInput
     messages?: MessageUpdateManyWithoutUserNestedInput
+    password?: PasswordUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFriendshipsAInput = {
@@ -13718,6 +15172,7 @@ export namespace Prisma {
     friendshipsB?: FriendshipUncheckedUpdateManyWithoutFriendANestedInput
     participations?: ParticipationUncheckedUpdateManyWithoutUserNestedInput
     messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
+    password?: PasswordUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type ChatUpsertWithoutFriendshipInput = {
@@ -13830,6 +15285,7 @@ export namespace Prisma {
     friendshipsA?: FriendshipCreateNestedManyWithoutFriendBInput
     friendshipsB?: FriendshipCreateNestedManyWithoutFriendAInput
     messages?: MessageCreateNestedManyWithoutUserInput
+    password?: PasswordCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutParticipationsInput = {
@@ -13843,6 +15299,7 @@ export namespace Prisma {
     friendshipsA?: FriendshipUncheckedCreateNestedManyWithoutFriendBInput
     friendshipsB?: FriendshipUncheckedCreateNestedManyWithoutFriendAInput
     messages?: MessageUncheckedCreateNestedManyWithoutUserInput
+    password?: PasswordUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutParticipationsInput = {
@@ -13891,6 +15348,7 @@ export namespace Prisma {
     friendshipsA?: FriendshipUpdateManyWithoutFriendBNestedInput
     friendshipsB?: FriendshipUpdateManyWithoutFriendANestedInput
     messages?: MessageUpdateManyWithoutUserNestedInput
+    password?: PasswordUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutParticipationsInput = {
@@ -13904,6 +15362,7 @@ export namespace Prisma {
     friendshipsA?: FriendshipUncheckedUpdateManyWithoutFriendBNestedInput
     friendshipsB?: FriendshipUncheckedUpdateManyWithoutFriendANestedInput
     messages?: MessageUncheckedUpdateManyWithoutUserNestedInput
+    password?: PasswordUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type GroupUpsertWithoutParticipationsInput = {
@@ -14073,6 +15532,7 @@ export namespace Prisma {
     friendshipsA?: FriendshipCreateNestedManyWithoutFriendBInput
     friendshipsB?: FriendshipCreateNestedManyWithoutFriendAInput
     participations?: ParticipationCreateNestedManyWithoutUserInput
+    password?: PasswordCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutMessagesInput = {
@@ -14086,6 +15546,7 @@ export namespace Prisma {
     friendshipsA?: FriendshipUncheckedCreateNestedManyWithoutFriendBInput
     friendshipsB?: FriendshipUncheckedCreateNestedManyWithoutFriendAInput
     participations?: ParticipationUncheckedCreateNestedManyWithoutUserInput
+    password?: PasswordUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutMessagesInput = {
@@ -14131,6 +15592,7 @@ export namespace Prisma {
     friendshipsA?: FriendshipUpdateManyWithoutFriendBNestedInput
     friendshipsB?: FriendshipUpdateManyWithoutFriendANestedInput
     participations?: ParticipationUpdateManyWithoutUserNestedInput
+    password?: PasswordUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMessagesInput = {
@@ -14144,6 +15606,7 @@ export namespace Prisma {
     friendshipsA?: FriendshipUncheckedUpdateManyWithoutFriendBNestedInput
     friendshipsB?: FriendshipUncheckedUpdateManyWithoutFriendANestedInput
     participations?: ParticipationUncheckedUpdateManyWithoutUserNestedInput
+    password?: PasswordUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type ChatUpsertWithoutMessagesInput = {

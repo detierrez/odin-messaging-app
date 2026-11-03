@@ -2,18 +2,20 @@ const expressSession = require("express-session");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const prisma = require("../lib/prisma");
 
+const store = new PrismaSessionStore(prisma, {
+  checkPeriod: 10 * 60 * 1000, //ms: 10 minutes interval to check for expired sessions
+  dbRecordIdIsSessionId: true,
+});
+
 const session = expressSession({
   cookie: {
-    maxAge: 7 * 24 * 60 * 60 * 1000, // ms
+    maxAge: 7 * 24 * 60 * 60 * 1000, //ms: 7 days
   },
   secret: process.env.SESSION_SECRET,
   resave: true,
   saveUninitialized: true,
-  store: new PrismaSessionStore(prisma, {
-    checkPeriod: 2 * 60 * 1000, //ms
-    dbRecordIdIsSessionId: true,
-    dbRecordIdFunction: undefined,
-  }),
+  store,
 });
 
 module.exports.session = session;
+module.exports.store = store;

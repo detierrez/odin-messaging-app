@@ -9,7 +9,7 @@ passport.use(
     try {
       const user = await prisma.user.findUnique({
         where: { username },
-        select: { id: true },
+        select: { id: true, password: { select: { hash: true } } },
       });
 
       if (!user) {
@@ -18,12 +18,15 @@ passport.use(
         });
       }
 
-      // const isPasswordValid = await bcrypt.compare(password, user.password);
-      // if (!isPasswordValid) {
-      //   throw new httpError(401, [
-      //     { reason: "Incorrect username or password" },
-      //   ]);
-      // }
+      const isPasswordValid = await bcrypt.compare(
+        password,
+        user.password.hash,
+      );
+      if (!isPasswordValid) {
+        throw new HttpError(401, "Incorrect username or password", {
+          type: "FAILED_AUTHENTICATION",
+        });
+      }
 
       return done(null, user);
     } catch (error) {

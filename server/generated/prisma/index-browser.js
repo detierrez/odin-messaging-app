@@ -135,6 +135,11 @@ exports.Prisma.UserScalarFieldEnum = {
   description: 'description'
 };
 
+exports.Prisma.PasswordScalarFieldEnum = {
+  userId: 'userId',
+  hash: 'hash'
+};
+
 exports.Prisma.RequestScalarFieldEnum = {
   senderId: 'senderId',
   receiverId: 'receiverId'
@@ -221,6 +226,7 @@ exports.MessageType = exports.$Enums.MessageType = {
 exports.Prisma.ModelName = {
   Session: 'Session',
   User: 'User',
+  Password: 'Password',
   Request: 'Request',
   Friendship: 'Friendship',
   Group: 'Group',

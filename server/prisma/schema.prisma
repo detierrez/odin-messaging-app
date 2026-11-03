@@ -27,6 +27,14 @@ model User {
     friendshipsB     Friendship[]    @relation("userFriendshipsB")
     participations   Participation[] @relation("userParticipations")
     messages         Message[]       @relation("userMessages")
+    password         Password?       @relation("userPassword")
+}
+
+model Password {
+    userId Int   @id
+    hash   String
+    
+    user   User  @relation("userPassword", fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Request {
@@ -56,7 +64,6 @@ model Group {
     name        String?
     avatarUrl   String?
     description String?
-    chatId      Int
 
     participations Participation[] @relation("groupParticipations")
     chat           Chat?           @relation("groupChat")
