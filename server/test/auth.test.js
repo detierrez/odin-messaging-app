@@ -1,5 +1,4 @@
 const request = require("supertest");
-const express = require("express");
 const bcrypt = require("bcryptjs");
 const {
   describe,
@@ -8,24 +7,9 @@ const {
   beforeAll,
   afterAll,
 } = require("@jest/globals");
-const { passport, session, errors } = require("../middlewares");
 const { store } = require("../middlewares/session");
-const auth = require("../routes/auth");
 const prisma = require("../lib/prisma");
-
-const app = express();
-app.use(express.json());
-app.use(session);
-app.use(passport.session);
-app.use("/", auth);
-app.get("/protected", passport.protect, (req, res) => {
-  res.json({ success: true });
-});
-app.use(
-  errors.throwNotFoundError,
-  errors.maskInternalErrors,
-  errors.respondWithError,
-);
+const app = require("../app");
 
 const TEST_USER = {
   username: "testuser",
@@ -58,7 +42,7 @@ afterAll(async () => {
   await prisma.user.deleteMany({
     where: { username: TEST_USER.username },
   });
-  // Stops the store's expired-session check interval and disconnects Prisma
+
   await store.shutdown();
 });
 
@@ -66,7 +50,7 @@ describe("Auth Routes (/)", () => {
   describe("POST /login", () => {
     test("should return 422 if username and password are missing", async () => {
       const res = await request(app).post("/login").send({}).expect(422);
-      console.log(res.body);
+
       expect(res.body).toEqual(
         expect.objectContaining({
           status: "UNPROCESSABLE_ENTITY",
@@ -206,14 +190,14 @@ describe("Auth Routes (/)", () => {
         .expect(200);
 
       // Verify authenticated
-      await agent.get("/protected").expect(200);
+      await agent.get("/users/me").expect(200);
 
       // Logout
       const logoutRes = await agent.post("/logout").expect(200);
       expect(logoutRes.body).toEqual({ success: true });
 
       // Access protected route again - should now be unauthorized
-      const protectedRes = await agent.get("/protected").expect(401);
+      const protectedRes = await agent.get("/users/me").expect(401);
       expect(protectedRes.body).toEqual(
         expect.objectContaining({
           status: "UNAUTHORIZED",
