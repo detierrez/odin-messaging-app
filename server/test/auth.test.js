@@ -46,7 +46,7 @@ afterAll(async () => {
   await store.shutdown();
 });
 
-describe("Auth Routes (/)", () => {
+describe("Testing auth routes", () => {
   describe("POST /login", () => {
     test("should return 422 if username and password are missing", async () => {
       const res = await request(app).post("/login").send({}).expect(422);
