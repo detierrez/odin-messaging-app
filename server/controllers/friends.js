@@ -28,6 +28,12 @@ module.exports.postFriend = async (req, res) => {
     throw new HttpError(422, "You cannot befriend yourself");
   }
 
+  const friend = await prisma.user.findUnique({ where: { id: friendId } });
+
+  if (!friend) {
+    throw new HttpError(404, "User not found");
+  }
+
   const { request, friendship, message } = await prisma.$transaction(
     async (tx) => {
       let request;
@@ -117,17 +123,32 @@ module.exports.deleteFriend = async (req, res) => {
     throw new HttpError(422, "You cannot unfriend yourself");
   }
 
+  const friend = await prisma.user.findUnique({ where: { id: friendId } });
+
+  if (!friend) {
+    throw new HttpError(404, "User not found");
+  }
+
   const { friendship, message } = await prisma.$transaction(async (tx) => {
     const [friendAId, friendBId] = toSorted([userId, friendId]);
-    const friendship = await tx.friendship.update({
-      where: { friendAId_friendBId: { friendAId, friendBId }, endedAt: null },
-      data: { endedAt: new Date() },
-      select: apiSelectors.friendship,
-    });
+
+    let friendship;
+    try {
+      friendship = await tx.friendship.update({
+        where: { friendAId_friendBId: { friendAId, friendBId }, endedAt: null },
+        data: { endedAt: new Date() },
+        select: apiSelectors.friendship,
+      });
+    } catch (error) {
+      throw error.code === "P2025"
+        ? new HttpError(409, "You are not friends with this user")
+        : error;
+    }
+
+    console.log(friendship);
     const message = await tx.message.create({
       data: {
-        friendAId,
-        friendBId,
+        chatId: friendship.chat.id,
         type: "CLOSE",
         userId,
         metadata: { targetUserId: friendId },
