@@ -8,25 +8,47 @@ const groups = Router();
 
 groups.post("/", m.uploadFile("avatar"), v.postGroup, c.groups.postGroup);
 
-groups.use("/:groupId", v.paramId("groupId"));
-groups.get("/:groupId", c.groups.getGroup);
-groups.use("/:groupId", c.groups.checkRole("MEMBER"));
-groups.delete("/:groupId/members/me", c.members.deleteMemberMe);
-groups.use("/:groupId", c.groups.checkRole("ADMIN"));
+groups.get("/:groupId", v.paramId("groupId"), c.groups.getGroup);
+
 groups.patch(
   "/:groupId",
+  v.paramId("groupId"),
+  c.groups.checkRole("ADMIN"),
   m.uploadFile("avatar"),
   v.patchGroup,
   c.groups.patchGroup,
 );
-groups.post("/:groupId/members", v.postMember, c.members.postMember);
-groups.use("/:groupId/members/:memberId", v.paramId("memberId"));
+
+groups.post(
+  "/:groupId/members",
+  v.paramId("groupId"),
+  c.groups.checkRole("ADMIN"),
+  v.postMember,
+  c.members.postMember,
+);
+
 groups.patch(
   "/:groupId/members/:memberId",
+  v.paramId("groupId"),
+  v.paramId("memberId"),
+  c.groups.checkRole("ADMIN"),
   v.patchMember,
   c.members.patchMember,
 );
-groups.delete("/:groupId/members/:memberId", c.members.deleteMember);
+
+groups.delete(
+  "/:groupId/members/me",
+  v.paramId("groupId"),
+  c.groups.checkRole("MEMBER"),
+  c.members.deleteMemberMe,
+);
+
+groups.delete(
+  "/:groupId/members/:memberId",
+  v.paramId("groupId"),
+  v.paramId("memberId"),
+  c.groups.checkRole("ADMIN"),
+  c.members.deleteMember,
+);
 
 module.exports = groups;
-

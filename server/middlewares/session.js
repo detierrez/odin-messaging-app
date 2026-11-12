@@ -9,7 +9,7 @@ const store = new PrismaSessionStore(prisma, {
 
 const session = expressSession({
   cookie: {
-    maxAge: 7 * 24 * 60 * 60 * 1000, //ms: 7 days
+    maxAge: Number(process.env.SESSION_MAX_AGE) || 7 * 24 * 60 * 60 * 1000, //ms: 7 days
   },
   secret: process.env.SESSION_SECRET,
   resave: true,

@@ -7,14 +7,20 @@ const { validators: v } = m;
 const chats = Router();
 
 chats.get("/", c.chats.getChats);
-chats.use("/:chatId", v.paramId("chatId"));
-chats.get("/:chatId/messages", v.getMessages, c.messages.getMessages);
+
+chats.get(
+  "/:chatId/messages",
+  v.paramId("chatId"),
+  v.getMessages,
+  c.messages.getMessages,
+);
+
 chats.post(
   "/:chatId/messages",
+  v.paramId("chatId"),
   m.uploadFile("attachment"),
   v.postMessage,
   c.messages.postMessage,
 );
 
 module.exports = chats;
-

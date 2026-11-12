@@ -110,9 +110,9 @@ const memberIds = [
 ];
 
 const memberId = body("memberId")
-  .toInt()
   .exists({ values: "falsy" })
   .withMessage("memberId is required")
+  .toInt()
   .isInt({ min: 1 })
   .withMessage("memberId must be a positive integer");
 

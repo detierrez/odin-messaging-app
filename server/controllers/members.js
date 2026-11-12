@@ -108,12 +108,17 @@ module.exports.patchMember = async (req, res) => {
   }
 
   const { participation, message } = await prisma.$transaction(async (tx) => {
-    let participation;
+    let query;
     try {
-      participation = await tx.participation.update({
+      query = await tx.participation.update({
         where: { userId_groupId: { userId: memberId, groupId }, endedAt: null },
         data: { role },
-        select: { userId: true, groupId: true, role: true },
+        select: {
+          userId: true,
+          groupId: true,
+          role: true,
+          group: { select: { chat: { select: { id: true } } } },
+        },
       });
     } catch (error) {
       throw error.code === "P2025"
@@ -121,11 +126,13 @@ module.exports.patchMember = async (req, res) => {
         : error;
     }
 
+    const { group, ...participation } = query;
+
     const message = await tx.message.create({
       data: {
-        groupId,
-        type: "ROLE_UPDATE",
         userId,
+        chatId: group.chat.id,
+        type: "ROLE_UPDATE",
         metadata: { targetUserId: memberId, role },
       },
       select: apiSelectors.message,
@@ -149,19 +156,25 @@ module.exports.deleteMember = async (req, res) => {
   }
 
   const { participation, message } = await prisma.$transaction(async (tx) => {
-    const { group, ...participation } = await tx.participation.update({
-      where: { userId_groupId: { userId: memberId, groupId }, endedAt: null },
-      data: { endedAt: new Date() },
-      select: {
-        userId: true,
-        groupId: true,
-        group: { select: { chat: { select: { id: true } } } },
-      },
-    });
+    let query;
 
-    if (!participation) {
-      throw new HttpError(404, "Member not found");
+    try {
+      query = await tx.participation.update({
+        where: { userId_groupId: { userId: memberId, groupId }, endedAt: null },
+        data: { endedAt: new Date() },
+        select: {
+          userId: true,
+          groupId: true,
+          group: { select: { chat: { select: { id: true } } } },
+        },
+      });
+    } catch (error) {
+      throw error.code === "P2025"
+        ? new HttpError(404, "Member not found.")
+        : error;
     }
+
+    const { group, ...participation } = query;
 
     const message = await tx.message.create({
       data: {
